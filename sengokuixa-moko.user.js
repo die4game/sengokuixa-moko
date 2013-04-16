@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name			sengokuixa-moko
 // @description	戦国IXA用ツール
-// @version		2.0.5.3
+// @version		2.0.5.13416
 // @namespace		sengokuixa-ponpoko
 // @author		nameless, osafune, sengokuixa-moko
 // @match			http://*.sengokuixa.jp/*
@@ -23,7 +23,7 @@
 		function Moko_main($) {
 			'use strict';
 			var TOOL_NAME = "戦国IXA用ツール",
-			VERSION_NAME = "ver 2.0.5.3",
+			VERSION_NAME = "ver 2.0.5.13416",
 				//タブ
 			options_grp = {
 				all: '全般1', all2: '全般2', chat: 'チャット', deck: '部隊', unit: '兵士編成' ,map: '地図',
