@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name			sengokuixa-moko
 // @description	戦国IXA用ツール
-// @version		2.0.5.13416
+// @version		2.0.5.1366372444659
 // @namespace		sengokuixa-ponpoko
 // @author		nameless, osafune, sengokuixa-moko
 // @match			http://*.sengokuixa.jp/*
@@ -23,7 +23,7 @@
 		function Moko_main($) {
 			'use strict';
 			var TOOL_NAME = "戦国IXA用ツール",
-			VERSION_NAME = "ver 2.0.5.13416",
+			VERSION_NAME = "ver 2.0.5.1366372444659",
 				//タブ
 			options_grp = {
 				all: '全般1', all2: '全般2', chat: 'チャット', deck: '部隊', unit: '兵士編成' ,map: '地図',
@@ -3076,14 +3076,21 @@
 					
 					$('tr.ixamoko_regmap')
 					.live('click', function(e) {
-						location.href = $(this).attr('url');
+ 						location.href = $(this).attr('url');
 					})
 					.live('mouseover', function(e) {
 						$('area[balloon="' + $(this).attr('alt') + '"]').trigger('mouseover');
 					})
 					.live('mouseout', function(e) {
 						$('#ixamoko_zoommap').remove();
-					});
+					})
+				  .live('contextmenu', function(event) {
+				    var ev = options.map_leftclick? 'click': (options.map_rightclick? 'contextmenu': false);
+				    if (!ev) return;
+  					event.preventDefault();
+				    $('area[balloon="' + $(this).attr('alt') + '"]').trigger(ev);
+  					//openToolMap( $('area[balloon="' + $(this).attr('alt') + '"]'), event.pageX, event.pageY );
+				  });
 					map_list2();
 				}
 
@@ -3189,6 +3196,7 @@
 				
 				function mouseover() {
 					$(this).css('background-color', '#725E1E');
+					$('area[href*="' + $(this).attr('coord') + '"]').trigger('mouseover');
 					if (options.map_minimap) {
 						var ctx = $('#ixamoko_maplist3 > canvas')[0].getContext('2d');
 						var coord = $(this).attr('coord').match(/(\-?\d+).+?(\-?\d+)/);
@@ -3205,6 +3213,7 @@
 				}
 				function mouseout() {
 					$(this).css('background-color', '');
+					$('#ixamoko_zoommap').remove();
 					if (options.map_minimap) {
 						var ctx = $('#ixamoko_maplist3 > canvas')[0].getContext('2d');
 						var coord = $(this).attr('coord').match(/(\-?\d+).+?(\-?\d+)/);
@@ -8297,17 +8306,27 @@
 				});
 				//ページャーをAjaxに/リンクを全表示に組み分けボタンを無効化
 				if (options.pager_ajax) {
-				
+				  toggle_unit_brigade_btn_func = function () {}; // ixaデフuォルトのトグル関数を書き替え
+				  var toggle_unit_brigade_btn_func_moko = function () {
+				    console.log(this);
+				    var cn = this.className.match(/\d/);
+				    cn++;
+				    if (cn > 5)
+				      cn = 1;
+				    this.className = this.className.replace(/\d/,cn);
+				  };
+//				
 					$('#ig_deck_smallcardarea_out').find('div.ig_deck_smallcardarea').each(function() {
-						$(this).find('div.ig_deck_unitbox').removeAttr('onclick');
-						$(this).find('div.ig_deck_smallcardtitle.clearfix').find('div:first').removeAttr('class');
+						$(this).find('div.ig_deck_unitbox div').click(toggle_unit_brigade_btn_func_moko);
+					  //console.log($(this).find('div.ig_deck_unitbox div').eq(0)[0]);
+//						$(this).find('div.ig_deck_smallcardtitle.clearfix').find('div:first').removeAttr('class');
 					});
-					
-					var style = document.createElement("style");
-					style.innerHTML = 'div[class^="unit_brigade"] { cursor: not-allowed; }' +
-								   'div[class^="unit_brigade"]:hover { background-position: 0 0; }'
-					document.head.appendChild(style);
-				
+//					
+//					var style = document.createElement("style");
+//					style.innerHTML = 'div[class^="unit_brigade"] { cursor: not-allowed; }' +
+//								   'div[class^="unit_brigade"]:hover { background-position: 0 0; }'
+//					document.head.appendChild(style);
+//				
 				}
 				//出品中カードを暗色表示
 				if (options.being_exhibited) {
@@ -11419,28 +11438,28 @@
 					return;
 				if ( location.pathname != "/card/deck.php" && location.pathname != "/facility/set_unit_list.php" && location.pathname != "/union/levelup.php" && location.pathname != "/union/remove.php" && location.pathname != "/card/trade_card.php" && location.pathname != "/card/trade.php" && location.pathname != "/card/exhibit_list.php" )
 					return;
-					$('body').append('<div id="tooltip_layer"><div id="tooltip"><ul id="cardUnit"></ul></div></div>');
-					$("#tooltip_layer").hide();
-					
-					var TargetArea ='';
-					if(location.pathname == "/card/deck.php" || location.pathname == "/union/levelup.php" || location.pathname == "/union/remove.php"){
-						TargetArea = $('div.ig_deck_smallcardimage');
-					}
-					else if(location.pathname == "/facility/set_unit_list.php"){
-						TargetArea = $('#busho_info').find('tr.tr_gradient');
-					}
-					else if(location.pathname == "/card/trade_card.php"){
-						TargetArea = $('div.ig_deck_subcardarea');
-					}
-					else if(location.pathname == "/card/trade.php" || location.pathname == "/card/exhibit_list.php"){
-						TargetArea = $('table.common_table1.center.mt10').find('tr.fs12');
-					}
-					
-					TargetArea.live('contextmenu', function(event) {
-						openMenu(this, event.pageX, event.pageY);
-						event.preventDefault();
-						return false;
-					});
+				$('body').append('<div id="tooltip_layer"><div id="tooltip"><ul id="cardUnit"></ul></div></div>');
+				$("#tooltip_layer").hide();
+				
+				var TargetArea ='';
+				if(location.pathname == "/card/deck.php" || location.pathname == "/union/levelup.php" || location.pathname == "/union/remove.php"){
+					TargetArea = $('div.ig_deck_smallcardimage');
+				}
+				else if(location.pathname == "/facility/set_unit_list.php"){
+					TargetArea = $('#busho_info').find('tr.tr_gradient');
+				}
+				else if(location.pathname == "/card/trade_card.php"){
+					TargetArea = $('div.ig_deck_subcardarea');
+				}
+				else if(location.pathname == "/card/trade.php" || location.pathname == "/card/exhibit_list.php"){
+					TargetArea = $('table.common_table1.center.mt10').find('tr.fs12');
+				}
+				
+				TargetArea.live('contextmenu', function(event) {
+					openMenu(this, event.pageX, event.pageY);
+					event.preventDefault();
+					return false;
+				});
 			}
 			
 			function openMenu(target, x, y) {
@@ -16509,8 +16528,8 @@
 			'.left_flo { float: left; }'+
 			'.bg_red { background-color: fireBrick; padding: 0 2px 1px; margin-left: -2px; border-radius: 2px; }' +
 			'.slect_point .ig_fight_dotbox { border: 3px solid red; padding: 7px; }' +
-			'.cardarea_select_first { border: 2px solid gold !important; padding: 5px 3px 0 7px; height: 269px !important; background-position: -1px -1px; }' +
-			'.cardarea_select { border: 2px solid darkgray !important; padding: 5px 3px 0 7px; height: 269px !important; background-position: -1px -1px; }' +
+			'.cardarea_select_first { box-shadow: 0px 0px 0px 2px gold inset}' +
+			'.cardarea_select { box-shadow: 0px 0px 0px 2px darkgray inset}' +
 			/*待機武将一覧：簡易兵種フィルター*/
 			'#soldiers_blind_list { float: right; padding: 4px; background-color: #272521; border: 1px solid dimgrey; border-radius: 5px; }' +
 			'#soldiers_blind_list > li { float: left; }' +
