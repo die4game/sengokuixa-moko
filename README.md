@@ -35,4 +35,6 @@ Chrome用 sengokuixa-moko.user.js の他力本願プロジェクトです。
 ## 最後に
 　戦国IXAがしたいんじゃない、sengokuixa-mokoの開発がしたいんだ！(しないけど)
 
+***
+Google analytics by [githalytics.com](http://githalytics.com/)
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/75c1d6e384e20eeb64760642830a5a4e "githalytics.com")](http://githalytics.com/die4game/sengokuixa-moko)
