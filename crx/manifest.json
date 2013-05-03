@@ -1,0 +1,49 @@
+{
+	"manifest_version": 2,
+
+  "name": "sengokuixa-moko",
+	"version": "2.0.5.6747",
+	"description": "戦国IXA用ツールmoko",
+
+	"content_scripts": [
+		{
+			"js": [
+		    "sengokuixa-moko.user.js"
+		    //"plugin/jquery-1.9.1.min.js"
+		  ],
+		  "run_at": "document_start",
+			"all_frames": true,
+			"matches": [
+		    "http://*.sengokuixa.jp/*",
+		    "http://mixi.jp/run_appl.pl?id=34581",
+		    "http://*.app0.mixi-platform.com/*"
+		  ],
+		  "exclude_matches": [
+		    "http://sengokuixa.jp/*"
+		  ]
+		}
+	],
+
+	"permissions": [
+		"tabs",
+		"cookies",
+		"notifications",
+
+		"http://*.sengokuixa.jp/*",
+		"http://sengokuixa.hangame.co.jp/*",
+		"http://mixi.jp/run_appl.pl?id=34581",
+		"http://*.app0.mixi-platform.com/*"
+	],
+
+  "icons": {
+    "19": "img/icons/19.png",
+	  "48":"img/icons/48.png",
+	  "128":"img/icons/128.png"
+	},
+
+  "web_accessible_resources": [
+    "img",
+    "plugin"
+  ]
+
+}
