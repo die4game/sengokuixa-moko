@@ -1,10 +1,10 @@
 # sengokuixa-moko.crx
 
-Chrome用 sengokuixa-moko.user.js の他力本願プロジェクトです。
+Chrome用 sengokuixa-moko.user.js 開発の他力本願プロジェクトです。
 crx化によって誰でも開発し易くなった！あとはよろしく！
 
 ## インストール
-　Chrome拡張機能のページ右上にあるデベロッパーモードをチェック。「パッケージ化されていない拡張機能を読み込む…」からフォルダcrxを選択して読み込む。
+　Chrome拡張機能のページ右上にあるデベロッパーモードをチェック。「パッケージ化されていない拡張機能を読み込む…」からフォルダcrxを選択して読み込む。ドラッグ&ドロップできないので注意。
 
 ## 開発の手引き
 　Chrome Extensionの基本に関しては「[Getting Started: Building a Chrome Extension](http://developer.chrome.com/extensions/getstarted.html)」を参照。以下ざっくり。
@@ -12,14 +12,14 @@ crx化によって誰でも開発し易くなった！あとはよろしく！
 ### 実行の流れ
 * まずloder.jsが実行される。これにより、mokoStyle.css, TableSorter.js, sengokuixa-moko.js, data.jsonが読み込まれる。
 * そしてmain.jsが実行される。これによりmoko本体のMoko_main()が実行される。
-* loder.js, main.jsは直接読み込み、他はloder.jsによる間接読み込みである。直接間接は使い分ける必要がある。
+* loder.js, main.jsは直接読み込み、他はloder.jsによる間接読み込みといえる。直接間接は使い分ける必要がある。
 
 ### 各ファイルの中身とポイント
-　簡単に紹介
+　ざっくりざっくり。
 #### loader.js
-　ここに記述された各ファイルを読み込み\<script>や\<style>\として<head>に挿入する。css, js, jsonを読み込むことを想定している。\<head>に読み込むとixa公式の関数等にアクセスできるが、chrome.extensionのメソッドが使えなくなる。
+　ここに記述された各ファイルを読み込み\<script>や\<style>として\<head>に挿入する。css, js, jsonを読み込むことを想定している。\<head>に読み込むとixa公式の関数等にアクセスできるが、chrome.extensionのメソッドが使えなくなる。
 #### main.js
-　Moko_mainの実行担当。ixa公式のj$とdata.jsonのオブジェクトを
+　Moko_mainの実行担当。ixa公式のjQuery, j$とdata.jsonオブジェクトを渡して実行する\<script>を\<head>に挿入。
 #### mokoStyle.css
 　スタイルシート。読み込まれる順番がものをいうのでloader.jsからDOMContentLoadedで最後に読み込む。cssも直接読み込み可能だがタイミングを選択できないので間接読み込み。
 #### TableSorter.js
