@@ -8,7 +8,9 @@
 		// load and execute Moko
 		window.addEventListener("DOMContentLoaded", function() {
 			var scriptMoko = document.createElement("script");
-			scriptMoko.textContent = "Moko_main( j$, CRXMOKODATA);";
+			scriptMoko.textContent =
+			  "var CRXMOKODATA;\n" + // data.jsonのロードが重い時のための宣言。
+			  "Moko_main( j$, CRXMOKODATA);";
 			document.head.appendChild(scriptMoko);
 		});
 	}
