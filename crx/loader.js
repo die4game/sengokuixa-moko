@@ -13,7 +13,6 @@ var fileArray = [
       {
         fileURL: chrome.extension.getURL( "moko/sengokuixa-moko.js"),
         tagName: "script"
-        //eventName: "DOMContentLoaded"
       }
     ],
 
