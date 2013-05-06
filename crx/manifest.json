@@ -1,49 +1,52 @@
 {
-	"manifest_version": 2,
+  "manifest_version": 2,
 
-  "name": "sengokuixa-moko",
-	"version": "2.0.5.6747",
-	"description": "戦国IXA用ツールmoko",
+  "name": "sengokuixa-moko.crx",
+  "version": "1.0.0.6747",
+  "description": "戦国IXA用ツールmoko.crx版 @author: nameless, osafune, sengokuixa-moko @special thanks: hatt  http://www1.ocn.ne.jp/~hatt/3gkb/",
 
-	"content_scripts": [
-		{
-			"js": [
-		    "sengokuixa-moko.user.js"
-		    //"plugin/jquery-1.9.1.min.js"
-		  ],
-		  "run_at": "document_start",
-			"all_frames": true,
-			"matches": [
-		    "http://*.sengokuixa.jp/*",
-		    "http://mixi.jp/run_appl.pl?id=34581",
-		    "http://*.app0.mixi-platform.com/*"
-		  ],
-		  "exclude_matches": [
-		    "http://sengokuixa.jp/*"
-		  ]
-		}
-	],
+  "content_scripts": [
+    {
+      "js": [
+        "loader.js",
+        "main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "matches": [
+          "http://*.sengokuixa.jp/*",
+          "http://mixi.jp/run_appl.pl?id=34581",
+          "http://*.app0.mixi-platform.com/*"
+      ],
+      "exclude_matches": [
+          "http://sengokuixa.jp/*"
+      ]
+    }
+  ],
 
-	"permissions": [
-		"tabs",
-		"cookies",
-		"notifications",
+  "permissions": [
+      "tabs",
+      "cookies",
+      "notifications",
+      "storage",
 
-		"http://*.sengokuixa.jp/*",
-		"http://sengokuixa.hangame.co.jp/*",
-		"http://mixi.jp/run_appl.pl?id=34581",
-		"http://*.app0.mixi-platform.com/*"
-	],
+      "http://*.sengokuixa.jp/*",
+      "http://sengokuixa.hangame.co.jp/*",
+      "http://mixi.jp/run_appl.pl?id=34581",
+      "http://*.app0.mixi-platform.com/*"
+  ],
 
   "icons": {
-    "19": "img/icons/19.png",
-	  "48":"img/icons/48.png",
-	  "128":"img/icons/128.png"
-	},
+    "19": "icons/19.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
 
   "web_accessible_resources": [
-    "img",
-    "plugin"
+    "css/*.css",
+    "JSON/*.json",
+    "plugin/*.js",
+    "moko/*.js"
   ]
 
 }
