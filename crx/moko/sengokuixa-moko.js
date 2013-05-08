@@ -158,10 +158,6 @@ function Moko_main( $, CRXMOKODATA) {
   groupsx_def = ['#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600', '#600'],
   //グループ：アイコン デフォルト
   groups_img_def = CRXMOKODATA.group[0],
-  //グループ：アイコン お勧め
-  groups_img_recommand = CRXMOKODATA.group[1],
-  //グループ：アイコン お勧め2
-  groups_img_wafu = CRXMOKODATA.group[2],
 
   IMAGES = CRXMOKODATA.images,
   SOUND = CRXMOKODATA.sound,
@@ -240,7 +236,7 @@ function Moko_main( $, CRXMOKODATA) {
         }
         setting_dialog_strx += '</DIV>';
       }
-      setting_dialog_strx += '</DIV><INPUT style="" type="button" value="追加" class="ixamoko_set_grp_add" />&nbsp;<INPUT type="button" value="標準に戻す" class="ixamoko_set_grp_default" />&nbsp;<INPUT style="" type="button" value="お勧め" class="ixamoko_set_grp_default2" />&nbsp;<INPUT style="" type="button" value="お勧め2" class="ixamoko_set_grp_default3" /></DIV>';
+      setting_dialog_strx += '</DIV><INPUT style="" type="button" value="追加" class="ixamoko_set_grp_add" />&nbsp;<INPUT type="button" value="標準に戻す" class="ixamoko_set_grp_default" />';
     } else {
       var key, key2, chk_flg, sort_list;
       for (key in options_param) {
@@ -269,9 +265,9 @@ function Moko_main( $, CRXMOKODATA) {
           } else if (key == 'unitListDialog') {
             options[key] = '2';
           } else if (key == 'kind_mod') {
-            options[key] = '0';
+            options[key] = '1';
           } else if (key == 'reversal_mod') {
-            options[key] = '0';
+            options[key] = '1';
           } else if (key == 'all_setting_mod') {
             options[key] = '0';
           } else if (key == 'width_display_mod') {
@@ -281,12 +277,15 @@ function Moko_main( $, CRXMOKODATA) {
           } else if (key == 'group_sort_mode') {
             options[key] = '0';
           } else if (key == 'rightclick_mode') {
-            options[key] = '0';
+            options[key] = '1';
           } else if (key == 'return_mode') {
             options[key] = '0';
-          }else if (key == 'raid' || key == 'inside_attack_view' || key == 'non_cardview' || key == 'place_skip' || key == 'sort_village' || key == 'raid_sound' || key == 'hide_soldier' || key == 'hide_facility' ||
-              key == 'panel_func_change' || key == 'map_history'|| key == 'toolbox_fixing' || key == 'map_quarters' || key == 'non_back' || key == 'toride_inbox' || key == 'fight_reg' || key == 'send_troop_check' ||
-              key == 'set_unit_color'  || key == 'pager_ajax' || key == 'warskil_summary_init' || key == 'off_face' || key == 'firstcard_in' || key == 'platoon_leader_remove' || key == 'unit_list_200' || key == 'width_display' || key == 'auto_union_check' || key == 'logout_correction' ) {
+          }else if (key == 'raid' || key == 'inside_attack_view' || key == 'place_skip' || key == 'sort_village' ||
+            key == 'raid_sound' || key == 'hide_soldier' || key == 'hide_facility' || key == 'panel_func_change' ||
+            key == 'toolbox_fixing' || key == 'non_back' ||
+            key == 'toride_inbox' || key == 'fight_reg' || key == 'send_troop_check' || key == 'warskil_summary_init' ||
+            key == 'off_face' || key == 'firstcard_in' || key == 'unit_list_200' || key == 'auto_union_check' ||
+            key == 'logout_correction' ) {
             options[key] = false;
           } else {
             options[key] = true;
@@ -706,46 +705,6 @@ function Moko_main( $, CRXMOKODATA) {
       $('#ixamoko_grp_list').empty().html(html);
       localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups_def));
       localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img_def));
-    }
-  });
-  $('INPUT.ixamoko_set_grp_default2').click(function(e) {
-    if (confirm('"お勧め"に設定してよろしいですか？グループ順記録も破棄されます。')) {
-      group_setting = {};
-      group_index = [];
-      localStorage.setItem("ixamoko_group_set", toJSON(group_setting));
-      localStorage.setItem("ixakaizou_group_index", ArraytoJSON(group_index));
-      var html = '';
-      for (var i = 0; i < groups_def.length; ++i) {
-        html += '<DIV grpid="' + i + '"><IMG width="30" height="30" align="absmiddle" src="' + groups_img_recommand[i] + '" /> <INPUT class="ixamoko_icon" style="width:210px;position:relative;top:-10px;" type="text" value="' + groups_img_recommand[i] + '" /> <INPUT class="ixamoko_color" style="width:50px;position:relative;top:-10px;" type="text" value="' + groups_def[i] + '" />';
-        html += '&nbsp;<INPUT style="position:relative;top:-10px;" type="button" value="設定" class="ixamoko_set_grp_set" />';
-        if (i > 0) {
-          html += '&nbsp;<INPUT style="position:relative;top:-10px;" type="button" value="削除" class="ixamoko_set_grp_del" />';
-        }
-        html += '</DIV>';
-      }
-      $('#ixamoko_grp_list').empty().html(html);
-      localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups_def));
-      localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img_recommand));
-    }
-  });
-  $('INPUT.ixamoko_set_grp_default3').click(function(e) {
-    if (confirm('"お勧め"に設定してよろしいですか？グループ順記録も破棄されます。')) {
-      group_setting = {};
-      group_index = [];
-      localStorage.setItem("ixamoko_group_set", toJSON(group_setting));
-      localStorage.setItem("ixakaizou_group_index", ArraytoJSON(group_index));
-      var html = '';
-      for (var i = 0; i < groups_def.length; ++i) {
-        html += '<DIV grpid="' + i + '"><IMG width="30" height="30" align="absmiddle" src="' + groups_img_wafu[i] + '" /> <INPUT class="ixamoko_icon" style="width:210px;position:relative;top:-10px;" type="text" value="' + groups_img_wafu[i] + '" /> <INPUT class="ixamoko_color" style="width:50px;position:relative;top:-10px;" type="text" value="' + groups_def[i] + '" />';
-        html += '&nbsp;<INPUT style="position:relative;top:-10px;" type="button" value="設定" class="ixamoko_set_grp_set" />';
-        if (i > 0) {
-          html += '&nbsp;<INPUT style="position:relative;top:-10px;" type="button" value="削除" class="ixamoko_set_grp_del" />';
-        }
-        html += '</DIV>';
-      }
-      $('#ixamoko_grp_list').empty().html(html);
-      localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups_def));
-      localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img_wafu));
     }
   });
   $('INPUT.ixamoko_set_grp_add').click(function(e) {
