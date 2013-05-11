@@ -1,0 +1,119 @@
+#ixamoko_dialog {
+width: 500px;
+height: 435px;
+z-index: 9999;
+padding: 10px;
+background-color: rgb(255, 255, 255);
+border: 3px solid rgb(255, 0, 0);
+border-top-left-radius: 5px;
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+border-bottom-left-radius: 5px;
+}
+
+#ixamoko_dialog_header {
+padding: 10px;
+margin-bottom: 5px;
+border-bottom: 2px solid dimgrey;
+}
+
+#ixamoko_set_grp {
+float: left;
+width: 75px;
+height: 365px;
+margin-right: 3px;
+padding-right: 7px;
+border-right: 1px solid #ddd;
+}
+
+#ixamoko_dialog_main {
+float: left;
+width: 405px;
+height: 385px;
+padding-left: 8px;
+overflow-y: auto;
+font-size: small}
+
+#ixamoko_dialog_footer {
+clear: both;
+}
+
+#ixamoko_dialog_header a.close {
+color:#000;
+}
+
+#ixamoko_set_grp div {
+cursor:pointer;
+font-size: 12px;
+text-align:center;
+width:5em;
+padding:5px;
+margin:2px;
+border:1px solid black;
+border-radius:5px;
+}
+
+#ixamoko_dialog_main>div {
+display: none;
+margin-top:5px;
+}
+
+#ixamoko_set_tab_all>div {
+overflow: auto;
+}
+
+#ixamoko_set_tab_all>div>div {
+padding:8px 20px;
+}
+
+#raidNotification {
+font-size: 1em;
+}
+
+#raidNotification_test {
+font-size: 1em;
+margin-left: 1em;
+}
+
+#ixamoko_set_tab_all>div>label:nth-child(2) {
+margin-left: 1em;
+}
+
+#clear_enemyCheckR {
+font-size: 1em;
+margin-left: 1em;
+}
+
+#ixamoko_set_tab_sol>div.scbar_normal {
+padding: 0.5em;
+border: 1px solid silver;
+margin-left: 2em;
+margin-bottom: 1em;
+height: 8.5em;
+width: 11em;
+overflow-y: scroll;
+}
+
+#ixamoko_set_tab_grp>div.scbar_normal {
+height:350px;
+margin-top: 4px;
+padding-bottom: 15px;
+}
+
+#ixamoko_grp_list>div>img {
+width: 30px;
+height: 30px;
+}
+
+#ixamoko_grp_list>div>input.ixamoko_icon {
+width: 180px;
+}
+
+#ixamoko_grp_list>div>input.ixamoko_color {
+width: 50px;
+}
+
+#ixamoko_grp_list>div>input {
+position: relative;
+top: -10px;
+}

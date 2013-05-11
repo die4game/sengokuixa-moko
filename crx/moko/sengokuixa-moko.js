@@ -1,10 +1,11 @@
 // Mokoメイン関数
 // jQueryとdata.jsonを受け取る。
-function Moko_main( $, CRXMOKODATA) {
+function Moko_main( $) {
   'use strict';
   var TOOL_NAME = "sengokuixa-moko.crx",
   VERSION_NAME = "ver 1.0.0.6747",
   //タブ
+/*
   options_grp = {
     all: '全般1', all2: '全般2', chat: 'チャット', deck: '部隊', unit: '兵士編成' ,map: '地図',
     land: '地図(詳細)', faci: '内政',  dungeon: '秘境', sol: '兵舎', grp: 'グループ', battle: '出陣', minigame: '犬聖ﾌﾞﾙ'
@@ -150,6 +151,7 @@ function Moko_main( $, CRXMOKODATA) {
   },
 
   options = {},
+*/
   OPTION_TAG = 'ixa_moko_options',
   OPTION_PREFIX = 'ixa_moko_',
   //グループ：デフォルト枠
@@ -188,31 +190,31 @@ function Moko_main( $, CRXMOKODATA) {
   groups_img = groups_img_def,
   group_index = null;
   
-  if (localStorage.getItem(OPTION_TAG)) {
-    options = secureEvalJSON(localStorage.getItem("ixa_moko_options"));
+  if (localStorage.getItem('crx_'+ OPTION_TAG)) {
+    options = secureEvalJSON(localStorage.getItem("crx_ixa_moko_options"));
   }
   group_setting = {};
   //cardname_setting = {};
   group_index = [];
-  if (localStorage.getItem("ixamoko_group_set")) {
-    group_setting = secureEvalJSON(localStorage.getItem("ixamoko_group_set"));
+  if (localStorage.getItem("crx_ixamoko_group_set")) {
+    group_setting = secureEvalJSON(localStorage.getItem("crx_ixamoko_group_set"));
   }
-  if (localStorage.getItem("ixakaizou_group_index")) {
-    group_index = secureEvalJSON(localStorage.getItem("ixakaizou_group_index"));
+  if (localStorage.getItem("crx_ixakaizou_group_index")) {
+    group_index = secureEvalJSON(localStorage.getItem("crx_ixakaizou_group_index"));
   }
-  if (localStorage.getItem('ixamoko_init_groups')) {
-    groups = secureEvalJSON(localStorage.getItem('ixamoko_init_groups'));
+  if (localStorage.getItem('crx_ixamoko_init_groups')) {
+    groups = secureEvalJSON(localStorage.getItem('crx_ixamoko_init_groups'));
   } else {
-    localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups));
+    localStorage.setItem('crx_ixamoko_init_groups', ArraytoJSON(groups));
   }
-  if (localStorage.getItem('ixamoko_init_groups_img')) {
-    groups_img = secureEvalJSON(localStorage.getItem('ixamoko_init_groups_img'));
+  if (localStorage.getItem('crx_ixamoko_init_groups_img')) {
+    groups_img = secureEvalJSON(localStorage.getItem('crx_ixamoko_init_groups_img'));
   } else {
-    localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img));
+    localStorage.setItem('crx_ixamoko_init_groups_img', ArraytoJSON(groups_img));
   }
   //nowLoading
-  var setting_dialog_str = '<div id="nowLoadingContent" style="position:absolute;width:220px;height:20px;display:none;z-index:9999;padding:20px;color:white;background-color:black;border:3px solid #77692F;-webkit-border-radius:5px;" class="window"><p style="text-align:center;">しばらくお待ちください。 <span></span></p><img src="' + IMAGES.rel_interstitial_loading + '"></div><DIV id="ixamoko_boxes"><DIV id="ixamoko_dialog" style="position:absolute;width:500px;height:415px;display:none;z-index:9999;padding:10px;background-color:#fff;border:3px solid #f00;-webkit-border-radius:5px;" class="window"><DIV id="ixamoko_dialog_header" style="padding: 10px;margin-bottom: 5px;border-bottom: 2px solid dimgrey;"><B>' + TOOL_NAME + '設定</B> ' + VERSION_NAME +' | <A style="color:#000;" href="javascript:void(0);" class="close">[ 設定する ]</A></DIV>';
-  var changed = false;
+  var setting_dialog_str = '<div id="nowLoadingContent" style="position:absolute;width:220px;height:20px;display:none;z-index:9999;padding:20px;color:white;background-color:black;border:3px solid #77692F;-webkit-border-radius:5px;" class="window"><p style="text-align:center;">しばらくお待ちください。 <span></span></p><img src="' + IMAGES.rel_interstitial_loading + '"></div>';//<DIV id="ixamoko_boxes"><DIV id="ixamoko_dialog" style="position:absolute;width:500px;height:415px;display:none;z-index:9999;padding:10px;background-color:#fff;border:3px solid #f00;-webkit-border-radius:5px;" class="window"><DIV id="ixamoko_dialog_header" style="padding: 10px;margin-bottom: 5px;border-bottom: 2px solid dimgrey;"><B>' + TOOL_NAME + '設定</B> ' + VERSION_NAME +' | <A style="color:#000;" href="javascript:void(0);" class="close">[ 設定する ]</A></DIV>';
+/*  var changed = false;
   setting_dialog_str += '<DIV id="ixamoko_set_grp" style="float: left;width: 75px;height: 365px;margin-right: 3px;padding-right: 7px;border-right: 1px solid #ddd;">';
   var setting_dialog_strxx = '';
   var i;
@@ -475,6 +477,7 @@ function Moko_main( $, CRXMOKODATA) {
           }
           setting_dialog_strx += '<LABEL><INPUT type="checkbox" class="ixamoko_setting" key="' + key + '" ' + chk_flg + ' /> ' + options_param[key].caption + '</LABEL>&nbsp;<SELECT class="ixamoko_setting" key="kind_mod">';
           var mod_list = {0: '生産量/h',1: '保有量(％)'};
+          options.kind_mod = options.kind_mod? options.kind: 1;
           for (key2 in mod_list) {
             if (key2 == options.kind_mod) {
               setting_dialog_strx += '<OPTION value="' + key2 + '" SELECTED>' + mod_list[key2] + '</OPTION>';
@@ -490,6 +493,7 @@ function Moko_main( $, CRXMOKODATA) {
           }
           setting_dialog_strx += '<LABEL><INPUT type="checkbox" class="ixamoko_setting" key="' + key + '" ' + chk_flg + ' /> ' + options_param[key].caption + '</LABEL>&nbsp;<SELECT class="ixamoko_setting" key="reversal_mod">';
           var reversal_list = {0: 'メニューと逆転', 1: '最上部に表示'};
+          options.reversal_mod = options.reversal_mod? options.reversal_mod: 1;
           for (key2 in reversal_list) {
             if (key2 == options.reversal_mod) {
               setting_dialog_strx += '<OPTION value="' + key2 + '" SELECTED>' + reversal_list[key2] + '</OPTION>';
@@ -535,7 +539,8 @@ function Moko_main( $, CRXMOKODATA) {
           }
           setting_dialog_strx += '<LABEL><INPUT type="checkbox" class="ixamoko_setting" key="' + key + '" ' + chk_flg + ' /> ' + options_param[key].caption + '</LABEL>&nbsp;<SELECT class="ixamoko_setting" key="rightclick_mode">';
           var rightclick_list = {0: 'ツールチップを表示', 1: '地図移動'};
-          for (key2 in rightclick_list) {
+          options.rightclick_mode = options.rightclick_mode? options.rightclick_mode : 1;
+        for (key2 in rightclick_list) {
             if (key2 == options.rightclick_mode) {
               setting_dialog_strx += '<OPTION value="' + key2 + '" SELECTED>' + rightclick_list[key2] + '</OPTION>';
             } else {
@@ -647,12 +652,14 @@ function Moko_main( $, CRXMOKODATA) {
     }
     setting_dialog_strxx += setting_dialog_strx + '</DIV>';
   }
-  setting_dialog_str += '</DIV><DIV id="ixamoko_dialog_main" class="scbar_normal" style="float: left;width: 405px;height: 365px;padding-left: 8px;overflow-y: auto;">' + setting_dialog_strxx + '</DIV><DIV id="ixamoko_dialog_footer" style="clear: both;"></DIV>';
+  setting_dialog_str += '</DIV><DIV id="ixamoko_dialog_main" class="scbar_normal" style="float: left;width: 405px;height: 365px;padding-left: 8px;overflow-y: auto;">' + setting_dialog_strxx + '</DIV><DIV id="ixamoko_dialog_footer" style="clear: both;"></DIV></DIV></DIV>';
   if (changed) {
-    localStorage.setItem(OPTION_TAG, toJSON(options));
+    localStorage.setItem('crx_'+ OPTION_TAG, toJSON(options));
   }
-  setting_dialog_str += '</DIV></DIV><DIV style="position:absolute;z-index:9000;background-color:#000;display:none;" id="ixamoko_mask"></DIV><DIV style="position:absolute;z-index:9000;background-color:#000;display:none;" id="loading_mask"></DIV></DIV>';
+*/
+  setting_dialog_str += '<DIV style="position:absolute;z-index:9000;background-color:#000;display:none;" id="ixamoko_mask"></DIV><DIV style="position:absolute;z-index:9000;background-color:#000;display:none;" id="loading_mask"></DIV></DIV>';
   $('BODY').prepend(setting_dialog_str);
+/*
   $('#ixamoko_set_grp > DIV').click(function(e) {
     $('#ixamoko_set_tab_' + $(this).attr('tabid')).show().siblings().hide();
     $(this).css('background-color', '#aaf')
@@ -666,8 +673,8 @@ function Moko_main( $, CRXMOKODATA) {
       groups[parseInt($parent.attr('grpid'), 10)] = color.replace('"', '%22');
       groups_img[parseInt($parent.attr('grpid'), 10)] = icon.replace('"', '%22');
       $parent.find('IMG').attr('src', icon);
-      localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups));
-      localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img));
+      localStorage.setItem('crx_ixamoko_init_groups', ArraytoJSON(groups));
+      localStorage.setItem('crx_ixamoko_init_groups_img', ArraytoJSON(groups_img));
     }
   });
   $('INPUT.ixamoko_set_grp_del').live('click', function(e) {
@@ -683,16 +690,16 @@ function Moko_main( $, CRXMOKODATA) {
           --group_setting[cardid];
         }
       }
-      localStorage.setItem('ixamoko_group_set', toJSON(group_setting));
+      localStorage.setItem('crx_ixamoko_group_set', toJSON(group_setting));
       $parent.remove();
-      localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups));
-      localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img));
+      localStorage.setItem('crx_ixamoko_init_groups', ArraytoJSON(groups));
+      localStorage.setItem('crx_ixamoko_init_groups_img', ArraytoJSON(groups_img));
     }
   });
   $('INPUT.ixamoko_set_grp_default').click(function(e) {
     if (confirm('"標準"に戻してよろしいですか？グループ順記録も破棄されます。')) {
       group_setting = {};
-      localStorage.setItem('ixamoko_group_set', toJSON(group_setting));
+      localStorage.setItem('crx_ixamoko_group_set', toJSON(group_setting));
       var html = '';
       for (var i = 0; i < groups_def.length; ++i) {
         html += '<DIV grpid="' + i + '"><IMG width="30" height="30" align="absmiddle" src="' + groups_img_def[i] + '" /> <INPUT class="ixamoko_icon" style="width:210px;position:relative;top:-10px;" type="text" value="' + groups_img_def[i] + '" /> <INPUT class="ixamoko_color" style="width:50px;position:relative;top:-10px;" type="text" value="' + groups_def[i] + '" />';
@@ -703,8 +710,8 @@ function Moko_main( $, CRXMOKODATA) {
         html += '</DIV>';
       }
       $('#ixamoko_grp_list').empty().html(html);
-      localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups_def));
-      localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img_def));
+      localStorage.setItem('crx_ixamoko_init_groups', ArraytoJSON(groups_def));
+      localStorage.setItem('crx_ixamoko_init_groups_img', ArraytoJSON(groups_img_def));
     }
   });
   $('INPUT.ixamoko_set_grp_add').click(function(e) {
@@ -714,15 +721,15 @@ function Moko_main( $, CRXMOKODATA) {
     $list.append(html);
     groups[i] = '';
     groups_img[i] = groups_img[0];
-    localStorage.setItem('ixamoko_init_groups', ArraytoJSON(groups));
-    localStorage.setItem('ixamoko_init_groups_img', ArraytoJSON(groups_img));
+    localStorage.setItem('crx_ixamoko_init_groups', ArraytoJSON(groups));
+    localStorage.setItem('crx_ixamoko_init_groups_img', ArraytoJSON(groups_img));
   });
   $('#clear_all_map_status').click(function(e) {
-    localStorage.removeItem('ixakaizou_map_status');
+    localStorage.removeItem('crx_ixakaizou_map_status');
     alert('Done.');
   });
   $('#clear_enemyCheckR').click(function(e) {
-    localStorage.removeItem('enemyCheckR');
+    localStorage.removeItem('crx_enemyCheckR');
     alert('Done.');
   });
   $('#raidNotification').click(function(e) {
@@ -738,42 +745,41 @@ function Moko_main( $, CRXMOKODATA) {
   });
   $('#clear_all_area_map').click(function(e) {
     if (confirm('表示設定と記録した同盟データをすべて消去してよろしいですか？')) {
-      localStorage.removeItem('areamaptoride');
-      localStorage.removeItem('areamapcountry');
-      localStorage.removeItem('alliesObj');
+      localStorage.removeItem('crx_areamaptoride');
+      localStorage.removeItem('crx_areamapcountry');
+      localStorage.removeItem('crx_alliesObj');
     }
   });
   $('#clear_map_reg').click(function(e) {
     if (confirm('記録した座標をすべて消去してよろしいですか？')) {
       var map_list = {};
-      localStorage.setItem("map_list", toJSON(map_list));
+      localStorage.setItem("crx_map_list", toJSON(map_list));
     }
   });
   $('#clear_grp_reg').click(function(e) {
     if (confirm('記録したグループをすべて消去してよろしいですか？')) {
       var tmp_list = {};
-      localStorage.setItem("ixamoko_group_set", toJSON(tmp_list));
-      //localStorage.setItem("ixamoko_card_name", toJSON(tmp_list));
+      localStorage.setItem("crx_ixamoko_group_set", toJSON(tmp_list));
     }
   });
   $('#clear_facility_reg').click(function(e) {
     if (confirm('記録した施設をすべて消去してよろしいですか？')) {
       var facility_list = {};
-      localStorage.setItem("facility_list", toJSON(facility_list));
+      localStorage.setItem("crx_facility_list", toJSON(facility_list));
     }
   });
   
   $('#clear_localStorage').click(function(e) {
     if (confirm('・グループ設定\n・お気に入り部隊\n・お気に入りソート選択\n・基本兵種設定\n　\n上記以外の設定は破棄されます。')) {
       for (var key in localStorage) {
-        if ( key === 'ixakaizou_butai_list_id' ||
-          key === 'ixakaizou_favorite_list' ||
-        //  key === 'ixamoko_card_name' ||
-          key === 'ixamoko_default_unit' ||
-          key === 'ixamoko_group_set' ||
-          key === 'ixamoko_init_groups' ||
-          key === 'ixamoko_init_groups_img' ||
-          key === 'ixakaizou_group_index'
+        if ( key === 'crx_ixakaizou_butai_list_id' ||
+          key === 'crx_ixakaizou_favorite_list' ||
+        //  key === 'crx_ixamoko_card_name' ||
+          key === 'crx_ixamoko_default_unit' ||
+          key === 'crx_ixamoko_group_set' ||
+          key === 'crx_ixamoko_init_groups' ||
+          key === 'crx_ixamoko_init_groups_img' ||
+          key === 'crx_ixakaizou_group_index'
         ) {
           continue;
         } else {
@@ -783,11 +789,12 @@ function Moko_main( $, CRXMOKODATA) {
     }
   });
   //敵襲音再生
-$('#raid_sound_src')
+  $('#raid_sound_src')
     .after('<a><audio id="reid_sound_test"></audio>&#9654;</a>')
     .next('a').css({marginLeft:'1em', padding:'0 0.4em', border:'solid 1px', borderRadius:'4px', color:'gray', cursor:'pointer'})
     .hover(function(e){$(this).css({color:'black'});},function(e){$(this).css({color:'gray'});})
     .click(function(e){$('#reid_sound_test').attr('src',$('#raid_sound_src').val()?$('#raid_sound_src').val():SOUND.raid_sound).get(0).play()});
+*/
   //サイドバー：mokoツールリストの形成
   $('#sideboxTop').prepend('<DIV class="sideBox"><DIV class="sideBoxHead"><h3 id="moko_title">' + TOOL_NAME + '</h3></DIV><DIV class="sideBoxInner" id="mokotool"></DIV></DIV>');
   $('#mokotool').append('<ul id="toollist"></ul>');
@@ -812,7 +819,7 @@ $('#raid_sound_src')
   }
   //クッキーに登録したログイン時間を取得
   if (getCookie('im_st')) {
-    localStorage.setItem(OPTION_PREFIX + 'starttime', getCookie('im_st'));
+    localStorage.setItem(OPTION_PREFIX + 'crx_starttime', getCookie('im_st'));
     document.cookie = 'im_st=0; expires=Fri, 31-Dec-1999 23:59:59 GMT; domain=.sengokuixa.jp; path=/;';
   }
 
@@ -941,6 +948,7 @@ $('#raid_sound_src')
   trade_auxiliary();
   alltroops_cancel();
 
+/*
   //犬聖ﾌﾞﾙ
   ambitiousBull();
   function ambitiousBull() {
@@ -951,7 +959,7 @@ $('#raid_sound_src')
       shugyotyu = [false],
       iniBull = function(bost) {
         bost = ['いくさぶる', '☆☆☆☆☆0', 193, 193, 193, 100, 0, 0, 0, [['大判ぶる舞LV1', 12, '攻', 5]]];
-        localStorage.setItem('犬聖ﾌﾞﾙ', toJSON(bost));
+        localStorage.setItem('crx_犬聖ﾌﾞﾙ', toJSON(bost));
         return bost;
       },
       ixaBullboxWrite = function(box, bost) {
@@ -959,7 +967,7 @@ $('#raid_sound_src')
           o.innerText = bost[i];
         });
       };
-    bullstatus = secureEvalJSON(localStorage.getItem('犬聖ﾌﾞﾙ'));
+    bullstatus = secureEvalJSON(localStorage.getItem('crx_犬聖ﾌﾞﾙ'));
     if (!bullstatus) {
       bullstatus = iniBull(bullstatus);
     }
@@ -1099,7 +1107,7 @@ $('#raid_sound_src')
               setTimeout(function() {
                 bullstatus[6] = parseInt(bullstatus[6]) + ex;
                 ixaBullbox.find('td:eq(6)').text(bullstatus[6]);
-                localStorage.setItem('犬聖ﾌﾞﾙ', toJSON(bullstatus));
+                localStorage.setItem('crx_犬聖ﾌﾞﾙ', toJSON(bullstatus));
                 shugyotyu[0] = false;
               }, 1000)
             },1000);
@@ -1122,7 +1130,7 @@ $('#raid_sound_src')
            [1.7661638e+06, 5.7533283e+04, 2.9262164e+02, 1.6250100e+01, 0, 0, 0, 0]
           ],
         i;
-      bullstatus = secureEvalJSON(localStorage.getItem('犬聖ﾌﾞﾙ'));
+      bullstatus = secureEvalJSON(localStorage.getItem('crx_犬聖ﾌﾞﾙ'));
       opponentbox.find('#opimg img').attr('src','/img/common/dummy.gif');
       opponentbox.find('td').text('');
       opponentbox.find('div.skill span').text('');
@@ -1164,7 +1172,7 @@ $('#raid_sound_src')
         bullstatus[1] = (i >= 5 - rank ? '★': '☆') + bullstatus[1];
       }
       ixaBullboxWrite(ixaBullbox, bullstatus);
-      localStorage.setItem('犬聖ﾌﾞﾙ', toJSON(bullstatus));
+      localStorage.setItem('crx_犬聖ﾌﾞﾙ', toJSON(bullstatus));
 
       function levelup(bst) {
         var sum,
@@ -1186,6 +1194,9 @@ $('#raid_sound_src')
           bst[4] = parseInt(bst[4]) + 1;
         }
       }
+    });
+  }
+*/
 /*
       rank 0:
       Eq: %0i*X^i (i=0-7)
@@ -1266,8 +1277,6 @@ $('#raid_sound_src')
         <DY^2> = 2.1186384e-01
       |r| or |R| = 1.0000000e+00
 */
-    });
-  }
 
 //////////////////////
 //プルダウンメニュー：
@@ -1652,6 +1661,7 @@ $('#raid_sound_src')
       chat_mapcood();
     }
 
+/*
     //Moko設定の整形
     $('#navi01').css('padding-top','4px');
     $('#navi01 > ul').append('<li class="navi01_04"><a href="javascript:void(0);" id="ixamoko_setting" class="fade" title="moko設定">moko設定</a></li>');
@@ -1667,7 +1677,7 @@ $('#raid_sound_src')
       function(){
         $(this).fadeTo(200,1.0);
       });
-
+*/
     //資源バーにリンクを追加
     $('#status_left').css('width', '100%');
     var sllink = {
@@ -1704,6 +1714,7 @@ $('#raid_sound_src')
       $(this).prev().height('');
     })
     
+/*
     //設定を開く
     $('#ixamoko_setting').live("click", function(e) {
       var id = '#ixamoko_dialog';
@@ -1745,9 +1756,10 @@ $('#raid_sound_src')
           options[key] = $(this).attr('checked') === true ? true : false;
         }
       });
-      localStorage.setItem(OPTION_TAG, toJSON(options));
+      localStorage.setItem('crx_'+ OPTION_TAG, toJSON(options));
       return false;
     });
+*/
     //チャット欄に敵襲タブを追加
     if (options.commentListEnemy || options.raid_system) {
       comBtnEnemy();
@@ -1819,8 +1831,8 @@ $('#raid_sound_src')
     if (options.timeout_countdown) {
       var totime = 0;
       var sec = 0;
-      if (localStorage.getItem(OPTION_PREFIX + 'starttime') !== null) {
-        totime = (parseInt(localStorage.getItem(OPTION_PREFIX + 'starttime'), 10) + 3 * 60 * 60);
+      if (localStorage.getItem(OPTION_PREFIX + 'crx_starttime') !== null) {
+        totime = (parseInt(localStorage.getItem( OPTION_PREFIX + 'crx_starttime'), 10) + 3 * 60 * 60);
         sec = totime - getUnixTime();
       }
       //console.log(totime);
@@ -2381,8 +2393,8 @@ $('#raid_sound_src')
 
   function favoriteView() {
     var favorite_list = {};
-    if (localStorage.getItem("ixakaizou_favorite_list")) {
-      favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_favorite_list"));
+    if (localStorage.getItem("crx_ixakaizou_favorite_list")) {
+      favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_favorite_list"));
     }
     $('#favoriteselect').children().remove();
     $('#favoriteselect').append('<option>----お気に入りソート選択----</option>');
@@ -2396,8 +2408,8 @@ $('#raid_sound_src')
     var favorite_list = {};
     var l_key = '';
     var l_val = [];
-    if (localStorage.getItem("ixakaizou_favorite_list")) {
-      favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_favorite_list"));
+    if (localStorage.getItem("crx_ixakaizou_favorite_list")) {
+      favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_favorite_list"));
     }
     for (var i = 0; i < 3; i++) {
       l_key += $('#sort_order_' + i).children(':selected').text() + ':';
@@ -2406,15 +2418,15 @@ $('#raid_sound_src')
       l_val.push($('#sort_order_type_' + i).children(':selected').attr('value'));
     }
     favorite_list[l_key] = l_val.join('/');
-    localStorage.setItem('ixakaizou_favorite_list', toJSON(favorite_list));
+    localStorage.setItem('crx_ixakaizou_favorite_list', toJSON(favorite_list));
     favoriteView();
   }
 
   function favoriteDelete() {
     var favorite_list = {};
     var favorite_list_new = {};
-    if (localStorage.getItem("ixakaizou_favorite_list")) {
-      favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_favorite_list"));
+    if (localStorage.getItem("crx_ixakaizou_favorite_list")) {
+      favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_favorite_list"));
     }
     var target = $('#favoriteselect').children(':selected').attr('value');
     if (target === undefined)
@@ -2424,7 +2436,7 @@ $('#raid_sound_src')
         favorite_list_new[i] = favorite_list[i];
       }
     }
-    localStorage.setItem('ixakaizou_favorite_list', toJSON(favorite_list_new));
+    localStorage.setItem('crx_ixakaizou_favorite_list', toJSON(favorite_list_new));
     favoriteView();
   }
 
@@ -2475,8 +2487,8 @@ $('#raid_sound_src')
     
     function deal_search_favoriteView() {
       var deal_search_favorite_list = {};
-      if (localStorage.getItem("ixakaizou_deal_search_favorite_list")) {
-        deal_search_favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_deal_search_favorite_list"));
+      if (localStorage.getItem("crx_ixakaizou_deal_search_favorite_list")) {
+        deal_search_favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_deal_search_favorite_list"));
       }
       $('#deal_search_favoriteselect').children().remove();
       $('#deal_search_favoriteselect').append('<option>--お気に入り検索を選択--</option>');
@@ -2490,23 +2502,23 @@ $('#raid_sound_src')
       var deal_search_favorite_list = {};
       var l_key = '';
       var l_val = [];
-      if (localStorage.getItem("ixakaizou_deal_search_favorite_list")) {
-        deal_search_favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_deal_search_favorite_list"));
+      if (localStorage.getItem("crx_ixakaizou_deal_search_favorite_list")) {
+        deal_search_favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_deal_search_favorite_list"));
       }
         l_key += $('#t').children(':selected').text() + '：';
         l_key += $('#k').val() + '　';
         l_val.push($('#t').children(':selected').attr('value'));
         l_val.push($('#k').val());
       deal_search_favorite_list[l_key] = l_val.join('/');
-      localStorage.setItem('ixakaizou_deal_search_favorite_list', toJSON(deal_search_favorite_list));
+      localStorage.setItem('crx_ixakaizou_deal_search_favorite_list', toJSON(deal_search_favorite_list));
       deal_search_favoriteView();
     }
     
     function deal_search_favoriteDelete() {
       var deal_search_favorite_list = {};
       var deal_search_favorite_list_new = {};
-      if (localStorage.getItem("ixakaizou_deal_search_favorite_list")) {
-        deal_search_favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_deal_search_favorite_list"));
+      if (localStorage.getItem("crx_ixakaizou_deal_search_favorite_list")) {
+        deal_search_favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_deal_search_favorite_list"));
       }
       var target = $('#deal_search_favoriteselect').children(':selected').attr('value');
       if (target === undefined)
@@ -2516,7 +2528,7 @@ $('#raid_sound_src')
           deal_search_favorite_list_new[i] = deal_search_favorite_list[i];
         }
       }
-      localStorage.setItem('ixakaizou_deal_search_favorite_list', toJSON(deal_search_favorite_list_new));
+      localStorage.setItem('crx_ixakaizou_deal_search_favorite_list', toJSON(deal_search_favorite_list_new));
       deal_search_favoriteView();
     }
     
@@ -2549,8 +2561,8 @@ $('#raid_sound_src')
     
     function deal_sort_favoriteView() {
       var deal_sort_favorite_list = {};
-      if (localStorage.getItem("ixakaizou_deal_sort_favorite_list")) {
-        deal_sort_favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_deal_sort_favorite_list"));
+      if (localStorage.getItem("crx_ixakaizou_deal_sort_favorite_list")) {
+        deal_sort_favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_deal_sort_favorite_list"));
       }
       $('#deal_sort_favoriteselect').children().remove();
       $('#deal_sort_favoriteselect').append('<option>--お気に入りソート選択--</option>');
@@ -2564,23 +2576,23 @@ $('#raid_sound_src')
       var deal_sort_favorite_list = {};
       var l_key = '';
       var l_val = [];
-      if (localStorage.getItem("ixakaizou_deal_sort_favorite_list")) {
-        deal_sort_favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_deal_sort_favorite_list"));
+      if (localStorage.getItem("crx_ixakaizou_deal_sort_favorite_list")) {
+        deal_sort_favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_deal_sort_favorite_list"));
       }
         l_key += $('#s').children(':selected').text() + '：';
         l_key += $('#o').children(':selected').text() + '　';
         l_val.push($('#s').children(':selected').val());
         l_val.push($('#o').val());
       deal_sort_favorite_list[l_key] = l_val.join('/');
-      localStorage.setItem('ixakaizou_deal_sort_favorite_list', toJSON(deal_sort_favorite_list));
+      localStorage.setItem('crx_ixakaizou_deal_sort_favorite_list', toJSON(deal_sort_favorite_list));
       deal_sort_favoriteView();
     }
     
     function deal_sort_favoriteDelete() {
       var deal_sort_favorite_list = {};
       var deal_sort_favorite_list_new = {};
-      if (localStorage.getItem("ixakaizou_deal_sort_favorite_list")) {
-        deal_sort_favorite_list = secureEvalJSON(localStorage.getItem("ixakaizou_deal_sort_favorite_list"));
+      if (localStorage.getItem("crx_ixakaizou_deal_sort_favorite_list")) {
+        deal_sort_favorite_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_deal_sort_favorite_list"));
       }
       var target = $('#deal_sort_favoriteselect').children(':selected').attr('value');
       if (target === undefined)
@@ -2590,7 +2602,7 @@ $('#raid_sound_src')
           deal_sort_favorite_list_new[i] = deal_sort_favorite_list[i];
         }
       }
-      localStorage.setItem('ixakaizou_deal_sort_favorite_list', toJSON(deal_sort_favorite_list_new));
+      localStorage.setItem('crx_ixakaizou_deal_sort_favorite_list', toJSON(deal_sort_favorite_list_new));
       deal_sort_favoriteView();
     }
     
@@ -2995,8 +3007,8 @@ $('#raid_sound_src')
   function set_map_list( base_x, base_y ) {
     $('#reg_box').empty().append('<tr id="reg_info"><td colspan="4" style="text-align: center;" class="imk_border_right">記録無し</td></tr>');
     var map_list = {};
-    if (localStorage.getItem("map_list")) {
-      map_list = secureEvalJSON(localStorage.getItem("map_list"));
+    if (localStorage.getItem("crx_map_list")) {
+      map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
     }
     
     var CountryCode = $('#ig_map_movepanel').find('li:eq(0) > a').attr('href').split('=')[4],
@@ -3492,7 +3504,7 @@ $('#raid_sound_src')
           var now = Dt.getFullYear() + '/' + (Dt.getMonth() + 1) + '/' + Dt.getDate() + '/ ' + Dt.getHours() + ':' + Dt.getMinutes() + ':' + Dt.getSeconds();
           $("#lastmodify").text('最終更新 ' + now);
           var map_status = $('.map_status').find('#all_map_status:eq(0)').html();
-          localStorage.setItem('ixakaizou_map_status', map_status);
+          localStorage.setItem('crx_ixakaizou_map_status', map_status);
           return;
         }
         get_map_status(c, j, (mp[j][0]), (mp[j][1]));
@@ -3600,12 +3612,12 @@ $('#raid_sound_src')
           '<ul style="height: 100%; overflow-y:auto; overflow-x: hidden;"></ul>'
         );
         var $country = $baselist.find('#country');
-        if (localStorage.getItem('areamapcountry'))
-          $country.val(localStorage.getItem('areamapcountry'));
+        if (localStorage.getItem('crx_areamapcountry'))
+          $country.val(localStorage.getItem('crx_areamapcountry'));
         //砦、番号表示選択
         var torideCheck = ['', ''];
-        if (localStorage.getItem('areamaptoride'))
-          torideCheck = secureEvalJSON(localStorage.getItem('areamaptoride'));
+        if (localStorage.getItem('crx_areamaptoride'))
+          torideCheck = secureEvalJSON(localStorage.getItem('crx_areamaptoride'));
         $baselist.prepend(
         '<p>' +
         '<span>' +
@@ -3696,7 +3708,7 @@ $('#raid_sound_src')
           
           }
 
-          localStorage.setItem('areamaptoride', ArraytoJSON(torideCheck));
+          localStorage.setItem('crx_areamaptoride', ArraytoJSON(torideCheck));
         });
 
         //砦番号の表示チェック
@@ -3748,13 +3760,13 @@ $('#raid_sound_src')
             }
           }
 
-          localStorage.setItem('areamaptoride', ArraytoJSON(torideCheck));
+          localStorage.setItem('crx_areamaptoride', ArraytoJSON(torideCheck));
         });
 
         //自国と他国の変更
         $country.change(function() {
           country = $country.val();
-          localStorage.setItem('areamapcountry', $country.val());
+          localStorage.setItem('crx_areamapcountry', $country.val());
           $baselist.find('ul').children().remove();
           $basePointImg.children().remove();
           $ally_baselist.find('div').remove();
@@ -3770,30 +3782,30 @@ $('#raid_sound_src')
         });
 
         //同盟オブジェクト取得
-        var alliesObj = secureEvalJSON(localStorage.getItem('alliesObj'));
+        var alliesObj = secureEvalJSON(localStorage.getItem('crx_alliesObj'));
         if (alliesObj) {
           //所属国選択
           $ally_baselist.append('<select id="ally_country" style="margin-top:4px;margin-bottom:4px;"></select><br/>');
           var $ally_country = $ally_baselist.find('#ally_country');
           for (key in alliesObj)
             $ally_country.append('<option value="' + key + '">' + key + '</option>');
-          if (localStorage.getItem('areamapAllyCountry'))
-            $ally_country.val(localStorage.getItem('areamapAllyCountry'));
+          if (localStorage.getItem('crx_areamapAllyCountry'))
+            $ally_country.val(localStorage.getItem('crx_areamapAllyCountry'));
           var ac = $ally_country.val();
-          localStorage.setItem('areamapAllyCountry', ac);
+          localStorage.setItem('crx_areamapAllyCountry', ac);
           //同盟選択
           $ally_baselist.append('<select id="ally_ID" style="margin-bottom:4px;width:100%"></select><br/>');
           var $ally_ID = $ally_baselist.find('#ally_ID');
           for (key in alliesObj[ac]['同盟ID'])
             $ally_ID.append('<option value="' + key + '">' + alliesObj[ac]['同盟ID'][key]['名称'] + '</option>');
-          if (localStorage.getItem('areamapAllyID'))
-            $ally_ID.val(localStorage.getItem('areamapAllyID'));
+          if (localStorage.getItem('crx_areamapAllyID'))
+            $ally_ID.val(localStorage.getItem('crx_areamapAllyID'));
           var ai = $ally_ID.val();
-          localStorage.setItem('areamapAllyID', ai);
+          localStorage.setItem('crx_areamapAllyID', ai);
           //拠点分類・陥落表示選択
           var baseCheck = {'本領': 'checked','所領': 'checked','陥落': '','出城': 'checked','陣': 'checked','領地': ''};
-          if (localStorage.getItem('areamapbaseCheck'))
-            baseCheck = secureEvalJSON(localStorage.getItem('areamapbaseCheck'));
+          if (localStorage.getItem('crx_areamapbaseCheck'))
+            baseCheck = secureEvalJSON(localStorage.getItem('crx_areamapbaseCheck'));
           $ally_baselist.append(
           '<span>' +
           '<input type="checkbox" class="base_check" id="本領"' + baseCheck['本領'] + '> : 本領' +
@@ -3836,7 +3848,7 @@ $('#raid_sound_src')
           //所属国選択変更
           $ally_country.change(function() {
             ac = $ally_baselist.find('#ally_country').val();
-            localStorage.setItem('areamapAllyCountry', ac);
+            localStorage.setItem('crx_areamapAllyCountry', ac);
             $ally_ID.children().remove();
             $ally_baselist.find('div').remove();
             $ally_basePointImg.children().remove();
@@ -3846,7 +3858,7 @@ $('#raid_sound_src')
               tmp += '<option value="' + key + '">' + alliesObj[ac]['同盟ID'][key]['名称'] + '</option>';
             $ally_ID.append(tmp);
             ai = $ally_baselist.find('#ally_ID').val();
-            localStorage.setItem('areamapAllyID', ai);
+            localStorage.setItem('crx_areamapAllyID', ai);
             //同盟拠点リスト・ポイント取得、表示
             allyBases = cleateAllyBases(x_zero, y_zero, basepoint3, countrycode, ac, ai, alliesObj, baseCheck);
             set_allyBases(allyBases, country);
@@ -3855,7 +3867,7 @@ $('#raid_sound_src')
           //同盟選択変更
           $ally_ID.live('change', function() {
             ai = $ally_ID.val();
-            localStorage.setItem('areamapAllyID', ai);
+            localStorage.setItem('crx_areamapAllyID', ai);
             $ally_baselist.find('div').remove();
             $ally_basePointImg.children().remove();
             allyBases = cleateAllyBases(x_zero, y_zero, basepoint3, countrycode, ac, ai, alliesObj, baseCheck);
@@ -3872,7 +3884,7 @@ $('#raid_sound_src')
                 baseCheck[key] = '';
               }
             }
-            localStorage.setItem('areamapbaseCheck', toJSON(baseCheck));
+            localStorage.setItem('crx_areamapbaseCheck', toJSON(baseCheck));
             //console.log('click');
             $ally_baselist.find('div').remove();
             $ally_basePointImg.children().remove();
@@ -3896,8 +3908,8 @@ $('#raid_sound_src')
       function get_country_code() {
         var countrycode = [], tmp = {}, date_now = [Date()];
         date_now[1] = Date.parse(date_now[0]);
-        if (localStorage.getItem('countrycode')) {
-          tmp = secureEvalJSON(localStorage.getItem('countrycode'));
+        if (localStorage.getItem('crx_countrycode')) {
+          tmp = secureEvalJSON(localStorage.getItem('crx_countrycode'));
           if ((date_now[1] - tmp.date) < 86400000)
             return tmp.countrycode;
         }
@@ -3921,7 +3933,7 @@ $('#raid_sound_src')
         if (countrycode[1] === undefined)
           countrycode[1] = countrycode[0];
         tmp.countrycode = countrycode;
-        localStorage.setItem('countrycode', toJSON(tmp));
+        localStorage.setItem('crx_countrycode', toJSON(tmp));
         return countrycode;
       }
 
@@ -4222,8 +4234,8 @@ $('#raid_sound_src')
       var alliesObj = {};
       var fmlynm = $('.family_name p.name').text();
       var cc = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,'北条家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
-      if (localStorage.getItem('alliesObj'))
-        alliesObj = secureEvalJSON(localStorage.getItem('alliesObj'));
+      if (localStorage.getItem('crx_alliesObj'))
+        alliesObj = secureEvalJSON(localStorage.getItem('crx_alliesObj'));
       if (!alliesObj[fmlynm])
         alliesObj[fmlynm] = {'国番号': cc[fmlynm],'同盟ID': {}};
       alliesObj[fmlynm]['同盟ID'][allid] = {'名称': alnm,'同盟員': mnbrData,'戦場': '','date': Date()};
@@ -4300,7 +4312,7 @@ $('#raid_sound_src')
           if (!confirm('陥落チェックを行いますか？100人規模で約15分かかります。')) {
             nowLoading(true);
             //console.log('陥落チェックなし',toJSON(alliesObj));
-            localStorage.setItem('alliesObj', toJSON(alliesObj));
+            localStorage.setItem('crx_alliesObj', toJSON(alliesObj));
             return;
           }
           //必要なデータの配列を作成
@@ -4359,7 +4371,7 @@ $('#raid_sound_src')
               setTimeout(fallCheck, 1000, i, mn, bc, bn, ad);
             else {
               //console.log('陥落チェック完了',toJSON(alliesObj));
-              localStorage.setItem('alliesObj', toJSON(alliesObj));
+              localStorage.setItem('crx_alliesObj', toJSON(alliesObj));
               nowLoading(true);
             }
           },
@@ -4459,21 +4471,21 @@ $('#raid_sound_src')
       tmp +=  '<tr><td colspan=14>【消沈<<<<font color="#ff4c4c">激戦</font>】<input id="update_map" type=button value="　　現在の戦況を確認する　　"></td></tr>' +
           '</tbody></table><input id="clear_all_map_status2" type=button value="初期化"></div>';
       $('span#all_map').append(tmp);
-      if (localStorage.getItem("ixakaizou_map_status")) {
-        var ixa_map_status = localStorage.getItem("ixakaizou_map_status");
+      if (localStorage.getItem("crx_ixakaizou_map_status")) {
+        var ixa_map_status = localStorage.getItem("crx_ixakaizou_map_status");
         $('.map_status').find('#all_map_status:eq(0)').html(ixa_map_status);
-        $('select#target').val(localStorage.getItem("ixakaizou_map_select_country"));
+        $('select#target').val(localStorage.getItem("crx_ixakaizou_map_select_country"));
       }
       $('#all_map_status').find('th, td').css('background-color', 'black');
       $('#all_map_status').find('th').css('padding', '2px');
       $('#clear_all_map_status2').click(function(e) {
-        localStorage.removeItem('ixakaizou_map_status');
+        localStorage.removeItem('crx_ixakaizou_map_status');
         all_map_status_mousedown();
       });
       $("input#update_map").live("click", function() {
         $(this).attr('disabled', true).parent().parent().parent().find('td[id]').css({'color': 'white'});
         get_map_status(0, 0, 12, 28);
-        localStorage.setItem("ixakaizou_map_select_country", $('select#target').val());
+        localStorage.setItem("crx_ixakaizou_map_select_country", $('select#target').val());
       });
       $("td").live("click", function() {
         if ( options.chapter_change === '0' ) {
@@ -4907,8 +4919,8 @@ $('#raid_sound_src')
     if (!options.map_reg)
       return;
     var map_list = {};
-    if (localStorage.getItem("map_list")) {
-      map_list = secureEvalJSON(localStorage.getItem("map_list"));
+    if (localStorage.getItem("crx_map_list")) {
+      map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
     }
     if (location.pathname == "/user/") {
       $('table.common_table1.center').find('tr').find('a:eq(1)').each(function() {
@@ -4962,23 +4974,23 @@ $('#raid_sound_src')
     
     $('input.reg_map').click(function(e) {
       var map_list = {};
-      if (localStorage.getItem("map_list")) {
-        map_list = secureEvalJSON(localStorage.getItem("map_list"));
+      if (localStorage.getItem("crx_map_list")) {
+        map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
       }
       var coord = $(this).attr('coord');
       var mname = $(this).attr('mname').trim();
       map_list[coord] = mname;
-      localStorage.setItem("map_list", toJSON(map_list));
+      localStorage.setItem("crx_map_list", toJSON(map_list));
       $(this).val('記録完了').attr('disabled', true);
     });
     $('input.remove_map').click(function(e) {
-      if (localStorage.getItem("map_list")) {
-        var map_list = secureEvalJSON(localStorage.getItem("map_list"));
+      if (localStorage.getItem("crx_map_list")) {
+        var map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
         var coord = $(this).attr('coord');
         var mname = $(this).attr('mname').trim();
         if (typeof (map_list[coord]) != 'undefined') {
           delete map_list[coord];
-          localStorage.setItem("map_list", toJSON(map_list));
+          localStorage.setItem("crx_map_list", toJSON(map_list));
         }
       }
       $(this).val('削除完了').attr('disabled', true);
@@ -5869,8 +5881,8 @@ $('#raid_sound_src')
 
       //チェック兵種をストレージから取得、複合の最大兵数を表示
       for (key in soldiertype) {
-        if (localStorage.getItem('checked_soldier' + key))
-          $('input#' + key).attr('checked', secureEvalJSON(localStorage.getItem('checked_soldier' + key)));
+        if (localStorage.getItem('crx_checked_soldier' + key))
+          $('input#' + key).attr('checked', secureEvalJSON(localStorage.getItem('crx_checked_soldier' + key)));
       }
       combo_soldier();
       for (key in soldiertype) {
@@ -5942,7 +5954,7 @@ $('#raid_sound_src')
       var rice2 = 0;
       var checker = 0;
       for (var key in soldiertype) {
-        localStorage.setItem('checked_soldier' + key, toJSON($('input#' + key).attr('checked')));
+        localStorage.setItem('crx_checked_soldier' + key, toJSON($('input#' + key).attr('checked')));
         if ($('input#' + key).attr('checked')) {
           checker++;
           tmp2 += '<div>' + key + '</div>';
@@ -6361,8 +6373,8 @@ $('#raid_sound_src')
       $(this).wrap('<div id="' + beseID + '" class="same_base"></div>');
     });
     var facility_list = {};
-    if (localStorage.getItem("facility_list")) {
-      facility_list = secureEvalJSON(localStorage.getItem("facility_list"));
+    if (localStorage.getItem("crx_facility_list")) {
+      facility_list = secureEvalJSON(localStorage.getItem("crx_facility_list"));
     }
     
     var moko_tmp = ''
@@ -6413,37 +6425,37 @@ $('#raid_sound_src')
           
         if( list_code == base_code ){
           var facility_list = {};
-          if (localStorage.getItem("facility_list")) {
-            facility_list = secureEvalJSON(localStorage.getItem("facility_list"));
+          if (localStorage.getItem("crx_facility_list")) {
+            facility_list = secureEvalJSON(localStorage.getItem("crx_facility_list"));
           }
           var code = facilityInput.attr('code');
           var mname = facilityInput.attr('mname');
           facility_list[code] = mname;
-          localStorage.setItem("facility_list", toJSON(facility_list));
+          localStorage.setItem("crx_facility_list", toJSON(facility_list));
         }
       }
     });
     $('INPUT.reg_facility').click(function(e) {
       if (confirm('お気に入り施設に登録してよろしいですか?')) {
         var facility_list = {};
-        if (localStorage.getItem("facility_list")) {
-          facility_list = secureEvalJSON(localStorage.getItem("facility_list"));
+        if (localStorage.getItem("crx_facility_list")) {
+          facility_list = secureEvalJSON(localStorage.getItem("crx_facility_list"));
         }
         var code = $(this).attr('code');
         var mname = $(this).attr('mname');
         facility_list[code] = mname;
-        localStorage.setItem("facility_list", toJSON(facility_list));
+        localStorage.setItem("crx_facility_list", toJSON(facility_list));
       }
     });
     $('INPUT.remove_facility').click(function(e) {
       if (confirm('お気に入り施設から削除してよろしいですか?')) {
-        if (localStorage.getItem("facility_list")) {
-          var facility_list = secureEvalJSON(localStorage.getItem("facility_list"));
+        if (localStorage.getItem("crx_facility_list")) {
+          var facility_list = secureEvalJSON(localStorage.getItem("crx_facility_list"));
           var code = $(this).attr('code');
           var mname = $(this).attr('mname');
           if (typeof(facility_list[code])!='undefined') {
             delete facility_list[code];
-            localStorage.setItem("facility_list", toJSON(facility_list));
+            localStorage.setItem("crx_facility_list", toJSON(facility_list));
           }
         }
       }
@@ -7892,14 +7904,14 @@ $('#raid_sound_src')
       return;
     var dungeon_btn = $('div.btnarea').clone();
     $('ul.dungeon_list_header').after(dungeon_btn);
-    var idx = localStorage.getItem(location.hostname + 'dungeon_idx');
+    var idx = localStorage.getItem(location.hostname + 'crx_dungeon_idx');
     
     if (idx!=null) {
       $('INPUT[name="dungeon_select"][value="'+idx+'"]').attr('checked', true);
     }
     $('INPUT[name="dungeon_select"]').change(
         function() {
-          localStorage.setItem(location.hostname + 'dungeon_idx', $('INPUT[name="dungeon_select"]:checked').val());
+          localStorage.setItem(location.hostname + 'crx_dungeon_idx', $('INPUT[name="dungeon_select"]:checked').val());
         }, false);
     // change end
     
@@ -8145,11 +8157,10 @@ $('#raid_sound_src')
         $(this).closest('div.ig_deck_smallcardarea').addClass('cardarea_select');
       }
     });
-    //ページャーをAjaxに/リンクを全表示に組み分けボタンを無効化
+    //ページャーをAjaxに/リンクを全表示に組み分けボタンの関数書き替え
     if (options.pager_ajax) {
       toggle_unit_brigade_btn_func = function () {}; // ixaデフuォルトのトグル関数を書き替え
       var toggle_unit_brigade_btn_func_moko = function () {
-        console.log(this);
         var cn = this.className.match(/\d/);
         cn++;
         if (cn > 5)
@@ -9152,8 +9163,8 @@ $('#raid_sound_src')
     if (location.pathname != "/card/deck.php" && location.pathname != "/union/levelup.php" && location.pathname != "/union/additional.php")
       return;
     var group_id = {};
-    if (localStorage.getItem("ixamoko_group_set")) {
-      group_id = secureEvalJSON(localStorage.getItem("ixamoko_group_set"));
+    if (localStorage.getItem("crx_ixamoko_group_set")) {
+      group_id = secureEvalJSON(localStorage.getItem("crx_ixamoko_group_set"));
     } else {
       return;
     }
@@ -9522,8 +9533,8 @@ $('#raid_sound_src')
 
     if ($('#ig_deck_unititle_s5.clearfix').find('p:eq(0)').text() == '[------]部隊') {
       var butai_list = {};
-      if (localStorage.getItem("ixakaizou_butai_list_id")) {
-        butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+      if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
+        butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
       } else {
         return;
       }
@@ -9622,8 +9633,8 @@ $('#raid_sound_src')
   function butai_save(unit_assign_id) {
     var butai_list = {};
     var b_array = [];
-    if (localStorage.getItem("ixakaizou_butai_list_id")) {
-      butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+    if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
+      butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
     }
     b_array.push($('#b_type').children(':selected').val());
     if ($('#b_name').val() === '') {
@@ -9639,7 +9650,7 @@ $('#raid_sound_src')
           b_array.push(tmp);
         });
         butai_list[$('#b_name').val()] = b_array.join(',');
-        localStorage.setItem('ixakaizou_butai_list_id', toJSON(butai_list));
+        localStorage.setItem('crx_ixakaizou_butai_list_id', toJSON(butai_list));
         re_butai();
         alert('この部隊を記録しました。');
       }
@@ -9663,8 +9674,8 @@ $('#raid_sound_src')
         '<tbody>';
     var butai_list = {};
     var c = 0, i, j;
-    if (localStorage.getItem("ixakaizou_butai_list_id")) {
-      butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+    if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
+      butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
       for (i in butai_list) {
         var b_type = '';
         if (parseInt( butai_list[i][0] ) === 0) {
@@ -9719,21 +9730,21 @@ $('#raid_sound_src')
       var butai_list = {},
       butai_list_new = {},
       i;
-      if (localStorage.getItem("ixakaizou_butai_list_id")) {
-        butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+      if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
+        butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
       }
       for (i in butai_list) {
         if (i != $(this).attr('id')) {
           butai_list_new[i] = butai_list[i];
         }
       }
-      localStorage.setItem('ixakaizou_butai_list_id', toJSON(butai_list_new));
+      localStorage.setItem('crx_ixakaizou_butai_list_id', toJSON(butai_list_new));
       tmp = '<span id="butaiTable"><p id="b_head"></p><table style="width:100%;">';
       tmp += '<thead><tr><th class="imk_th_view">選択</th><th class="imk_th_view">タイプ</th><th class="imk_th_view">部隊名</th><th class="imk_th_view">部隊長</th><th class="imk_th_view">小隊長</th><th class="imk_th_view">小隊長</th><th class="imk_th_view">小隊長</th><th class="imk_th_view imk_border_right"></th></tr></thead><tbody>';
       butai_list = {};
       var c = 0, i, j;
-      if (localStorage.getItem("ixakaizou_butai_list_id")) {
-        butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+      if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
+        butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
         for (i in butai_list) {
           var b_type = '';
           if ( parseInt( butai_list[i][0] ) === 0) {
@@ -9794,8 +9805,8 @@ $('#raid_sound_src')
       return false;
     }
     var butai_list = {};
-    if ( localStorage.getItem("ixakaizou_butai_list_id") ) {
-      butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+    if ( localStorage.getItem("crx_ixakaizou_butai_list_id") ) {
+      butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
     }
     var i,
     j = 0,
@@ -9854,7 +9865,7 @@ $('#raid_sound_src')
         }
       });
     }
-    var butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+    var butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
     var i, j = 0;
     var card_key = '';
     
@@ -9908,7 +9919,7 @@ $('#raid_sound_src')
         }
       });
     }
-    var butai_list = secureEvalJSON(localStorage.getItem("ixakaizou_butai_list_id"));
+    var butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
     var t = butai_list[card_key].split(',');
     var param_list = [];
     
@@ -10422,16 +10433,16 @@ $('#raid_sound_src')
       group_setting = {};
       //cardname_setting = {};
       group_index = [];
-      if (localStorage.getItem("ixamoko_group_set")) {
-        group_setting = secureEvalJSON(localStorage.getItem("ixamoko_group_set"));
+      if (localStorage.getItem("crx_ixamoko_group_set")) {
+        group_setting = secureEvalJSON(localStorage.getItem("crx_ixamoko_group_set"));
       }
 /*
-      if (localStorage.getItem("ixamoko_card_name")) {
-        cardname_setting = secureEvalJSON(localStorage.getItem("ixamoko_card_name"));
+      if (localStorage.getItem("crx_ixamoko_card_name")) {
+        cardname_setting = secureEvalJSON(localStorage.getItem("crx_ixamoko_card_name"));
       }
 */
-      if (localStorage.getItem("ixakaizou_group_index")) {
-        group_index = secureEvalJSON(localStorage.getItem("ixakaizou_group_index"));
+      if (localStorage.getItem("crx_ixakaizou_group_index")) {
+        group_index = secureEvalJSON(localStorage.getItem("crx_ixakaizou_group_index"));
       }
       //グループ順記録ボタンの生成とclickイベント
        $('<input type="button" id="ixamoko_reset_grp" value="グループ順記録" style="width: 9em;" />')
@@ -10452,8 +10463,8 @@ $('#raid_sound_src')
         group_setting = ngroup_setting;
         ngroup_index.reverse();
         group_index = ngroup_index;
-        localStorage.setItem('ixamoko_group_set', toJSON(group_setting));
-        localStorage.setItem('ixakaizou_group_index', ArraytoJSON(group_index));
+        localStorage.setItem('crx_ixamoko_group_set', toJSON(group_setting));
+        localStorage.setItem('crx_ixakaizou_group_index', ArraytoJSON(group_index));
         $(this).val('記録完了');
       }).mouseover(function() {
         $(this).removeAttr('value').val('グループ順記録');
@@ -10480,7 +10491,7 @@ $('#raid_sound_src')
         .append('<img class="ixamoko_grp" cardid="' + card_id +'" src="' + groups_img[group_setting[card_id]] + '" />');
 /*
         cardname_setting[card_id] = $.trim( parentTR.find('td:eq(2) a').text() );  //特に必要はなし
-        localStorage.setItem('ixamoko_card_name', toJSON(cardname_setting));
+        localStorage.setItem('crx_ixamoko_card_name', toJSON(cardname_setting));
 */
         //グループ設定の背景色
         if (typeof (hpstatus[card_id]) != 'undefined') {
@@ -10537,7 +10548,7 @@ $('#raid_sound_src')
         }
         
         $(this).get()[0].src = groups_img[group_setting[card_id]];
-        localStorage.setItem('ixamoko_group_set', toJSON(group_setting));
+        localStorage.setItem('crx_ixamoko_group_set', toJSON(group_setting));
         return false;
         
       });
@@ -10564,7 +10575,7 @@ $('#raid_sound_src')
         }
         
         $(this).get()[0].src = groups_img[ group_setting[card_id] ];
-        localStorage.setItem( 'ixamoko_group_set', toJSON(group_setting) ) ;
+        localStorage.setItem( 'crx_ixamoko_group_set', toJSON(group_setting) ) ;
         return false;
       });
     
@@ -10692,8 +10703,8 @@ $('#raid_sound_src')
       return;
 
     var default_unit = {};
-    if (localStorage.getItem("ixamoko_default_unit")) {
-      default_unit = secureEvalJSON(localStorage.getItem("ixamoko_default_unit"));
+    if (localStorage.getItem("crx_ixamoko_default_unit")) {
+      default_unit = secureEvalJSON(localStorage.getItem("crx_ixamoko_default_unit"));
     }
     $('#button_box').append('&nbsp;<input type="button" value="基本兵種記録" id="default_unit_set" style="width:9em;" />');
     $('#moko_container').css({'height':'32px', 'width':'715px'});
@@ -10727,7 +10738,7 @@ $('#raid_sound_src')
         var unit = $('#unit_default_select_' + id_num).find('option:selected').val();
         default_unit[card_id] = unit;
       });
-      localStorage.setItem('ixamoko_default_unit', toJSON(default_unit));
+      localStorage.setItem('crx_ixamoko_default_unit', toJSON(default_unit));
       $(this).val('記録完了');
     }).mouseover(function() {
       $(this).removeAttr('value').val('基本兵種記録');
@@ -10748,8 +10759,8 @@ $('#raid_sound_src')
     var default_unit = {};
     var pool_unit = {};
     //基本兵種取得
-    if (localStorage.getItem("ixamoko_default_unit")) {
-      default_unit = secureEvalJSON(localStorage.getItem("ixamoko_default_unit"));
+    if (localStorage.getItem("crx_ixamoko_default_unit")) {
+      default_unit = secureEvalJSON(localStorage.getItem("crx_ixamoko_default_unit"));
     }
     //存在する兵種のみ設定できる + 存在する兵種のみメニューに表示
     var unit = '';
@@ -10791,8 +10802,8 @@ $('#raid_sound_src')
       '</div>'
     ).insertBefore('#bar_card');
     
-    if (localStorage.getItem("ixamoko_kanihensei")) {
-      var selections = secureEvalJSON(localStorage.getItem("ixamoko_kanihensei"));
+    if (localStorage.getItem("crx_ixamoko_kanihensei")) {
+      var selections = secureEvalJSON(localStorage.getItem("crx_ixamoko_kanihensei"));
       //console.log(selections);
       $('#select_butai_heisyu').val(selections.select_butai_type);
       $('#select_butai_heisuu').val(selections.select_butai_cnt);
@@ -10814,7 +10825,7 @@ $('#raid_sound_src')
         //セット兵数選択
         var set_butai_cnt = $('#set_butai_heisuu').find('option:selected').val(); //文字列
         
-        localStorage.setItem("ixamoko_kanihensei", toJSON({"select_butai_type": select_butai_type,"select_butai_cnt": select_butai_cnt,"set_butai_type": set_butai_type,"set_butai_cnt": set_butai_cnt}));
+        localStorage.setItem("crx_ixamoko_kanihensei", toJSON({"select_butai_type": select_butai_type,"select_butai_cnt": select_butai_cnt,"set_butai_type": set_butai_type,"set_butai_cnt": set_butai_cnt}));
 
         //プール兵数更新
         for (var key in pool_unit) {
@@ -11859,19 +11870,19 @@ $('#raid_sound_src')
       var map_list = {},
       mname = areaName,
       coord = coordinate;
-      if (localStorage.getItem("map_list")) {
-        var map_list = secureEvalJSON(localStorage.getItem("map_list"));
+      if (localStorage.getItem("crx_map_list")) {
+        var map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
       }
       if (typeof (map_list[coord]) == 'undefined') {
         $('<li class="reg_map"  mname="' + mname + '" coord="' + coord + '">この座標を記録</li>')
         .click(function(){
           $("#tooltip_layer").hide();
             var map_list = {};
-            if (localStorage.getItem("map_list")) {
-              map_list = secureEvalJSON(localStorage.getItem("map_list"));
+            if (localStorage.getItem("crx_map_list")) {
+              map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
             }
             map_list[coord] = mname;
-            localStorage.setItem("map_list", toJSON(map_list));
+            localStorage.setItem("crx_map_list", toJSON(map_list));
           map_Ajax_Move( center_href );
         }).appendTo( MapUnit );
       }
@@ -11879,11 +11890,11 @@ $('#raid_sound_src')
         $('<li class="remove_map"  mname="' + mname + '" coord="' + coord + '">座標記録を削除</li>')
         .click(function() {
           $("#tooltip_layer").hide();
-            if (localStorage.getItem("map_list")) {
-              var map_list = secureEvalJSON(localStorage.getItem("map_list"));
+            if (localStorage.getItem("crx_map_list")) {
+              var map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
               if (typeof (map_list[coord]) != 'undefined') {
                 delete map_list[coord];
-                localStorage.setItem("map_list", toJSON(map_list));
+                localStorage.setItem("crx_map_list", toJSON(map_list));
               }
             }
           map_Ajax_Move( center_href );
@@ -12431,14 +12442,14 @@ $('#raid_sound_src')
       groups_img = [];
     //グループ機能
     if (options.unit_list_group) {
-      if (localStorage.getItem("ixamoko_group_set")) {
-        group_setting = secureEvalJSON(localStorage.getItem("ixamoko_group_set"));
+      if (localStorage.getItem("crx_ixamoko_group_set")) {
+        group_setting = secureEvalJSON(localStorage.getItem("crx_ixamoko_group_set"));
       }
-      if (localStorage.getItem('ixamoko_init_groups')) {
-        groups = secureEvalJSON(localStorage.getItem('ixamoko_init_groups'));
+      if (localStorage.getItem('crx_ixamoko_init_groups')) {
+        groups = secureEvalJSON(localStorage.getItem('crx_ixamoko_init_groups'));
       }
-      if (options.unit_list_group && localStorage.getItem('ixamoko_init_groups_img')) {
-        groups_img = secureEvalJSON(localStorage.getItem('ixamoko_init_groups_img'));
+      if (options.unit_list_group && localStorage.getItem('crx_ixamoko_init_groups_img')) {
+        groups_img = secureEvalJSON(localStorage.getItem('crx_ixamoko_init_groups_img'));
       }
     }
     $('a#tiki').live('mousedown', function() {
@@ -13662,8 +13673,8 @@ $('#raid_sound_src')
   function enemyCheckR(rst) {
     var d = (new Date() / 1000) | 0;
     var rrr = { 'date': 0, 'raid': { 'time': [-1], 'num': 0} };
-    if (localStorage.getItem("enemyCheckR")) {
-      rrr = secureEvalJSON(localStorage.getItem("enemyCheckR"));
+    if (localStorage.getItem("crx_enemyCheckR")) {
+      rrr = secureEvalJSON(localStorage.getItem("crx_enemyCheckR"));
     }
     var dd = d - rrr.date, raidnum = rrr.raid.num;
     if (dd >= rst) {
@@ -13672,7 +13683,7 @@ $('#raid_sound_src')
         function(html) {
           rrr.date = d;
           rrr.raid = get_raid(html);
-          localStorage.setItem("enemyCheckR", toJSON(rrr));
+          localStorage.setItem("crx_enemyCheckR", toJSON(rrr));
           if (rrr.raid.time[0] > 0 && (raidnum < rrr.raid.num || rrr.raid.time[0] < 180)) {
             if ( webkitNotifications.checkPermission() === 0 ) {
               var n = parseInt(Math.random()*5) + 1;
@@ -13798,11 +13809,11 @@ $('#raid_sound_src')
     $("#commentNavi li a, #commentNavi2 li a").css("display", "block");
     $("#commentList" + b +", #commentList" + b + "2").css("display", "block");
     $("#commentNavi #comBtn" + b + " a" + ", #commentNavi2 #comBtn" + b + " a" + ", #commentNavi2 #comBtn" + b + "2 a").css("display", "none");
-    localStorage.setItem("header_info_type", b);
+    localStorage.setItem("crx_header_info_type", b);
   }
 
   function commentListSelecter() {
-    var target = localStorage.getItem("header_info_type");
+    var target = localStorage.getItem("crx_header_info_type");
     if (target && target !== 'null') {
       tabChangeListKaizou(target);
     } else {
@@ -13913,7 +13924,7 @@ $('#raid_sound_src')
       return;
     if(!options['ar_point_cmp']) return;
     var flag = 0;
-    if(( localStorage.getItem('ixamoko_ar_id') != undefined ) && ( location.search.replace("?id=","") == localStorage.getItem('ixamoko_ar_id') )) {
+    if(( localStorage.getItem('crx_ixamoko_ar_id') != undefined ) && ( location.search.replace("?id=","") == localStorage.getItem('crx_ixamoko_ar_id') )) {
       flag = 1;
       disp_apc();
     }
@@ -13929,11 +13940,11 @@ $('#raid_sound_src')
     
       $('input#apc').live('click',function(){
         var ans;
-        var ar_date = localStorage.getItem('ixamoko_ar_date');
+        var ar_date = localStorage.getItem('crx_ixamoko_ar_date');
         if(flag==1){
           ans = confirm(ar_date+"のデータが消去されます。\nよろしいですか？");
         } else {
-          var ar_name = localStorage.getItem('ixamoko_ar_name');
+          var ar_name = localStorage.getItem('crx_ixamoko_ar_name');
           ans = confirm("現在の同盟ポイントを記録をします。\nよろしいですか？");
         }
         if (!ans) return;
@@ -13944,26 +13955,26 @@ $('#raid_sound_src')
             var ar_member = $(this).find('td:eq(1)').text().replace(/(^\s+)|(\s+$)/g,"");
             point_array[ar_member] = ar_point;
           });
-        localStorage.setItem('ixamoko_ar_point', toJSON(point_array));
+        localStorage.setItem('crx_ixamoko_ar_point', toJSON(point_array));
         var ar_id = location.search.replace("?id=","");
-        localStorage.setItem('ixamoko_ar_id', ar_id);
+        localStorage.setItem('crx_ixamoko_ar_id', ar_id);
         var ar_name = $('div#ig_deckheadmenubox').find('div.alliance_title').text().replace(/(^\s+)|(\s+$)/g,"");
-        localStorage.setItem('ixamoko_ar_name', ar_name);
+        localStorage.setItem('crx_ixamoko_ar_name', ar_name);
         var now = new Date();
         var ar_date = now.getMonth() + 1 + "/";
         ar_date+= now.getDate() + " ";
         ar_date+= now.getHours() + ":";
         ar_date+= now.getMinutes() + "";
-        localStorage.setItem('ixamoko_ar_date', ar_date);
+        localStorage.setItem('crx_ixamoko_ar_date', ar_date);
         
         CommonTable.find('input').attr('value','記録完了');
         CommonTable.find('input').attr('disabled', true);
       });
   }
   function disp_apc() {
-    var recorded_ap = secureEvalJSON(localStorage.getItem("ixamoko_ar_point"));
+    var recorded_ap = secureEvalJSON(localStorage.getItem("crx_ixamoko_ar_point"));
       //console.log(recorded_ap);
-    var ar_date = localStorage.getItem('ixamoko_ar_date');
+    var ar_date = localStorage.getItem('crx_ixamoko_ar_date');
     var CommonTable = $('#ig_mainareaboxInner').find('.common_table1.center');
     
     CommonTable.find('tr:eq(0) th:eq(2)')

@@ -5,6 +5,19 @@
   "version": "1.0.0.6747",
   "description": "戦国IXA用ツールmoko.crx版 @author: nameless, osafune, sengokuixa-moko @special thanks: hatt  http://www1.ocn.ne.jp/~hatt/3gkb/",
 
+  "background": {
+    "page": "background/background.html",
+    "persistent": false
+  },
+
+  "page_action": {
+    "default_icon": {
+      "19": "icons/19.png"
+    },
+    "default_title": "moko",
+    "default_popup": "popup/popup.html"
+  },
+
   "content_scripts": [
     {
       "js": [
@@ -43,10 +56,14 @@
   },
 
   "web_accessible_resources": [
+    "background/background.html",
     "css/*.css",
     "JSON/*.json",
     "plugin/*.js",
-    "moko/*.js"
+    "moko/sengokuixa-moko.js",
+    "moko/data.js",
+    "popup/*.js",
+    "popup/*.html"
   ]
 
 }
