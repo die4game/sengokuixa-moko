@@ -57,10 +57,10 @@
 
   "web_accessible_resources": [
     "background/background.html",
-    "css/*.css",
     "JSON/*.json",
     "plugin/*.js",
     "moko/sengokuixa-moko.js",
+    "moko/mokoStyle.css",
     "moko/data.js",
     "popup/*.js",
     "popup/*.html"

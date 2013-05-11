@@ -219,7 +219,8 @@ $( function () {
       allSettings.toggle ^= toggle;
       store[world] = JSON.stringify(allSettings);
       chrome.storage.sync.set( store, function(){
-        //console.log(allSettings)});
+        //console.log(allSettings)
+      });
     });
   }
 
