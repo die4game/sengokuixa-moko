@@ -3,7 +3,150 @@ $( function () {
   var allSettings ={},
     groups = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     groups_def = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-    groups_img, groups_img_def = [], SOUND, group_setting = {}, options = {}, world;
+    groups_img, groups_img_def = [], SOUND, group_setting = {}, options = {}, WORLD,
+
+    // moko設定のデフォルト値
+    options_def = {
+      MapOverlay_FallMain: true,
+      MapOverlay_Leader: true,
+      ad_sort: "1",
+      all_area_map: true,
+      all_deck_setting: true,
+      all_dissolution: true,
+      all_map_status: true,
+      all_send_troop: true,
+      all_setting_mod: "0",
+      alliance_report_link: true,
+      ar_point_cmp: true,
+      auto_union_check: true,
+      bases_blind: true,
+      bbs_def_num: "20",
+      bbs_no_display_delete: true,
+      being_exhibited: true,
+      card_tool: true,
+      category_clone: true,
+      chapter_change: "5",
+      chat_linkchg: true,
+      chat_mapcood: true,
+      chat_mikire: true,
+      commentListEnemy: true,
+      deal_favorite: true,
+      deckFix: true,
+      deck_check: true,
+      def_attack: true,
+      def_kind_soldier: [
+        0, // 未使用
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false
+      ],
+      def_num_of_soldier: "100",
+      desc_soldier: true,
+      dungeon_soldiers: true,
+      faci_list: true,
+      facilityStuffTextColor: true,
+      facility_favorites: true,
+      facility_maxsoldier: true,
+      facility_panelreverse: true,
+      facility_selecter: true,
+      facility_tool: true,
+      facility_tool_WUP: true,
+      favoriteSort: true,
+      firstcard_in: false,
+      funct_select_move: true,
+      gofight_skill: true,
+      group_sort_mode: "0",
+      hide_facility: false,
+      hide_soldier: false,
+      hikyou_all: true,
+      hold_butai: true,
+      immediately_send_troop: true,
+      inside_attack_view: false,
+      ixa_time: true,
+      kind_mod: "0",
+      leave_departure: true,
+      leftclick_menu: true,
+      logout_correction: false,
+      map_butai_status: true,
+      map_history: true,
+      map_leftclick: true,
+      map_minimap: true,
+      map_potential: true,
+      map_quarters: true,
+      map_reg: true,
+      map_rightclick: true,
+      map_starx: "5",
+      market_desc: true,
+      market_maxsoldier: true,
+      market_radiobutton: true,
+      menu_reversal: true,
+      merge_fight_info: true,
+      mod_status_left: true,
+      move_nearby: true,
+      nearby_tool: true,
+      non_back: false,
+      non_cardview: true,
+      now_select_point: true,
+      off_face: false,
+      pager_ajax: true,
+      panelAttack: true,
+      panel_func_change: false,
+      place_skip: false,
+      place_skip_str: "",
+      platoon_leader_remove: true,
+      prod_with_smalllot: "0",
+      pulldown_menu: true,
+      raid: false,
+      raid_sound: false,
+      raid_sound_src: "",
+      raid_system: 12,
+      rank_lock: "2",
+      refillhp: true,
+      return_mode: "0",
+      reversal_mod: "1",
+      rightclick_mode: "1",
+      send_troop_check: false,
+      set_unit_color: true,
+      sidebox_change: true,
+      soldiers_blind: true,
+      sort_village: false,
+      table_sol_in_mokotool: true,
+      timeout_countdown: true,
+      tohankaku: true,
+      toolbox_fixing: false,
+      toride_count: "0",
+      toride_inbox: false,
+      toubatsu: true,
+      trade_auxiliary: true,
+      unitListDialog: "2",
+      unit_filter_branch: true,
+      unit_list_200: false,
+      unit_list_allset: true,
+      unit_list_default: true,
+      unit_list_group: true,
+      unit_list_max: true,
+      unit_list_pageup: true,
+      unit_list_total: true,
+      unit_power: true,
+      unit_set_one: true,
+      villageListView: true,
+      warreportlinkland: true,
+      warskil_summary_init: false,
+      width_display: true,
+      width_display_mod: "0",
+      zoomMap: true
+    };
 
   // カレントウィンドウを取得
   chrome.windows.getCurrent( function ( win) {
@@ -13,17 +156,27 @@ $( function () {
     chrome.tabs.getSelected( windowId, function ( tab) {
 
       var tmp = tab.url.match(/http:\/\/(.+?)\./);
-      world = tmp? tmp[1]: false;
+      WORLD = tmp? tmp[1]: false;
 
-      // world表示
-      //console.log( world);
-      if ( $('#worldSelect[value="'+world+'"]')[0])
-        $('#worldSelect').val(world);
-      else
-        $('#worldSelect').append('<option value="'+world+'">'+world+'</option>').val(world);
+      // 設定があるworldを取得し、world選択をセット
+      chrome.storage.sync.get( 'worldKey', function ( store) {
+        var worldArray = store.worldKey || [];
+        if ( $.inArray( WORLD, worldArray) < 0)
+          worldArray.push( WORLD);
+        worldArray.sort();
+        worldArray.forEach( function ( world) {
+          $( '#worldSelect').append( '<option value="' + world + '">' + world + '</option>').val( world);
+        });
+        chrome.storage.sync.set( { 'worldKey': worldArray}, function () {
+          console.log( worldArray);
+        });
+        $('#worldSelect').val(WORLD);
+      });
 
       // moko設定をロード
-      chrome.storage.sync.get( world, setSetting);
+      chrome.storage.sync.get( WORLD, function ( store) {
+        setSetting( store, WORLD);
+      });
 
       $('#ixamoko_set_tab_all').show();
       $('#ixamoko_set_grp>div').eq(0).css('background-color', '#aaf');
@@ -45,6 +198,60 @@ $( function () {
     SOUND = CRXMOKODATA.sound;
   });
 
+
+
+  ///////////////
+  // event定義 //
+  ///////////////
+
+
+  // world選択
+  $('#worldSelect').change( function () {
+    //console.log('world change', $(this).val());
+    var options, world = $(this).val();
+    if ( world === 'default') {
+      options = options_def;
+      setOptions( options_def);
+    } else {
+      chrome.storage.sync.get( world, function ( store) {
+        setSetting( store, world);
+      });
+    }
+  });
+
+  // importボタン
+  $('#import').click( function () {
+    if ( confirm( $('#worldSelect').val() + 'の設定をインポートします。')) {
+      saveSetting( WORLD);
+      $('#worldSelect').val( WORLD);
+    }
+  });
+
+  // deleteボタン
+  $('#delete').click( function () {
+    var world = $('#worldSelect').val();
+    if ( world !== 'default' && confirm( world + 'の設定を削除します。')) {
+      chrome.storage.sync.remove( world);
+      $('#worldSelect').find('[value="'+world+'"]').remove();
+      $('#worldSelect').val( WORLD).trigger( 'change');
+    }
+  });
+
+  // 設定を変更する
+  $('#ixamoko_dialog_main').on( "change", function () {
+    var world = $('#worldSelect').val();
+    if ( world !== 'default')
+      saveSetting( world);
+  });
+
+  // タブ切り替え
+  $('#ixamoko_set_grp > DIV').click(function(e) {
+    $('#ixamoko_set_tab_' + $(this).attr('tabid')).show().siblings().hide();
+    $(this).css('background-color', '#aaf')
+        .siblings().css('background-color', '');
+  });
+
+  // group設定
   $( '#ixamoko_grp_list').on( 'click', 'INPUT.ixamoko_set_grp_set', function(e) {
     if (confirm('本当に変更して良いですか。')) {
       var $parent = $(this).parent();
@@ -74,13 +281,7 @@ $( function () {
       $parent.remove();
       setStorage( 'crx_ixamoko_init_groups', groups);
       setStorage( 'crx_ixamoko_init_groups_img', groups_img);
-      chrome.storage.sync.set();
     }
-  });
-  $('#ixamoko_set_grp > DIV').click(function(e) {
-    $('#ixamoko_set_tab_' + $(this).attr('tabid')).show().siblings().hide();
-    $(this).css('background-color', '#aaf')
-        .siblings().css('background-color', '');
   });
   $('INPUT.ixamoko_set_grp_default').click(function(e) {
     if (confirm('"標準"に戻してよろしいですか？グループ順記録も破棄されます。')) {
@@ -101,14 +302,21 @@ $( function () {
     setStorage( 'crx_ixamoko_init_groups', groups);
     setStorage( 'crx_ixamoko_init_groups_img', groups_img);
   });
+  // group設定ここまで
+
+  // 戦況マップクリア
   $('#clear_all_map_status').click(function(e) {
     setStorage('crx_ixakaizou_map_status', false, true);
     alert('Done.');
   });
+
+  // 敵襲情報クリア
   $('#clear_enemyCheckR').click(function(e) {
     setStorage( 'crx_enemyCheckR', false, true);
     alert('Done.');
   });
+
+  // 敵襲通知
   $('#raidNotification').click(function(e) {
     webkitNotifications.requestPermission();
   });
@@ -119,6 +327,8 @@ $( function () {
       notification.cancel();
     }, 5000);
   });
+
+  // 広域マップクリア
   $('#clear_all_area_map').click(function(e) {
     if (confirm('表示設定と記録した同盟データをすべて消去してよろしいですか？')) {
       setStorage('crx_areamaptoride', false, true);
@@ -126,25 +336,32 @@ $( function () {
       setStorage('crx_alliesObj', false, true);
     }
   });
+
+  // 座標記録クリア
   $('#clear_map_reg').click(function(e) {
     if (confirm('記録した座標をすべて消去してよろしいですか？')) {
       var map_list = {};
       setStorage( "crx_map_list", map_list, true);
     }
   });
+
+  // お気に入り部隊登録クリア
   $('#clear_grp_reg').click(function(e) {
     if (confirm('記録したグループをすべて消去してよろしいですか？')) {
       var tmp_list = {};
       setStorage( "crx_ixamoko_group_set", tmp_list, true);
     }
   });
+
+  // お気に入り施設クリア
   $('#clear_facility_reg').click(function(e) {
     if (confirm('記録した施設をすべて消去してよろしいですか？')) {
       var facility_list = {};
       setStorage( "crx_facility_list", facility_list, true);
     }
   });
-  
+
+  // 一部設定クリア
   $('#clear_localStorage').click(function(e) {
     if (confirm('・グループ設定\n・お気に入り部隊\n・お気に入りソート選択\n・基本兵種設定\n　\n上記以外の設定は破棄されます。')) {
       for (var key in localStorage) {
@@ -163,14 +380,13 @@ $( function () {
       }
     }
   });
-  //敵襲音再生
+  
+  // 敵襲音再生
   $('#raid_sound_src')
   .after('<a><audio id="reid_sound_test"></audio>&#9654;</a>')
   .next('a').css({marginLeft:'1em', padding:'0 0.4em', border:'solid 1px', borderRadius:'4px', color:'gray', cursor:'pointer'})
   .hover(function(e){$(this).css({color:'black'});},function(e){$(this).css({color:'gray'});})
   .click(function(e){$('#reid_sound_test').attr('src',$('#raid_sound_src').val()?$('#raid_sound_src').val():SOUND.raid_sound).get(0).play()});
-  //設定を変更する
-  $('#ixamoko_dialog_main').on( "change", saveSetting);
 
 
 
@@ -180,7 +396,7 @@ $( function () {
 
 
   // moko設定をセーブ
-  function saveSetting () {
+  function saveSetting ( world) {
     var options = {};
     $('.ixamoko_setting').each(function() {
       var key = $(this).attr('key'), i;
@@ -206,33 +422,39 @@ $( function () {
         options[key] = $(this).prop('checked') === true ? true : false;
       }
     });
-    setStorage( 'crx_ixa_moko_options', options);
+    setStorage( 'crx_ixa_moko_options', options, false, world);
     return false;
   }
 
 
   // storage.sync.setの部分
-  function setStorage (  key, options, toggle) {
+  function setStorage (  key, options, toggle, world) {
+    var world = world? world: $('#worldSelect').val();
     chrome.storage.sync.get( world, function ( store) {
       allSettings = store[world]? JSON.parse(store[world]): {};
       allSettings[key] = options;
       allSettings.toggle ^= toggle;
       store[world] = JSON.stringify(allSettings);
       chrome.storage.sync.set( store, function(){
-        //console.log(allSettings)
+        console.log(allSettings)
       });
     });
   }
 
 
   // moko設定をロード
-  function setSetting ( store) {
+  function setSetting ( store, world) {
     //console.log( store);
     var options;
     if ( !store[world] || !( options = JSON.parse( store[world]).crx_ixa_moko_options)) {
       saveSetting();
       return;
     }
+    setOptions( options);
+  }
+
+  // optionsを渡してセット
+  function setOptions( options) {
     $('.ixamoko_setting').each(function() {
       var key = $(this).attr('key'), i;
       if ( key == 'def_kind_soldier') {

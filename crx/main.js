@@ -28,6 +28,7 @@
     });
   }
 
+  // worldをゲット
   var world = location.host.match(/^\w+/)[0];
   //console.log( world);
 
@@ -51,9 +52,9 @@
 
   // moko設定のセーブ(storageが変化したとき)
   chrome.storage.onChanged.addListener( function ( obj, areaName) {
-    //console.log( obj, areaName);
+    console.log( obj, areaName, obj[world]);
     if ( obj[world])
-      saveSettings( obj[world].newValue);
+      saveSettings( obj[world].newValue? JSON.parse( obj[world].newValue): false);
   });
 
 
@@ -63,10 +64,12 @@
   //////////////////
 
   function saveSettings( obj) {
-    var settings = JSON.parse( obj);
-    //console.log( settings);
-    for ( var key in settings) {
-      localStorage[key] = JSON.stringify(settings[key]);
+    if ( obj) {
+      for ( var key in obj) {
+        localStorage[ key] = JSON.stringify( obj[ key]);
+      }
+    } else {
+      localStorage.removeItem( 'crx_ixamoko_optio');
     }
   }
 })();
