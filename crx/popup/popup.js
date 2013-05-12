@@ -168,7 +168,7 @@ $( function () {
           $( '#worldSelect').append( '<option value="' + world + '">' + world + '</option>').val( world);
         });
         chrome.storage.sync.set( { 'worldKey': worldArray}, function () {
-          console.log( worldArray);
+          //console.log( worldArray);
         });
         $('#worldSelect').val(WORLD);
       });
@@ -191,7 +191,7 @@ $( function () {
     });
   });
 
-  // group と SOUND の defualt setting
+  // groupとSOUNDのdefualt settingを取得
   chrome.runtime.sendMessage( "send CRXMOKODATA", function( obj) {
     var CRXMOKODATA = JSON.parse(obj), i;
     groups_img_def = CRXMOKODATA.group[0];
@@ -261,7 +261,7 @@ $( function () {
       groups_img[parseInt($parent.attr('grpid'), 10)] = icon.replace('"', '%22');
       $parent.find('IMG').attr('src', icon);
       setStorage( 'crx_ixamoko_init_groups', groups);
-      setStorage( 'crx_ixamoko_init_groups_img', groups_img);
+      setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img);
     }
   });
   $( '#ixamoko_grp_list').on( 'click', 'INPUT.ixamoko_set_grp_del', function(e) {
@@ -280,7 +280,7 @@ $( function () {
       setStorage( 'crx_ixamoko_group_set', group_setting);
       $parent.remove();
       setStorage( 'crx_ixamoko_init_groups', groups);
-      setStorage( 'crx_ixamoko_init_groups_img', groups_img);
+      setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img);
     }
   });
   $('INPUT.ixamoko_set_grp_default').click(function(e) {
@@ -289,7 +289,7 @@ $( function () {
       setStorage( 'crx_ixamoko_group_set', group_setting);
       setGroup( groups_def, groups_img_def);
       setStorage( 'crx_ixamoko_init_groups', groups_def);
-      setStorage( 'crx_ixamoko_init_groups_img', groups_img_def);
+      setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img_def);
     }
   });
   $('INPUT.ixamoko_set_grp_add').click(function(e) {
@@ -300,7 +300,7 @@ $( function () {
     groups[i] = '';
     groups_img[i] = groups_img[0];
     setStorage( 'crx_ixamoko_init_groups', groups);
-    setStorage( 'crx_ixamoko_init_groups_img', groups_img);
+    setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img);
   });
   // group設定ここまで
 
@@ -436,6 +436,19 @@ $( function () {
       allSettings.toggle ^= toggle;
       store[world] = JSON.stringify(allSettings);
       chrome.storage.sync.set( store, function(){
+        console.log(allSettings)
+      });
+    });
+  }
+  // storage.local.set group_img用
+  function setStorageLocal (  key, options, toggle, world) {
+    var world = world? world: $('#worldSelect').val();
+    chrome.storage.local.get( world, function ( store) {
+      allSettings = store[world]? JSON.parse(store[world]): {};
+      allSettings[key] = options;
+      allSettings.toggle ^= toggle;
+      store[world] = JSON.stringify(allSettings);
+      chrome.storage.local.set( store, function(){
         console.log(allSettings)
       });
     });
