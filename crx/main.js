@@ -109,7 +109,7 @@
     if ( $toollist[0]) {
       $toollist.append(
         '<li class="list_img">' +
-          '<a href="'+chrome.extension.getURL( 'moko/deck/unitListDialog.html')+'?'+world+'&'+JSON.parse( localStorage.crx_ixa_moko_options).unitListDialog+'" target="_new">武将カード</a>' +
+          '<a href="'+chrome.extension.getURL( 'moko/deck/unitListDialog.html')+'?'+world+'" target="_new">武将カード</a>' +
         '</li>'
       );
     } else {

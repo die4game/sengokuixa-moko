@@ -14,7 +14,118 @@
     </style>
   </head>
   <body>
-    <div id="toollist"></div>
-    <div id="mokotool"></div>
+    <div>
+      <div id="mokotool">
+        <div id="unitlistdialog">
+          <button id="energy" style="margin-top: 4px;">総攻防力</button><span id="power"></span>
+          <p id="v_head"></p>
+          <button class="uldoption" style="padding: 0 4px; margin-bottom: 5px;">列表示選択</button>
+          <ul class="uldoption" style="clear: both; display: none;">
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : No</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 組</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : grp</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : ﾚｱ</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 名前</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : ｺｽﾄ</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : ★</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : Lv</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : HP</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 討伐</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 攻撃</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 防御</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 兵法</li></label>
+          </ul>
+          <ul class="uldoption" style="clear:both; display:none;">
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 指揮力</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 兵数</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 兵種</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 実指揮</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : ｺｽﾄ比</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 技1</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 技2</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 技3</li></label>
+          </ul>
+          <ul class="uldoption" style="clear:both; display:none;">
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 槍</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 馬</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 弓</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 器</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 槍馬</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 槍弓</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 弓馬</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 槍器</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 馬器</li></label>
+            <label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 弓器</li></label>
+          </ul>
+          <div class="Loading" style="position: absolute; top: 80px; left: 460px; opacity: 0.6">
+          </div>
+          <div class="pager" style="clear: both; padding-top: 5px;">
+            <select class="pagesize">
+              <option value="12">12</option>
+              <option value="16" selected="selected">16</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+            </select>
+          </div>
+          <table id="tb_unit" class="tablesorter" style="white-space:nowrap;">
+            <thead><tr>
+              <th class="選択">選択</th>
+              <th class="No">No</th>
+              <th class="組">組</th>
+              <th class="grp">grp</th>
+              <th class="ﾚｱ">ﾚｱ</th>
+              <th class="名前">名前</th>
+              <th class="ｺｽﾄ">ｺｽﾄ</th>
+              <th class="★">★</th>
+              <th class="Lv">Lv</th>
+              <th class="HP">HP</th>
+              <th class="討伐">討伐</th>
+              <th class="指揮力">指揮力</th>
+              <th class="兵数">兵数</th>
+              <th class="兵種">兵種</th>
+              <th class="攻撃">攻撃</th>
+              <th class="防御">防御</th>
+              <th class="兵法">兵法</th>
+              <th class="槍">槍</th>
+              <th class="槍 実指揮">実指揮</th>
+              <th class="槍 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="馬">馬</th>
+              <th class="馬 実指揮">実指揮</th>
+              <th class="馬 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="弓">弓</th>
+              <th class="弓 実指揮">実指揮</th>
+              <th class="弓 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="器">器</th>
+              <th class="器 実指揮">実指揮</th>
+              <th class="器 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="技1">技1</th>
+              <th class="技2">技2</th>
+              <th class="技3">技3</th>
+              <th class="槍馬">槍馬</th>
+              <th class="槍馬 実指揮">実指揮</th>
+              <th class="槍馬 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="槍弓">槍弓</th>
+              <th class="槍弓 実指揮">実指揮</th>
+              <th class="槍弓 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="弓馬">弓馬</th>
+              <th class="弓馬 実指揮">実指揮</th>
+              <th class="弓馬 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="槍器">槍器</th>
+              <th class="槍器 実指揮">実指揮</th>
+              <th class="槍器 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="馬器">馬器</th>
+              <th class="馬器 実指揮">実指揮</th>
+              <th class="馬器 ｺｽﾄ比">ｺｽﾄ比</th>
+              <th class="弓器">弓器</th>
+              <th class="弓器 実指揮">実指揮</th>
+              <th class="弓器 ｺｽﾄ比">ｺｽﾄ比</th>
+            </tr></thead>
+            <tbody id="tb_unitlist"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

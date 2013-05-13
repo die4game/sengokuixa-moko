@@ -1,5 +1,5 @@
 table.tablesorter { border-collapse: separate; border-spacing: 0; border-color: dimGray; border-style:solid; border-width:1px 1px 1px 0; margin:10px 0 0; width: 100%; }
-table.tablesorter thead tr th, table.tablesorter tfoot tr th { text-align: center; background: url("../img/thickbox/tbex_table_caption_color.png") rgba(134, 134, 134, 1) no-repeat center right ; font-size: 13px; color: white; font-weight: bold; border-left: 1px solid dimGray; border-bottom: 1px solid dimGray; font-family: MS PMincho; font-weight: normal; text-shadow: black 1px 1px 2px, black -1px -1px 2px; }
+table.tablesorter thead tr th, table.tablesorter tfoot tr th { text-align: center; background: rgba(134, 134, 134, 1) no-repeat center right ; font-size: 13px; color: white; font-weight: bold; border-left: 1px solid dimGray; border-bottom: 1px solid dimGray; font-family: MS PMincho; font-weight: normal; text-shadow: black 1px 1px 2px, black -1px -1px 2px; }
 table.tablesorter thead tr th, table.tablesorter tfoot tr th, table.tablesorter tbody td { padding: 5px 3px; }
 table.tablesorter thead tr .header { background-image: url("data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw=="); background-repeat: no-repeat; background-position: center right; cursor: pointer; }
 table.tablesorter tbody tr:last-child td { border-bottom:none; }
@@ -17,3 +17,4 @@ table#tb_unit th { padding-right: 18px; }
 .pager.disabled { display: none; }
 /* hide or fade out pager arrows when the first or last row is visible */
 .pager img.disabled { opacity: 0.5; }
+body > div { width: 800px;}

@@ -1,10 +1,25 @@
 ( function () {
-  var arg = [], world, options = {}, IMAGES = CRXMOKODATA.images;
+  var world, options = {}, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images;
   chrome.tabs.getCurrent( function ( tab) {
-    arg = tab.url.split( '?')[1].split( '&');
-    world = arg[0];
-    options = { unitListDialog: '1'};
-    $(unitListDialog);
+    world = tab.url.split( '?')[1];
+    //console.log( world);
+    chrome.storage.sync.get( world, function ( store) {
+      //console.log( store);
+      var storeWorld = JSON.parse( store[world]);
+      //console.log( storeWorld);
+      options = storeWorld.crx_ixa_moko_options;
+      group_setting = storeWorld.crx_ixamoko_group_set;
+      groups = storeWorld.crx_ixamoko_init_groups;
+      //console.log( 'storage.sync: ok');
+      chrome.storage.local.get( world, function ( store) {
+        //console.log( store);
+        var storeWorld = store[world]? JSON.parse( store[world]): CRXMOKODATA.group[0];
+        //console.log( storeWorld);
+        groups_img = storeWorld.crx_ixamoko_init_groups_img;
+        //console.log( 'storage.local: ok');
+        $(unitListDialog);
+      });
+    });
   });
   tableSorter_($);
   tablesorter_pager_plugin($);
@@ -14,122 +29,13 @@
     if (!options.unitListDialog || options.unitListDialog === '0') {
       return;
     }
-    //jQuery.event.special.ready.setup();
-    var listdialog = $(
-    '<div id="unitlistdialog">' +
-      '<button id="energy" style="margin-top: 4px;">総攻防力</button><span id="power"></span>' +
-      '<p id="v_head"></p>' +
-      '<button class="uldoption" style="padding: 0 4px; margin-bottom: 5px;">列表示選択</button>' +
-      '<ul class="uldoption" style="clear: both; display: none;">' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : No</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 組</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : grp</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : ﾚｱ</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 名前</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : ｺｽﾄ</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : ★</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : Lv</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : HP</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 討伐</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 攻撃</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 防御</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 兵法</li></label>' +
-      '</ul>' +
-      '<ul class="uldoption" style="clear:both; display:none;">' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 指揮力</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 兵数</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 兵種</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 実指揮</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : ｺｽﾄ比</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 技1</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 技2</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 技3</li></label>' +
-      '</ul>' +
-      '<ul class="uldoption" style="clear:both; display:none;">' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 槍</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 馬</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 弓</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox" checked > : 器</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 槍馬</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 槍弓</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 弓馬</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 槍器</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 馬器</li></label>' +
-        '<label><li style="float:left;width:5.5em;margin-bottom:4px;"><input type="checkbox"> : 弓器</li></label>' +
-      '</ul>' +
-      '<div class="Loading" style="position: absolute; top: 80px; left: 460px; opacity: 0.6"><img src="' + IMAGES.unitListDialog.Loading + '"></div>' +
-      '<div class="pager" style="clear: both; padding-top: 5px;">' +
+    $( '#unitlistdialog>div.Loading').append( '<img src="' + IMAGES.unitListDialog.Loading + '">')
+    .next().children().first().before(
         '<img src="' + IMAGES.unitListDialog.first + '" class="first"/>' +
         '<img src="' + IMAGES.unitListDialog.prev + '" class="prev"/>' +
         '<span class="pagedisplay"></span> <!-- this can be any element, including an input -->' +
         '<img src="' + IMAGES.unitListDialog.next + '" class="next"/>' +
-        '<img src="' + IMAGES.unitListDialog.last + '" class="last"/>' +
-        '&nbsp;<select class="pagesize">' +
-        //  '<option value="8">8</option>' +
-          '<option value="12">12</option>' +
-          '<option value="16" selected="selected">16</option>' +
-          '<option value="20">20</option>' +
-          '<option value="50">50</option>' +
-          '<option value="100">100</option>' +
-          '<option value="200">200</option>' +
-        '</select>' +
-      '</div>' +
-      '<table id="tb_unit" class="tablesorter" style="white-space:nowrap;">' +
-        '<thead><tr>' +
-          '<th class="選択">選択</th>' +
-          '<th class="No">No</th>' +
-          '<th class="組">組</th>' +
-          '<th class="grp">grp</th>' +
-          '<th class="ﾚｱ">ﾚｱ</th>' +
-          '<th class="名前">名前</th>' +
-          '<th class="ｺｽﾄ">ｺｽﾄ</th>' +
-          '<th class="★">★</th>' +
-          '<th class="Lv">Lv</th>' +
-          '<th class="HP">HP</th>' +
-          '<th class="討伐">討伐</th>' +
-          '<th class="指揮力">指揮力</th>' +
-          '<th class="兵数">兵数</th>' +
-          '<th class="兵種">兵種</th>' +
-          '<th class="攻撃">攻撃</th>' +
-          '<th class="防御">防御</th>' +
-          '<th class="兵法">兵法</th>' +
-          '<th class="槍">槍</th>' +
-          '<th class="槍 実指揮">実指揮</th>' +
-          '<th class="槍 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="馬">馬</th>' +
-          '<th class="馬 実指揮">実指揮</th>' +
-          '<th class="馬 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="弓">弓</th>' +
-          '<th class="弓 実指揮">実指揮</th>' +
-          '<th class="弓 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="器">器</th>' +
-          '<th class="器 実指揮">実指揮</th>' +
-          '<th class="器 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="技1">技1</th>' +
-          '<th class="技2">技2</th>' +
-          '<th class="技3">技3</th>' +
-          '<th class="槍馬">槍馬</th>' +
-          '<th class="槍馬 実指揮">実指揮</th>' +
-          '<th class="槍馬 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="槍弓">槍弓</th>' +
-          '<th class="槍弓 実指揮">実指揮</th>' +
-          '<th class="槍弓 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="弓馬">弓馬</th>' +
-          '<th class="弓馬 実指揮">実指揮</th>' +
-          '<th class="弓馬 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="槍器">槍器</th>' +
-          '<th class="槍器 実指揮">実指揮</th>' +
-          '<th class="槍器 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="馬器">馬器</th>' +
-          '<th class="馬器 実指揮">実指揮</th>' +
-          '<th class="馬器 ｺｽﾄ比">ｺｽﾄ比</th>' +
-          '<th class="弓器">弓器</th>' +
-          '<th class="弓器 実指揮">実指揮</th>' +
-          '<th class="弓器 ｺｽﾄ比">ｺｽﾄ比</th>' +
-        '</tr></thead>' +
-        '<tbody id="tb_unitlist"></tbody>' +
-      '</table>' +
-    '</div>'
+        '<img src="' + IMAGES.unitListDialog.last + '" class="last"/>'
     );
 //    if (options.unitListDialog === '1') {
 //      var sidemenulink = $('<li class="list_img"><a id="tiki" href="#TB_inline?height=480&amp;width=890&amp;inlineId=unitlistdialog" class="thickbox" title="待機武将一覧" onclick="return false;">待機武将一覧</a> [部隊編]</li>');
@@ -137,7 +43,7 @@
 //    else {
 //      var sidemenulink = $('<li class="list_img"><a id="tiki" href="#TB_inline?height=480&amp;width=890&amp;inlineId=unitlistdialog" class="thickbox" title="待機武将一覧" onclick="return false;">待機武将一覧</a> [兵士編]</li>');
 //    }
-    $('#mokotool').append(listdialog);
+    //$('#mokotool').append(listdialog);
     var op_tgl = true;
     $('button.uldoption').click(function() {
       if (op_tgl) {
@@ -188,7 +94,7 @@
           }
         }
       );
-    $('#v_head').find('button.set_unitlist').on('click', function() {
+    $('#v_head').on('click', 'button.set_unitlist', function() {
       unit_set($(this).parent().parent());
     });
     $('#energy').on('click', function() {
@@ -199,8 +105,8 @@
       groups_img = [];
     //グループ機能
     if (options.unit_list_group) {
-      if (localStorage.getItem("crx_ixamoko_group_set")) {
-        group_setting = secureEvalJSON(localStorage.getItem("crx_ixamoko_group_set"));
+      if (localStorage.getItem('crx_ixamoko_group_set')) {
+        group_setting = secureEvalJSON(localStorage.getItem('crx_ixamoko_group_set'));
       }
       if (localStorage.getItem('crx_ixamoko_init_groups')) {
         groups = secureEvalJSON(localStorage.getItem('crx_ixamoko_init_groups'));
@@ -290,11 +196,11 @@
           'sort_order_type[]': [ 0, 0, 0],
           show_deck_card_count: '15'
         };
-        nowLoading();
+        //nowLoading();
         //POST
         $.ajax({
           type: "POST",
-          url: '/card/deck.php',
+          url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
           data: data,
           cache: false,
           success: function(html) {
@@ -354,7 +260,7 @@
                     };
                 $.ajax({
                   type: "POST",
-                  url: '/card/deck.php',
+                  url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
                   data: data,
                   cache: false,
                   success: function(html) {
@@ -384,7 +290,7 @@
                         $v_head_span_ano.find('span.set_button').hide();
                       }
                     } else {
-                      base = $(base).removeAttr('onchange');
+                      base = $($.parseHTML(base)).removeAttr('onchange');
                       $v_head_span_ano.append(
                         '　<span class=base style="margin-right: 1em;"></span>' +
                         '<span class="set_button">　へ　<button class="set_unitlist" style="padding: 0 4px;" value="">配置</button></span>'
@@ -399,7 +305,7 @@
                     } else {
                       if ($('#v_head > select.unit_ano').find('option:selected').attr('class')){
                         $('#v_head').find('span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
-                        nowLoading(true);
+                        //nowLoading(true);
                       }
                     }
                   }
@@ -432,7 +338,7 @@
           set_squad_id;
         $.ajax({
           type: "POST",
-          url: '/card/deck.php',
+          url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
           data: data,
           cache: false,
           async: false,
@@ -900,7 +806,7 @@
         $('div.pager').show();
         return;
       }
-      var url = ['/facility/set_unit_list.php?show_num=100&p=1', '/facility/set_unit_list.php?show_num=100&p=2'],
+      var url = ['http://'+world+'.sengokuixa.jp/facility/set_unit_list.php?show_num=100&p=1', 'http://'+world+'.sengokuixa.jp/facility/set_unit_list.php?show_num=100&p=2'],
         card = {},
         flg = 0;
       getCardList(url[0]);
@@ -923,11 +829,11 @@
             sortkey.push(key);
           }
           sortkey.sort(function(a, b) {
-            return $(card[a]).find('span.ig_card_cardno').text() - $(card[b]).find('span.ig_card_cardno').text();
+            return $($.parseHTML(card[a])).find('span.ig_card_cardno').text() - $($.parseHTML(card[b])).find('span.ig_card_cardno').text();
           });
           //武将情報の取得
           for (i=0; i<sortkey.length; i++) {
-            $card = $(card[sortkey[i]]);
+            $card = $($.parseHTML(card[sortkey[i]]));
             var id = sortkey[i].match(/\d+/)[0];
             var grps = $card.find('input[id^="now_card_group_"]').val();
                 if( grps == '5' ) {
@@ -1026,7 +932,7 @@
 
       function getCardList(url) {
         var unitlist = new XMLHttpRequest();
-        unitlist.open("POST", location.origin + url);
+        unitlist.open("POST", url);
         unitlist.onreadystatechange = getCardWindow;
         unitlist.send();
         function getCardWindow() {
@@ -1061,7 +967,7 @@
               };
         $.ajax({
           type: "POST",
-          url: '/card/deck.php',
+          url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
           data: data,
           cache: false,
           success: function(html) {
@@ -1090,7 +996,7 @@
               
               if (set_assign_id) {
                 $v_head_span_ano.append(
-                  '　<span class="subleader"></span>　<span class="subleader"></span>　<span class="subleader"></span>' +
+                  '<span class="subleader"></span>　<span class="subleader"></span>　<span class="subleader"></span>' +
                   '　<span class=condition></span>' +
                   '　<span class=base style="margin-right: 1em;"></span>' +
                   '<span class="set_button">　へ　<button class="set_unitlist" style="padding: 0 4px;" value="' + set_assign_id + '">配置</button></span>'
@@ -1107,7 +1013,7 @@
                   $v_head_span_ano.find('span.set_button').hide();
                 }
               } else {
-                base = $(base).removeAttr('onchange');
+                base = $($.parseHTML(base)).removeAttr('onchange');
                 $v_head_span_ano.append(
                   '　<span class=base style="margin-right: 1em;"></span>' +
                   '<span class="set_button">　へ　<button class="set_unitlist" style="padding: 0 4px;" value="">配置</button></span>'
