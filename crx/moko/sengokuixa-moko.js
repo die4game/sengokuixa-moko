@@ -3,7 +3,6 @@
 function Moko_main( $) {
   'use strict';
   var TOOL_NAME = "sengokuixa-moko.crx",
-  VERSION_NAME = "ver 1.0.0.6747",
   i,
   options = {},
   OPTION_TAG = 'ixa_moko_options',

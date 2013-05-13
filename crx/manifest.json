@@ -38,6 +38,7 @@
 
   "permissions": [
       "tabs",
+      "notifications",
       "storage",
 
       "http://*.sengokuixa.jp/*",
