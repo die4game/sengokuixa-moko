@@ -9,23 +9,33 @@
   } else if (location.pathname !== '/false/login_sessionout.php') {
 
     // セッションタイムアウト画面以外
-    // Moko_mainの実行をheadに挿入
-    window.addEventListener( 'DOMContentLoaded', function() {
-      var scriptMoko = document.createElement( 'script');
-      scriptMoko.textContent =
-        'setTimeout( queMoko_main, 1);\n' +
-        queMoko_main.toString();
-      document.head.appendChild( scriptMoko);
 
-      // ロード完了を確認してからMoko_mainを実行する再帰ループ。
-      function queMoko_main () {
-        if ( window.Moko_main && window.CRXMOKODATA) {
-          Moko_main( j$);
-        } else {
-          setTimeout( queMoko_main, 1);
-        }
-      }
+    // backgroundページからオブジェクトをロード
+    var objectArray = [
+          'CRXMOKODATA',
+          'Moko_main',
+          'tableSorter_',
+          'tablesorter_pager_plugin'
+    ];
+    objectArray.forEach( function (objName) {
+      chrome.runtime.sendMessage( 'send ' + objName, function ( obj) {
+      createTagAndInsertHead( 'script', 'var ' + objName + ' = ' + obj + ';');
+      });
     });
+
+    // cssをロード。Moko_mainの実行をheadに挿入
+    var fileURL = chrome.extension.getURL( 'moko/mokoStyle.css'),
+        xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if ( xhr.readyState == 4 && xhr.status == 200) {
+        window.addEventListener( 'DOMContentLoaded', function () {
+          createTagAndInsertHead( 'style', xhr.responseText);
+          createTagAndInsertHead( 'script', 'setTimeout( queMoko_main, 1);\n' + queMoko_main.toString());
+        });
+      }
+    };
+    xhr.open( 'GET', fileURL, true);
+    xhr.send();
   }
 
   // worldをゲット
@@ -63,6 +73,7 @@
   // function定義 //
   //////////////////
 
+  // localStorageにmoko設定を保存
   function saveSettings( obj) {
     if ( obj) {
       for ( var key in obj) {
@@ -70,6 +81,22 @@
       }
     } else {
       localStorage.removeItem( 'crx_ixamoko_optio');
+    }
+  }
+
+  // scriptやstyleタグを生成してheadに挿入
+  function createTagAndInsertHead ( tagName, textContent) {
+    var s = document.createElement( tagName);
+    s.textContent = textContent;
+    document.head.appendChild( s);
+  }
+
+  // ロード完了を確認してからMoko_mainを実行する再帰ループ。
+  function queMoko_main () {
+    if ( window.Moko_main && window.CRXMOKODATA) {
+      Moko_main( j$);
+    } else {
+      setTimeout( queMoko_main, 1);
     }
   }
 })();

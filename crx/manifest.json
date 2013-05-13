@@ -21,7 +21,6 @@
   "content_scripts": [
     {
       "js": [
-        "loader.js",
         "main.js"
       ],
       "run_at": "document_start",
@@ -39,8 +38,6 @@
 
   "permissions": [
       "tabs",
-      "cookies",
-      "notifications",
       "storage",
 
       "http://*.sengokuixa.jp/*",
@@ -56,14 +53,7 @@
   },
 
   "web_accessible_resources": [
-    "background/background.html",
-    "JSON/*.json",
-    "plugin/*.js",
-    "moko/sengokuixa-moko.js",
-    "moko/mokoStyle.css",
-    "moko/data.js",
-    "popup/*.js",
-    "popup/*.html"
+    "moko/mokoStyle.css"
   ]
 
 }
