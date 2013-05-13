@@ -436,7 +436,7 @@ $( function () {
       allSettings.toggle ^= toggle;
       store[world] = JSON.stringify(allSettings);
       chrome.storage.sync.set( store, function(){
-        console.log(allSettings)
+        //console.log(allSettings)
       });
     });
   }
@@ -449,7 +449,7 @@ $( function () {
       allSettings.toggle ^= toggle;
       store[world] = JSON.stringify(allSettings);
       chrome.storage.local.set( store, function(){
-        console.log(allSettings)
+        //console.log(allSettings)
       });
     });
   }

@@ -36,6 +36,9 @@
     };
     xhr.open( 'GET', fileURL, true);
     xhr.send();
+
+    //mokoツールリスト
+    addLink();
   }
 
   // worldをゲット
@@ -62,7 +65,7 @@
 
   // moko設定のセーブ(storageが変化したとき)
   chrome.storage.onChanged.addListener( function ( obj, areaName) {
-    console.log( obj, areaName, obj[world]);
+    //console.log( obj, areaName, obj[world]);
     if ( obj[world])
       saveSettings( obj[world].newValue? JSON.parse( obj[world].newValue): false);
   });
@@ -97,6 +100,20 @@
       Moko_main( j$);
     } else {
       setTimeout( queMoko_main, 1);
+    }
+  }
+
+  // tool listにリンクを追加
+  function addLink() {
+    var $toollist = $( '#toollist');
+    if ( $toollist[0]) {
+      $toollist.append(
+        '<li class="list_img">' +
+          '<a href="'+chrome.extension.getURL( 'moko/deck/unitListDialog.html')+'?'+world+'&'+JSON.parse( localStorage.crx_ixa_moko_options).unitListDialog+'" target="_new">武将カード</a>' +
+        '</li>'
+      );
+    } else {
+      setTimeout( addLink, 1);
     }
   }
 })();
