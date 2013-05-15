@@ -17,4 +17,51 @@ table#tb_unit th { padding-right: 18px; }
 .pager.disabled { display: none; }
 /* hide or fade out pager arrows when the first or last row is visible */
 .pager img.disabled { opacity: 0.5; }
-body > div { width: 800px;}
+
+#energy {
+  margin-top: 4px;
+}
+
+#unitlistdialog>div>button.uldoption {
+  float: left;
+  padding: 0 4px;
+  margin-bottom: 5px;
+}
+
+#unitlistdialog>div>ul.uldoption {
+  clear: both;
+  display: none;
+}
+
+#unitlistdialog>div>ul>label>li {
+  float: left;
+  width: 5.5em;
+  margin-bottom: 4px;
+}
+
+#unitlistdialog>div.Loading {
+  position: absolute;
+  top: 80px;
+  left: 460px;
+  opacity: 0.6;
+  width: 20px;
+}
+
+#unitlistdialog>div.pager {
+  float: left;
+  clear: both;
+  padding-top: 5px;
+}
+
+#tb_unit {
+  white-space: nowrap;
+}
+
+#unitSet {
+  float: left;
+  margin-left: 1em;
+}
+
+#unit_cnt_text {
+  width: 4em;
+}

@@ -26,6 +26,7 @@
 
   //待機武将一覧をポップアップ表示
   function unitListDialog() {
+    options.unitListDialog = 2;
     if (!options.unitListDialog || options.unitListDialog === '0') {
       return;
     }
@@ -120,7 +121,7 @@
       $('div.pager').hide();
       $('#tb_unit').css({'opacity': '0.3'});
       $('div.Loading').show();
-      if (options.unitListDialog === '1') {
+      if (options.unitListDialog === '0') {
         createUnitList(1, 0, group_setting, groups, groups_img);
       } else {
         unit_list_load(group_setting, groups, groups_img);
@@ -620,174 +621,7 @@
             $('#v_head > span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
             $('div.Loading').hide();
             $('#tb_unit').css({'opacity': '1.0'});
-            $('#tb_unit').ready(function() {
-              $.tablesorter.addParser({
-                // set a unique id
-                id: 'rarerity',
-                is: function(s) {
-                  // return false so this parser is not auto detected
-                  return false;
-                },
-                format: function(s) {
-                  // format your data for normalization
-                  return s.replace(/[^天極特上序]/, 0).replace(/天/, 5).replace(/極/, 4).replace(/特/, 3).replace(/上/, 2).replace(/序/, 1);
-                },
-                // set type, either numeric or text
-                type: 'numeric'
-              });
-              $.tablesorter.addParser({
-                // set a unique id
-                id: 'ability',
-                is: function(s) {
-                  // return false so this parser is not auto detected
-                  return false;
-                },
-                format: function(s) {
-                  // format your data for normalization
-                  return s.replace(/SSS/, 8).replace(/SS\+/, 7).replace(/SS/, 6).replace(/S\+/, 5).replace(/S/, 4)
-                  .replace(/A\+/, 3).replace(/A/, 2).replace(/B\+/, 1).replace(/B/, 0).replace(/C\+/, -1).replace(/C/, -2)
-                  .replace(/D\+/, -3).replace(/D/, -4).replace(/E\+/, -5).replace(/E/, -6).replace(/F\+/, -7).replace(/F/, -8);
-                },
-                // set type, either numeric or text
-                type: 'numeric'
-              });
-              $.tablesorter.addParser({
-                id: 'checkbox',
-                is: function(s) {
-                  return false;
-                },
-                format: function(s, table, cell) {
-                  return $(cell).find('input').attr('checked') ? 1 : 0;
-                },
-                type: 'numeric'
-              });
-              $.tablesorter.addParser({
-                // set a unique id
-                id: 'soltype',
-                is: function(s) {
-                  // return false so this parser is not auto detected
-                  return false;
-                },
-                format: function(s) {
-                  // format your data for normalization
-                  return s.replace(/^足軽$/, 10).replace(/長槍足軽/, 11).replace(/武士/, 12).replace(/国人衆/, 13)
-                      .replace(/弓足軽/, 20).replace(/長弓兵/, 21).replace(/弓騎馬/, 22).replace(/海賊衆/, 23)
-                      .replace(/騎馬兵/, 30).replace(/精鋭騎馬/, 31).replace(/赤備え/, 32).replace(/母衣衆/, 33)
-                      .replace(/破城鎚/, 40).replace(/攻城櫓/, 41).replace(/大筒兵/, 42)
-                      .replace(/鉄砲足軽/, 50).replace(/騎馬鉄砲/, 51).replace(/雑賀衆/, 52);
-                },
-                // set type, either numeric or text
-                type: 'numeric'
-              });
-              $.tablesorter.addParser({
-                // set a unique id
-                id: 'grp',
-                is: function(s) {
-                  // return false so this parser is not auto detected
-                  return false;
-                },
-                format: function(s, table, cell) {
-                  // format your data for normalization
-                  var gp = $(cell).find('input').val();
-                  return gp? gp: 999;
-                },
-                // set type, either numeric or text
-                type: 'numeric'
-              });
-              $.tablesorter.addParser({
-                // set a unique id
-                id: 'grouping',
-                is: function(s) {
-                  // return false so this parser is not auto detected
-                  return false;
-                },
-                format: function(s) {
-                  // format your data for normalization
-                  return s.replace(/第1組/, 1).replace(/第2組/, 2).replace(/第3組/, 3).replace(/第4組/, 4)
-                      .replace(/未設定/, 5);
-                },
-                // set type, either numeric or text
-                type: 'numeric'
-              });
-              $('#tb_unit')
-              .tablesorter({
-                widthFixed: true,
-                widgets: ['zebra'],
-                headers: {0: {sorter: 'checkbox'},
-                  2: {sorter: 'grouping'},
-                  3: {sorter: 'grp'},
-                  4: {sorter: 'rarerity'},
-                  13: {sorter: 'soltype'},
-                  17: {sorter: 'ability'},
-                  20: {sorter: 'ability'},
-                  23: {sorter: 'ability'},
-                  26: {sorter: 'ability'},
-                  32: {sorter: 'ability'},
-                  35: {sorter: 'ability'},
-                  38: {sorter: 'ability'},
-                  41: {sorter: 'ability'},
-                  44: {sorter: 'ability'},
-                  47: {sorter: 'ability'},
-                },
-                sortForce: [[0,1]]
-              })
-              .tablesorterPager({
-
-                // **********************************
-                //  Description of ALL pager options
-                // **********************************
-
-                // target the pager markup - see the HTML block below
-                container: $(".pager"),
-
-                // use this url format "http:/mydatabase.com?page={page}&size={size}"
-                ajaxUrl: null,
-
-                // process ajax so that the data object is returned along with the total number of rows
-                // example: { "data" : [{ "ID": 1, "Name": "Foo", "Last": "Bar" }], "total_rows" : 100 }
-                ajaxProcessing: function(ajax) {
-                  if (ajax && ajax.hasOwnProperty('data')) {
-                    // return [ "data", "total_rows" ];
-                    return [ajax.data, ajax.total_rows];
-                  }
-                },
-
-                // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-                output: '{startRow} to {endRow} ({totalRows})',
-
-                // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-                updateArrows: true,
-
-                // starting page of the pager (zero based index)
-                page: 0,
-
-                // Number of visible rows - default is 10
-                size: 8,
-
-                // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-                // table row set to a height to compensate; default is false
-                fixedHeight: false,
-
-                // remove rows from the table to speed up the sort of large tables.
-                // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-                removeRows: false,
-
-                // css class names of pager arrows
-                cssNext: '.next', // next page arrow
-                cssPrev: '.prev', // previous page arrow
-                cssFirst: '.first', // go to first page arrow
-                cssLast: '.last', // go to last page arrow
-                cssPageDisplay: '.pagedisplay', // location of where the "output" is displayed
-                cssPageSize: '.pagesize', // page size selector - select dropdown that sets the "size" option
-
-                // class added to arrows when at the extremes (i.e. prev/first arrows are "disabled" when on the first page)
-                cssDisabled: 'disabled' // Note there is no period "." in front of this class name
-              });
-              $('#tb_unitlist').find('input').click(function() {
-                $('#tb_unit').trigger('updateCell', [this.parentNode]);
-              });
-            });
-            
+            $('#tb_unit').ready( setupTableSorter);
             $('ul.uldoption').find('input').each(function() {
               if (!$(this).attr('checked')) {
                 $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
@@ -847,7 +681,7 @@
             var hi = $card.find('span.ig_card_hiragana').text();//ひらがな
             var nm = $card.find('span.ig_card_name').text();
             var ct = $card.find('span[class^="ig_card_cost"]').text();
-            var rk = $card.find('img.bg_star').attr('width') / 20;
+            var rk = parseInt( $card.find('img.bg_star').attr('width'), 10) / 20;
             var lv = $card.find('span.ig_card_level').text();
             var hp = $card.find('span.ig_card_status_hp').text();
             var uc = $card.find('span[class^="commandsol_no"]').text().match(/\d+/g);
@@ -1031,173 +865,8 @@
               $('#v_head').find('span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
               $('div.Loading').hide();
               $('#tb_unit').css({'opacity': '1.0'});
-              $('#tb_unit').ready(function() {
-                $.tablesorter.addParser({
-                  // set a unique id
-                  id: 'rarerity',
-                  is: function(s) {
-                    // return false so this parser is not auto detected
-                    return false;
-                  },
-                  format: function(s) {
-                    // format your data for normalization
-                    return s.replace(/[^天極特上序]/, 0).replace(/天/, 5).replace(/極/, 4).replace(/特/, 3).replace(/上/, 2).replace(/序/, 1);
-                  },
-                  // set type, either numeric or text
-                  type: 'numeric'
-                });
-                $.tablesorter.addParser({
-                  // set a unique id
-                  id: 'ability',
-                  is: function(s) {
-                    // return false so this parser is not auto detected
-                    return false;
-                  },
-                  format: function(s) {
-                    // format your data for normalization
-                    return s.replace(/SSS/, 8).replace(/SS\+/, 7).replace(/SS/, 6).replace(/S\+/, 5).replace(/S/, 4)
-                    .replace(/A\+/, 3).replace(/A/, 2).replace(/B\+/, 1).replace(/B/, 0).replace(/C\+/, -1).replace(/C/, -2)
-                    .replace(/D\+/, -3).replace(/D/, -4).replace(/E\+/, -5).replace(/E/, -6).replace(/F\+/, -7).replace(/F/, -8);
-                  },
-                  // set type, either numeric or text
-                  type: 'numeric'
-                });
-                $.tablesorter.addParser({
-                  id: 'checkbox',
-                  is: function(s) {
-                    return false;
-                  },
-                  format: function(s, table, cell) {
-                    return $(cell).find('input').attr('checked') ? 1 : 0;
-                  },
-                  type: 'numeric'
-                });
-                $.tablesorter.addParser({
-                  // set a unique id
-                  id: 'soltype',
-                  is: function(s) {
-                    // return false so this parser is not auto detected
-                    return false;
-                  },
-                  format: function(s) {
-                    // format your data for normalization
-                    return s.replace(/^足軽$/, 10).replace(/長槍足軽/, 11).replace(/武士/, 12).replace(/国人衆/, 13)
-                        .replace(/弓足軽/, 20).replace(/長弓兵/, 21).replace(/弓騎馬/, 22).replace(/海賊衆/, 23)
-                        .replace(/騎馬兵/, 30).replace(/精鋭騎馬/, 31).replace(/赤備え/, 32).replace(/母衣衆/, 33)
-                        .replace(/破城鎚/, 40).replace(/攻城櫓/, 41).replace(/大筒兵/, 42)
-                        .replace(/鉄砲足軽/, 50).replace(/騎馬鉄砲/, 51).replace(/雑賀衆/, 52);
-                  },
-                  // set type, either numeric or text
-                  type: 'numeric'
-                });
-                $.tablesorter.addParser({
-                  // set a unique id
-                  id: 'grp',
-                  is: function(s) {
-                    // return false so this parser is not auto detected
-                    return false;
-                  },
-                  format: function(s, table, cell) {
-                    // format your data for normalization
-                    var gp = $(cell).find('input').val();
-                    return gp? gp: 999;
-                  },
-                  // set type, either numeric or text
-                  type: 'numeric'
-                });
-                $.tablesorter.addParser({
-                  // set a unique id
-                  id: 'grouping',
-                  is: function(s) {
-                    // return false so this parser is not auto detected
-                    return false;
-                  },
-                  format: function(s) {
-                    // format your data for normalization
-                    return s.replace(/第1組/, 1).replace(/第2組/, 2).replace(/第3組/, 3).replace(/第4組/, 4)
-                        .replace(/未設定/, 5);
-                  },
-                  // set type, either numeric or text
-                  type: 'numeric'
-                });
-                $('#tb_unit')
-                .tablesorter({
-                  widthFixed: true,
-                  widgets: ['zebra'],
-                  headers: {0: {sorter: 'checkbox'},
-                    2: {sorter: 'grouping'},
-                    3: {sorter: 'grp'},
-                    4: {sorter: 'rarerity'},
-                    13: {sorter: 'soltype'},
-                    17: {sorter: 'ability'},
-                    20: {sorter: 'ability'},
-                    23: {sorter: 'ability'},
-                    26: {sorter: 'ability'},
-                    32: {sorter: 'ability'},
-                    35: {sorter: 'ability'},
-                    38: {sorter: 'ability'},
-                    41: {sorter: 'ability'},
-                    44: {sorter: 'ability'},
-                    47: {sorter: 'ability'},
-                  },
-                  sortForce: [[0,1]]
-                })
-                .tablesorterPager({
-
-                  // **********************************
-                  //  Description of ALL pager options
-                  // **********************************
-
-                  // target the pager markup - see the HTML block below
-                  container: $(".pager"),
-
-                  // use this url format "http:/mydatabase.com?page={page}&size={size}"
-                  ajaxUrl: null,
-
-                  // process ajax so that the data object is returned along with the total number of rows
-                  // example: { "data" : [{ "ID": 1, "Name": "Foo", "Last": "Bar" }], "total_rows" : 100 }
-                  ajaxProcessing: function(ajax) {
-                    if (ajax && ajax.hasOwnProperty('data')) {
-                      // return [ "data", "total_rows" ];
-                      return [ajax.data, ajax.total_rows];
-                    }
-                  },
-
-                  // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-                  output: '{startRow} to {endRow} ({totalRows})',
-
-                  // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-                  updateArrows: true,
-
-                  // starting page of the pager (zero based index)
-                  page: 0,
-
-                  // Number of visible rows - default is 10
-                  size: 8,
-
-                  // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-                  // table row set to a height to compensate; default is false
-                  fixedHeight: false,
-
-                  // remove rows from the table to speed up the sort of large tables.
-                  // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-                  removeRows: false,
-
-                  // css class names of pager arrows
-                  cssNext: '.next', // next page arrow
-                  cssPrev: '.prev', // previous page arrow
-                  cssFirst: '.first', // go to first page arrow
-                  cssLast: '.last', // go to last page arrow
-                  cssPageDisplay: '.pagedisplay', // location of where the "output" is displayed
-                  cssPageSize: '.pagesize', // page size selector - select dropdown that sets the "size" option
-
-                  // class added to arrows when at the extremes (i.e. prev/first arrows are "disabled" when on the first page)
-                  cssDisabled: 'disabled' // Note there is no period "." in front of this class name
-                });
-                $('#tb_unitlist').find('input').click(function() {
-                  $('#tb_unit').trigger('updateCell', [this.parentNode]);
-                });
-              });
+              $('#tb_unit').ready( setupTableSorter);
+              $( '#unitSet').append( $( html).find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
               $('ul.uldoption').find('input').each(function() {
                 if (!$(this).attr('checked')) {
                   $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
@@ -1209,5 +878,244 @@
         });
       }
     }
+  }
+
+  //兵士一括セット
+  function setHeishi() {
+    var $tb_unitlist = $( '#tb_unitlist'), dataArray = [],
+      unitID = $( '[id^="unit_id_select_"]').val(), unitCnt = $( '#unit_cnt_text').val(),
+      max = $( '#unitSet>select[id^="unit_id_select_"] option:selected').text().match(/\d+/)[0];
+    $tb_unitlist.find('td.選択>input:checked').each( function () {
+      var cnt = unitCnt;
+      if ( unitCnt.match(/max/i)) {
+        cnt = Math.min( $(this).parent().siblings( 'td.指揮力').text(), max);
+        max -= cnt;
+        //console.log(unitCnt,cnt,max);
+      }
+      dataArray.push( { card_id: $( this).val(), unit_type: unitID, unit_count: cnt});
+    });
+    $('div.Loading').show();
+    $( '#tb_unit').css( 'opacity', '0.3');
+    postSetHeishi( dataArray);
+  }
+
+  function postSetHeishi(dataArray) {
+    if ( dataArray[0]) {
+      $.post(
+        'http://' + world + '.sengokuixa.jp/facility/set_unit_list_if.php',
+        dataArray.shift(), // { card_id: data0, unit_type: data1, unit_count: data2 },
+        function () {
+          setTimeout( postSetHeishi, 100, dataArray);
+        }
+      );
+    } else {
+      var url = ['http://'+world+'.sengokuixa.jp/facility/set_unit_list.php?show_num=100&p=1', 'http://'+world+'.sengokuixa.jp/facility/set_unit_list.php?show_num=100&p=2'];
+      $.get(
+        url[0],
+        function ( data) {
+          var $parseData = $( $.parseHTML( data));
+          $parseData.find( '#busho_info tr.tr_gradient').each( function () {
+            var id = $(this.firstElementChild.firstElementChild).prop('id'), tr;
+            if( id) {
+              tr = $('#tb_unitlist>tr:has(td.選択>input[value="'+id.match( /\d+/)[0]+'"])');
+              tr.find( 'td.兵種').text( $(this).find( '[id^="now_unit_img_"]').prop('alt'));
+              tr.find( 'td.兵数').text( $(this).find( '[id^="now_unit_cnt_"]').text());
+            }
+          });
+          $( '#unitSet>select').after( $parseData.find( '#unit_id_select_0').removeAttr( 'onchange')).remove();
+          $( '#tb_unit').trigger( 'update');
+          if ( $parseData.is( 'bar_card .pager')) {
+            $.get(
+              url[1],
+              function ( data) {
+                $( $.parseHTML( data)).find( '#busho_info tr.tr_gradient').each( function () {
+                  var id = $(this.firstElementChild.firstElementChild).prop('id'), tr;
+                  if( id) {
+                    tr = $('#tb_unitlist>tr:has(td.選択>input[value="'+id.match( /\d+/)[0]+'"])');
+                    tr.find( 'td.兵種').text( $(this).find( '[id^="now_unit_img_"]').prop('alt'));
+                    tr.find( 'td.兵数').text( $(this).find( '[id^="now_unit_cnt_"]').text());
+                  }
+                });
+                $( 'div.Loading').hide();
+                $( '#tb_unit').css( 'opacity', '1');
+                $( '#tb_unit').trigger( 'update');
+              }
+            );
+          } else {
+            $( 'div.Loading').hide();
+            $( '#tb_unit').css( 'opacity', '1');
+          }
+        }
+      );
+    }
+  }
+
+
+  function setupTableSorter() {
+    $.tablesorter.addParser({
+      // set a unique id
+      id: 'rarerity',
+      is: function(s) {
+        // return false so this parser is not auto detected
+        return false;
+      },
+      format: function(s) {
+        // format your data for normalization
+        return s.replace(/[^天極特上序]/, 0).replace(/天/, 5).replace(/極/, 4).replace(/特/, 3).replace(/上/, 2).replace(/序/, 1);
+      },
+      // set type, either numeric or text
+      type: 'numeric'
+    });
+    $.tablesorter.addParser({
+      // set a unique id
+      id: 'ability',
+      is: function(s) {
+        // return false so this parser is not auto detected
+        return false;
+      },
+      format: function(s) {
+        // format your data for normalization
+        return s.replace(/SSS/, 8).replace(/SS\+/, 7).replace(/SS/, 6).replace(/S\+/, 5).replace(/S/, 4)
+        .replace(/A\+/, 3).replace(/A/, 2).replace(/B\+/, 1).replace(/B/, 0).replace(/C\+/, -1).replace(/C/, -2)
+        .replace(/D\+/, -3).replace(/D/, -4).replace(/E\+/, -5).replace(/E/, -6).replace(/F\+/, -7).replace(/F/, -8);
+      },
+      // set type, either numeric or text
+      type: 'numeric'
+    });
+    $.tablesorter.addParser({
+      id: 'checkbox',
+      is: function(s) {
+        return false;
+      },
+      format: function(s, table, cell) {
+        return $(cell).find('input').attr('checked') ? 1 : 0;
+      },
+      type: 'numeric'
+    });
+    $.tablesorter.addParser({
+      // set a unique id
+      id: 'soltype',
+      is: function(s) {
+        // return false so this parser is not auto detected
+        return false;
+      },
+      format: function(s) {
+        // format your data for normalization
+        return s.replace(/^足軽$/, 10).replace(/長槍足軽/, 11).replace(/武士/, 12).replace(/国人衆/, 13)
+            .replace(/弓足軽/, 20).replace(/長弓兵/, 21).replace(/弓騎馬/, 22).replace(/海賊衆/, 23)
+            .replace(/騎馬兵/, 30).replace(/精鋭騎馬/, 31).replace(/赤備え/, 32).replace(/母衣衆/, 33)
+            .replace(/破城鎚/, 40).replace(/攻城櫓/, 41).replace(/大筒兵/, 42)
+            .replace(/鉄砲足軽/, 50).replace(/騎馬鉄砲/, 51).replace(/雑賀衆/, 52);
+      },
+      // set type, either numeric or text
+      type: 'numeric'
+    });
+    $.tablesorter.addParser({
+      // set a unique id
+      id: 'grp',
+      is: function(s) {
+        // return false so this parser is not auto detected
+        return false;
+      },
+      format: function(s, table, cell) {
+        // format your data for normalization
+        var gp = $(cell).find('input').val();
+        return gp? gp: 999;
+      },
+      // set type, either numeric or text
+      type: 'numeric'
+    });
+    $.tablesorter.addParser({
+      // set a unique id
+      id: 'grouping',
+      is: function(s) {
+        // return false so this parser is not auto detected
+        return false;
+      },
+      format: function(s) {
+        // format your data for normalization
+        return s.replace(/第1組/, 1).replace(/第2組/, 2).replace(/第3組/, 3).replace(/第4組/, 4)
+            .replace(/未設定/, 5);
+      },
+      // set type, either numeric or text
+      type: 'numeric'
+    });
+    $('#tb_unit')
+    .tablesorter({
+      widthFixed: true,
+      widgets: ['zebra'],
+      headers: {0: {sorter: 'checkbox'},
+        2: {sorter: 'grouping'},
+        3: {sorter: 'grp'},
+        4: {sorter: 'rarerity'},
+        13: {sorter: 'soltype'},
+        17: {sorter: 'ability'},
+        20: {sorter: 'ability'},
+        23: {sorter: 'ability'},
+        26: {sorter: 'ability'},
+        32: {sorter: 'ability'},
+        35: {sorter: 'ability'},
+        38: {sorter: 'ability'},
+        41: {sorter: 'ability'},
+        44: {sorter: 'ability'},
+        47: {sorter: 'ability'},
+      },
+      sortForce: [[0,1]]
+    })
+    .tablesorterPager({
+
+      // **********************************
+      //  Description of ALL pager options
+      // **********************************
+
+      // target the pager markup - see the HTML block below
+      container: $(".pager"),
+
+      // use this url format "http:/mydatabase.com?page={page}&size={size}"
+      ajaxUrl: null,
+
+      // process ajax so that the data object is returned along with the total number of rows
+      // example: { "data" : [{ "ID": 1, "Name": "Foo", "Last": "Bar" }], "total_rows" : 100 }
+      ajaxProcessing: function(ajax) {
+        if (ajax && ajax.hasOwnProperty('data')) {
+          // return [ "data", "total_rows" ];
+          return [ajax.data, ajax.total_rows];
+        }
+      },
+
+      // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
+      output: '{startRow} to {endRow} ({totalRows})',
+
+      // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
+      updateArrows: true,
+
+      // starting page of the pager (zero based index)
+      page: 0,
+
+      // Number of visible rows - default is 10
+      size: 8,
+
+      // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
+      // table row set to a height to compensate; default is false
+      fixedHeight: false,
+
+      // remove rows from the table to speed up the sort of large tables.
+      // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+      removeRows: false,
+
+      // css class names of pager arrows
+      cssNext: '.next', // next page arrow
+      cssPrev: '.prev', // previous page arrow
+      cssFirst: '.first', // go to first page arrow
+      cssLast: '.last', // go to last page arrow
+      cssPageDisplay: '.pagedisplay', // location of where the "output" is displayed
+      cssPageSize: '.pagesize', // page size selector - select dropdown that sets the "size" option
+
+      // class added to arrows when at the extremes (i.e. prev/first arrows are "disabled" when on the first page)
+      cssDisabled: 'disabled' // Note there is no period "." in front of this class name
+    });
+    $('#tb_unitlist').find('input').click(function() {
+      $('#tb_unit').trigger('updateCell', [this.parentNode]);
+    });
   }
 })();

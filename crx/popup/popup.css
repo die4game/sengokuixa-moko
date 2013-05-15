@@ -1,10 +1,10 @@
 html, body {
-  height: 470px;
+  height: 490px;
 }
 
 #ixamoko_dialog {
 width: 500px;
-height: 435px;
+height: 93%;
 z-index: 9999;
 padding: 10px;
 background-color: rgb(255, 255, 255);
@@ -33,7 +33,7 @@ border-right: 1px solid #ddd;
 #ixamoko_dialog_main {
 float: left;
 width: 405px;
-height: 385px;
+/*height: 86%;*/
 padding-left: 8px;
 overflow-y: auto;
 font-size: small}
@@ -60,6 +60,7 @@ border-radius:5px;
 #ixamoko_dialog_main>div {
 display: none;
 margin-top:5px;
+height:82%;
 }
 
 #ixamoko_set_tab_all>div {
@@ -99,7 +100,6 @@ overflow-y: scroll;
 }
 
 #ixamoko_set_tab_grp>div.scbar_normal {
-height:350px;
 margin-top: 4px;
 padding-bottom: 15px;
 }
