@@ -117,7 +117,7 @@ a#ig_cur01_w {top: 12px; left: 525px;}
 a#ig_cur01 {top: 33px; left: 525px;}
 a#ig_cur04_w {top: 12px; left: 170px;}
 a#ig_cur04 {top: 33px; left: 200px;}
-.map_tool_window { position: absolute; top: 455px; left: 35px; z-index: 198; background: rgba(0,0,0,0.8); padding: 1px; border: 1px solid #B1912C; }
+.map_tool_window { position: absolute; top: 455px; left: 35px; z-index: 202; background: rgba(0,0,0,0.8); padding: 1px; border: 1px solid #B1912C; }
 .map_tool_button_grp { height: 16px; margin: 0 -1px 1px; border-width: 1px 0; border-color: #725E1E; border-style: solid;  }
 .map { overflow: auto; height: 100%; max-height: 230px; background-color: transparent; color: white; font-family: Verdana; }
 .map_tool_button { cursor: pointer; float: left; width: 107px; padding: 2px 0; border-right: 1px solid #725E1E; color: #666; text-align: center; }
@@ -342,6 +342,10 @@ ul.secondmenu.clearfix { width: 680px !important; padding: 5px 5px 2px !importan
 #soldiers_blind_list li > div { display: none; position: absolute; z-index: 100; margin: -1px 0 0 2px; background-color: black; color: white; border:1px solid #685826; }
 #soldiers_blind_list li > div > a { cursor: pointer; display: block; padding: 8px 0; width: 65px; text-align: center; }
 #soldiers_blind_list li > div > a:hover { background-color: #725E1E; }
+/*秘境*/
+.table_waigintunit td.blank { border: 1px solid #888;}
+.table_waigintunit td.heisu { border-bottom: 1px solid #888;}
+.table_waigintunit td.heishu { border-bottom: 1px dotted #bbb;}
 /**/
 .confluence_search { position: relative; top: -15px; color: black !important; }
 .mk-button { font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: black;padding: 0.65em 1.5em; background: -webkit-gradient(linear, left top, left bottom, from(#fdfdfd), color-stop(0.50, #f0f0ce), color-stop(0.50, #dedeb6), to(#dbdba1)); border-radius: 6px; border: 1px solid #85824c; box-shadow:0px 1px 3px rgba(000,000,000,0.5),inset 0px 0px 2px rgba(255,255,255,1); text-shadow:0px -1px 0px rgba(000,000,000,0.2),0px 1px 0px rgba(255,255,255,1); }

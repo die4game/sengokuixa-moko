@@ -345,7 +345,7 @@ $( function () {
     }
   });
 
-  // お気に入り部隊登録クリア
+  // グループ順記録をクリア
   $('#clear_grp_reg').click(function(e) {
     if (confirm('記録したグループをすべて消去してよろしいですか？')) {
       var tmp_list = {};

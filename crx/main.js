@@ -37,7 +37,7 @@
     xhr.open( 'GET', fileURL, true);
     xhr.send();
 
-    //mokoツールリスト
+    //mokoツールリストにリンクをセット
     addLink();
   }
 
@@ -48,18 +48,21 @@
   // pageAction起動
   chrome.runtime.sendMessage( 'fire');
 
-  // localStorageのgroup設定のやりとり
-  chrome.runtime.onMessage.addListener( function ( msg, sender, callBack) {
-    //console.log( msg);
-    if ( msg === 'send groupSetting') {
-      var obj = ( localStorage.crx_ixamoko_init_groups && localStorage.crx_ixamoko_init_groups_img && localStorage.crx_ixamoko_group_set)? {
-        crx_ixamoko_init_groups: JSON.parse( localStorage.crx_ixamoko_init_groups),
-        crx_ixamoko_init_groups_img: JSON.parse( localStorage.crx_ixamoko_init_groups_img),
-        crx_ixamoko_group_set: JSON.parse( localStorage.crx_ixamoko_group_set)
-      }: false;
-      callBack( obj);
-    } else if ( msg === 'save localStorage') {
-      chrome.storage.sync.get( world, saveSettings);
+  // localStorageのmoko設定をchrome.storageにセーブ
+  chrome.storage.sync.get( world, function ( store) {
+    //console.log( store);
+    if ( localStorage.crx_ixamoko_init_groups && localStorage.crx_ixamoko_init_groups_img && localStorage.crx_ixamoko_group_set) {
+      var storeWorld = store[world]? JSON.parse( store[world]): {};
+      storeWorld.crx_ixamoko_init_groups = JSON.parse( localStorage.crx_ixamoko_init_groups);
+      storeWorld.crx_ixamoko_group_set = JSON.parse( localStorage.crx_ixamoko_group_set);
+      store[world] = JSON.stringify( storeWorld);
+      chrome.storage.sync.set( store);
+      chrome.storage.local.get( world, function ( store) {
+        var storeWorld = store[world]? JSON.parse( store[world]): {};
+        storeWorld.crx_ixamoko_init_groups_img = JSON.parse( localStorage.crx_ixamoko_init_groups_img);
+        store[world] = JSON.stringify( storeWorld);
+        chrome.storage.local.set( store);
+      });
     }
   });
 

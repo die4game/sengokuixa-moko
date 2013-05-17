@@ -1,22 +1,23 @@
 ( function () {
-  var world, options = {}, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images;
+  var world, tabId, options = {}, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images;
+
+  // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
-    world = tab.url.split( '?')[1];
-    //console.log( world);
+    arg = tab.url.split( '?')[1].split( '&');
+    world = arg[0], tabId = arg[1];
+    console.log( world, tabId, tab);
+
+    // options、グループ設定の取得
     chrome.storage.sync.get( world, function ( store) {
-      //console.log( store);
       var storeWorld = JSON.parse( store[world]);
-      //console.log( storeWorld);
+      console.log( storeWorld);
       options = storeWorld.crx_ixa_moko_options;
       group_setting = storeWorld.crx_ixamoko_group_set;
       groups = storeWorld.crx_ixamoko_init_groups;
-      //console.log( 'storage.sync: ok');
       chrome.storage.local.get( world, function ( store) {
-        //console.log( store);
-        var storeWorld = store[world]? JSON.parse( store[world]): CRXMOKODATA.group[0];
-        //console.log( storeWorld);
+        var storeWorld = JSON.parse( store[world]);
+        console.log( storeWorld);
         groups_img = storeWorld.crx_ixamoko_init_groups_img;
-        //console.log( 'storage.local: ok');
         $(unitListDialog);
       });
     });
@@ -26,7 +27,7 @@
 
   //待機武将一覧をポップアップ表示
   function unitListDialog() {
-    options.unitListDialog = 2;
+    options.unitListDialog = '1';
     if (!options.unitListDialog || options.unitListDialog === '0') {
       return;
     }
@@ -101,6 +102,7 @@
     $('#energy').on('click', function() {
       cal_energy($(this).next());
     });
+/*
     var group_setting = {},
       groups = [],
       groups_img = [];
@@ -116,12 +118,13 @@
         groups_img = secureEvalJSON(localStorage.getItem('crx_ixamoko_init_groups_img'));
       }
     }
+*/
 //    $('a#tiki').on('mousedown', function() {//}
     $( function () {
       $('div.pager').hide();
       $('#tb_unit').css({'opacity': '0.3'});
       $('div.Loading').show();
-      if (options.unitListDialog === '0') {
+      if (options.unitListDialog === '1') {
         createUnitList(1, 0, group_setting, groups, groups_img);
       } else {
         unit_list_load(group_setting, groups, groups_img);
@@ -622,6 +625,7 @@
             $('div.Loading').hide();
             $('#tb_unit').css({'opacity': '1.0'});
             $('#tb_unit').ready( setupTableSorter);
+            $( '#unitSet').append( $( html).find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
             $('ul.uldoption').find('input').each(function() {
               if (!$(this).attr('checked')) {
                 $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();

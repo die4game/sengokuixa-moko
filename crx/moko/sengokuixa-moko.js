@@ -6738,7 +6738,7 @@ function Moko_main( $) {
     var sol_cnt = {};
     var counter = 0;
     var txt_cnt = '<tr><th class="moko-th">兵数</th>';
-    var txt_kind = '<tr><th class="moko-th">兵種</th>';
+    var txt_kind = '<tr><td rowspan="2" class="blank"></td><th class="moko-th">兵種</th>';
     var commandsol_hash = {
         commandsol_yari1: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_ashigaru.png" alt="足軽">' ,
         commandsol_yari2: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_ashigaru-spear.png" alt="長槍足軽">' ,
@@ -6762,10 +6762,10 @@ function Moko_main( $) {
     $('table.table_waigintunit').find('tr:eq(1)').find('td:eq(0)').attr('rowspan','5');
     $('DIV[id^="cardWindow_"]').each(function() {
       var cid = $(this).attr('id').substring(11);
-      txt_cnt += '<td><span>';
+      txt_cnt += '<td colspan="2" class="heisu"><span>';
       txt_cnt +=  $(this).find('div.cardfront').find('span.commandsol_no').find('SPAN[id^="card_commandsol_cnt_"]').text();
       txt_cnt += '</span></td>';
-      txt_kind += '<td>';
+      txt_kind += '<td colspan="2" class="heishu">';
       var txt_kind_tmp = $(this).find('div.cardfront').find('div.parameta_area').find('SPAN[id^="card_commandsol_"]').attr('class');
       txt_kind += commandsol_hash[txt_kind_tmp];
       txt_kind += '</td>';
@@ -6807,8 +6807,8 @@ function Moko_main( $) {
         }
         if(sho_check.search(/-/) != -1){
           for (i = counter%4; i < 3; i++) {
-            txt_cnt += '<td> - </td>';
-            txt_kind += '<td> - </td>';
+            txt_cnt += '<td colspan="2" class="heisu"> - </td>';
+            txt_kind += '<td colspan="2" class="heishu"> - </td>';
           }
           txt_cnt += '</tr>';
           txt_kind += '</tr>';
@@ -6831,8 +6831,8 @@ function Moko_main( $) {
           default:
             break;
           }
-          txt_cnt = '<tr><th class="moko-th">兵数</th>';
-          txt_kind = '<tr><th class="moko-th">兵種</th>';
+        txt_cnt = '<tr><th class="moko-th">兵数</th>';
+        txt_kind = '<tr><td rowspan="2" class="blank"></td><th class="moko-th">兵種</th>';
           counter+= (3-(counter%4));
         }
       } else {
@@ -6857,8 +6857,8 @@ function Moko_main( $) {
         default:
           break;
         }
-        txt_cnt = '<tr><th class="moko-th">兵数</th>';
-        txt_kind = '<tr><th class="moko-th">兵種</th>';
+      txt_cnt = '<tr><th class="moko-th">兵数</th>';
+      txt_kind = '<tr><td rowspan="2"  class="blank"></td><th class="moko-th">兵種</th>';
       }
       counter++;
     });
@@ -7764,12 +7764,13 @@ function Moko_main( $) {
         if (currentHP < 100) {
           var ranklvl = $(this).find('table.ig_deck_smallcarddata:eq(0) tr:eq(1) td').text();
           var rank = parseInt( ranklvl.substring(1, 2) );
+          var jobType = getJobType( $(this).find('.ig_deck_unitbox>div')[0].id.match(/\d+/)[0]);
           var lvl = parseInt( ranklvl.substring(3) );
           var cardNo = $(this).find('img.smallcard_chara').attr('src').split('/')[8],
               cardNo = parseInt(cardNo.split('_')[0]);
           var rea =  $(this).find('span.ig_deck_smallcard_cardrarety').text();
           
-          timeText = getHPMAXTime( currentHP, rank, lvl, cardNo, rea );
+          timeText = getHPMAXTime( currentHP, rank, lvl, cardNo, rea, jobType );
           dayText = caddDate(new Date(), timeText);
           txt = "<div class='hp_100' title='" + dayText + " 完了'>HP全回復まで<br />あと <span class='time_text'>" + timeText + "</span></div>";
           
@@ -7809,6 +7810,10 @@ function Moko_main( $) {
     }
   }
 
+  function getJobType( id) {
+   return $( '#cardWindow_' + id + ' div.parameta_area_back span:eq(0)')[0].className;
+  }
+
   function getTime(toubatsu) {
     var tmp = toubatsu * 163;
     var h = Math.floor(tmp / 3600);
@@ -7819,17 +7824,18 @@ function Moko_main( $) {
     return tim;
   }
 
-  function getHPMAXTime( currentHP, rank, lv, cardNo, rea ) {
+  function getHPMAXTime( currentHP, rank, lv, cardNo, rea, jobType ) {
     //☆0 剣豪の基本レート(HP1辺りの回復時間)
     var HPres_kengou = [ 18, 19, 20, 21, 22, 24, 25, 30, 31, 34, 36, 40, 44, 48, 51, 54, 58, 61, 62, 70, 72 ];
     //☆0 将・忍・文の基本レート(HP1辺りの回復時間)
     var HPres_normal = [ 7, 9, 11, 13, 14, 16, 18, 20, 22, 23, 25, 27, 29, 31, 32, 34, 36, 38, 40, 41, 43 ];
     
     var rate = 0;
+    rank = 0;
     //ランク★1以上の時
     if (rank > 0) {
       //剣豪
-      if(   cardNo == 2007 ||  //柳生石舟斎
+      if(  jobType === 'jobtype_2'|| cardNo == 2007 ||  //柳生石舟斎
         cardNo == 2010 ||  //足利義輝
         cardNo == 2018 ||  //宮本武蔵
         cardNo == 2019 ||  //佐々木小次郎
@@ -7875,7 +7881,7 @@ function Moko_main( $) {
     else {
     //ランク★0の時
     //剣豪
-      if(   cardNo == 2007 ||  //柳生石舟斎
+      if( jobType === 'jobtype_2'|| cardNo == 2007 ||  //柳生石舟斎
         cardNo == 2010 ||  //足利義輝
         cardNo == 2018 ||  //宮本武蔵
         cardNo == 2019 ||  //佐々木小次郎
@@ -10081,13 +10087,13 @@ function Moko_main( $) {
       TargetArea = $('div.ig_deck_smallcardimage');
     }
     else if(location.pathname == "/facility/set_unit_list.php"){
-      TargetArea = $('#busho_info').find('tr.tr_gradient');
+      TargetArea = $('#busho_info').find('tr.tr_gradient td:lt(3)');//.children( 'td:lt(3)');console.log(TargetArea);
     }
     else if(location.pathname == "/card/trade_card.php"){
       TargetArea = $('div.ig_deck_subcardarea');
     }
     else if(location.pathname == "/card/trade.php" || location.pathname == "/card/exhibit_list.php"){
-      TargetArea = $('table.common_table1.center.mt10').find('tr.fs12');
+      TargetArea = $('table.common_table1.center.mt10').find('tr.fs12 td:lt(4)');
     }
     
     TargetArea.live('contextmenu', function(event) {
@@ -10130,9 +10136,9 @@ function Moko_main( $) {
         skill_3 = Area.find('td:eq(2)').text().split('L')[0];
     }
     if(location.pathname == "/facility/set_unit_list.php"){
-      var CardId = $(target).find('a.busho_name').attr('href').split('_')[2],
-        CardName = $(target).find('a.busho_name').text(),
-        CardRank = $(target).find('span.rank_glay').text(),
+      var CardId = $(target).parent().find('a.busho_name').attr('href').split('_')[2],
+        CardName = $(target).parent().find('a.busho_name').text(),
+        CardRank = $(target).parent().find('span.rank_glay').text(),
         Area = $('#cardWindow_' +CardId),
         CardNo = Area.find('span.ig_card_cardno').text(),
         CardLv = Area.find('span.ig_card_level').text(),
@@ -10141,9 +10147,9 @@ function Moko_main( $) {
         skill_3 = Area.find('div.skill3').find('span.ig_skill_name').text().split('L')[0];
     }
     if(location.pathname == "/card/trade_card.php" || location.pathname == "/card/trade.php" || location.pathname == "/card/exhibit_list.php"){
-      var CardName = $(target).find('span.ig_card_name').text(),
-        CardNo = $(target).find('span.ig_card_cardno').text(),
-        Area = $(target).find('div.parameta_area_back'),
+      var CardName = $(target).parent().find('span.ig_card_name').text(),
+        CardNo = $(target).parent().find('span.ig_card_cardno').text(),
+        Area = $(target).parent().find('div.parameta_area_back'),
         skill_1 = Area.find('div.skill1').find('span.ig_skill_name').text().split('L')[0],
         skill_2 = Area.find('div.skill2').find('span.ig_skill_name').text().split('L')[0],
         skill_3 = Area.find('div.skill3').find('span.ig_skill_name').text().split('L')[0];
