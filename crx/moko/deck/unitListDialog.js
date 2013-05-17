@@ -5,18 +5,18 @@
   chrome.tabs.getCurrent( function ( tab) {
     arg = tab.url.split( '?')[1].split( '&');
     world = arg[0], tabId = arg[1];
-    console.log( world, tabId, tab);
+    //console.log( world, tabId, tab);
 
     // options、グループ設定の取得
     chrome.storage.sync.get( world, function ( store) {
       var storeWorld = JSON.parse( store[world]);
-      console.log( storeWorld);
+      //console.log( storeWorld);
       options = storeWorld.crx_ixa_moko_options;
       group_setting = storeWorld.crx_ixamoko_group_set;
       groups = storeWorld.crx_ixamoko_init_groups;
       chrome.storage.local.get( world, function ( store) {
         var storeWorld = JSON.parse( store[world]);
-        console.log( storeWorld);
+        //console.log( storeWorld);
         groups_img = storeWorld.crx_ixamoko_init_groups_img;
         $(unitListDialog);
       });
@@ -195,10 +195,10 @@
           set_squad_id: set_squad_id[i],
           deck_mode: 'nomal',
           p: '1',
-          myselect_2: '',
-          'sort_order[]': [ 1, 0, 0],
-          'sort_order_type[]': [ 0, 0, 0],
-          show_deck_card_count: '15'
+          myselect_2: ''
+//          'sort_order[]': [ 1, 0, 0],
+//          'sort_order_type[]': [ 0, 0, 0],
+//          show_deck_card_count: '15'
         };
         //nowLoading();
         //POST
@@ -221,7 +221,7 @@
                   if ( !set_assign_id ) {
                     set_assign_id = $(html).find('#set_assign_id').val();
                   }
-                  setTimeout(set_card_to_deck, 1000, select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i + 1);
+                  setTimeout(set_card_to_deck, 100, select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i + 1);
                 } else {
                   alert(busho_list[i+1].find('#kanji').text() + 'をセットできませんでした。');
                   refresh_v_headSelect();
@@ -257,10 +257,10 @@
                       set_squad_id: '',
                       deck_mode: 'nomal',
                       p: '1',
-                      myselect_2: '',
-                      'sort_order[]': [1, 0, 0],
-                      'sort_order_type[]': [0, 0 ,0],
-                      show_deck_card_count: '15'
+                      myselect_2: ''
+//                      'sort_order[]': [1, 0, 0],
+//                      'sort_order_type[]': [0, 0 ,0],
+//                      show_deck_card_count: '15'
                     };
                 $.ajax({
                   type: "POST",
@@ -305,7 +305,7 @@
                     $('#v_head').append($v_head_span_ano);
                     //次ページ取得の判断
                     if ( ano < 4 && !$('#v_head > select.unit_ano').find('option:eq(' + ano + ')').text().match(/新規部隊を作成/) ) {
-                      setTimeout(refresh_v_headSpanano, 1000, ano+1);
+                      setTimeout(refresh_v_headSpanano, 100, ano+1);
                     } else {
                       if ($('#v_head > select.unit_ano').find('option:selected').attr('class')){
                         $('#v_head').find('span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
@@ -334,10 +334,10 @@
                 set_squad_id: '',
                 deck_mode: 'nomal',
                 p: p,
-                myselect_2: '',
-                'sort_order[]': [1, 0, 0],
-                'sort_order_type[]': [0, 0 ,0],
-                show_deck_card_count: '15'
+                myselect_2: ''
+//                'sort_order[]': [1, 0, 0],
+//                'sort_order_type[]': [0, 0 ,0],
+//                show_deck_card_count: '15'
               },
           set_squad_id;
         $.ajax({
@@ -443,10 +443,10 @@
               set_squad_id: '',
               deck_mode: 'nomal',
               p: p,
-              myselect_2: '',
-              'sort_order[]': [1, 0, 0],
-              'sort_order_type[]': [0, 0 ,0],
-              show_deck_card_count: '15'
+              myselect_2: ''
+//              'sort_order[]': [1, 0, 0],
+//              'sort_order_type[]': [0, 0 ,0],
+//              show_deck_card_count: '15'
             },
         rank = {'SSS': 120,'SS': 115,'S': 110,'A': 105,'B': 100,'C': 95,'D': 90,'E': 85,'F': 80},
         drank = {240: 'SSS',235: 'SS+',230: 'SS',225: 'S+',220: 'S',215: 'A+',210: 'A',205: 'B+',200: 'B',195: 'C+',190: 'C',185: 'D+',180: 'D',175: 'E+',170: 'E',165: 'F+',160: 'F'};
@@ -617,7 +617,7 @@
           var p2 = !$(html).find('ul.pager.cardstock:eq(0) > li.last > a:eq(1)')[0] ? '' : p + 1,
             ano2 = (ano === 4 || ano === '' ) ? '' : ano + 1;
           if ( (p && p2 > p) || ( ano2 > ano && !$('#v_head > select.unit_ano').find('option:eq(' + ano + ')').text().match(/新規部隊を作成/) ) ) {
-            setTimeout(createUnitList, 1000, (p? p2: p), ano2, group_setting, groups, groups_img);
+            setTimeout(createUnitList, 100, (p? p2: p), ano2, group_setting, groups, groups_img);
           }
           //取得終了後の処理
           else {
@@ -627,7 +627,7 @@
             $('#tb_unit').ready( setupTableSorter);
             $( '#unitSet').append( $( html).find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
             $('ul.uldoption').find('input').each(function() {
-              if (!$(this).attr('checked')) {
+              if (!$(this).prop('checked')) {
                 $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
               }
             });
@@ -649,7 +649,7 @@
         flg = 0;
       getCardList(url[0]);
       getCardList(url[1]);
-      setTimeout(watchflg, 300);
+      setTimeout(watchflg, 100);
 
       function watchflg() {
         var key,
@@ -661,7 +661,7 @@
           rank = {'SSS': 120,'SS': 115,'S': 110,'A': 105,'B': 100,'C': 95,'D': 90,'E': 85,'F': 80},
           drank = {240: 'SSS',235: 'SS+',230: 'SS',225: 'S+',220: 'S',215: 'A+',210: 'A',205: 'B+',200: 'B',195: 'C+',190: 'C',185: 'D+',180: 'D',175: 'E+',170: 'E',165: 'F+',160: 'F'};
         if (flg < 2) {
-          setTimeout(watchflg, 300);
+          setTimeout(watchflg, 100);
         } else {
           for (key in card) {
             sortkey.push(key);
@@ -798,10 +798,10 @@
                 set_squad_id: '',
                 deck_mode: 'nomal',
                 p: '1',
-                myselect_2: '',
-                'sort_order[]': [1, 0, 0],
-                'sort_order_type[]': [0, 0 ,0],
-                show_deck_card_count: '15'
+                myselect_2: ''
+//                'sort_order[]': [1, 0, 0],
+//                'sort_order_type[]': [0, 0 ,0],
+//                show_deck_card_count: '15'
               };
         $.ajax({
           type: "POST",
@@ -863,7 +863,7 @@
             }
             //次ページ取得の判断
             if ( ano < 4 && !$('#v_head > select.unit_ano').find('option:eq(' + ano + ')').text().match(/新規部隊を作成/) ) {
-              setTimeout(createUnitList, 1000, ano+1);
+              setTimeout(createUnitList, 100, ano+1);
             } else {
               //取得終了後の処理
               $('#v_head').find('span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
@@ -872,7 +872,7 @@
               $('#tb_unit').ready( setupTableSorter);
               $( '#unitSet').append( $( html).find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
               $('ul.uldoption').find('input').each(function() {
-                if (!$(this).attr('checked')) {
+                if (!$(this).prop('checked')) {
                   $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
                 }
               });
@@ -992,7 +992,8 @@
         return false;
       },
       format: function(s, table, cell) {
-        return $(cell).find('input').attr('checked') ? 1 : 0;
+        //console.log( s, table, cell);
+        return $(cell).find('input').prop('checked') ? 1 : 0;
       },
       type: 'numeric'
     });
