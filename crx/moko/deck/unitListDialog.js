@@ -95,6 +95,22 @@
       $('div.Loading').show();
       unitListLoad(1, 0);
     });
+
+    // 秘境
+    $( '#dungeon').on( 'click', 'button', function () {
+      var url = 'http://'+world+'.sengokuixa.jp/facility/dungeon.php',
+        data = {
+          dungeon_select: $( this).nextAll().find( ':checked').val(),
+          unit_select:[],
+          btn_send: true
+        };
+      $( '#v_head button.set_unitlist').each( function ( i, el) {
+        data.unit_select.push( $( el).val());
+      });
+      $.post( url, data, function ( data, textStatus, jqXHR) {
+        alert( textStatus + '\n' + '秘境のページを確認して下さい');
+      });
+    });
   }
 
 
@@ -454,10 +470,10 @@
           var bushoname = busho_list[i].find('#kanji').text(),
             regexpname = new RegExp(bushoname);
           if ( $(html).find('#ig_deckboxInner').find('div.common_box1')[0] ) {
-//            alert( busho_list[ i].find( '#kanji').text() + 'をセットできませんでした。');
+            alert( busho_list[ i].find( '#kanji').text() + 'をセットできませんでした。');
             getButai( $( html), select_assign_no);
           } else {
-            busho_list[i].find('td.選択').css({'background-color':'#BA8BE5'});
+            busho_list[i].find('td.選択').css({'background-color':'#BA8BE5'}).find( ':checked').prop( 'checked', false);
             $('#v_head > span.deckcost').text($(html).find('#ig_deckcost > span.ig_deckcostdata').text());
             if (i < set_squad_id.length - 1) {
               if ( (!set_assign_id && $(html).find('#ig_unitchoice > li.now').text().match(regexpname)) || (set_assign_id && !$(html).find('#ig_unitchoice > li.now').text().match(regexpname)) ) {
