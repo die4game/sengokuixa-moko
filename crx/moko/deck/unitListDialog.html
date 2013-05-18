@@ -16,11 +16,29 @@
   <body>
     <div>
       <div id="mokotool">
+        <div class="Loading">
+        </div>
         <div id="unitlistdialog">
+          <div id="v_head">
+            <div>
+              デッキコスト：<span class="deckcost"></span>
+            </div>
+            <table>
+              <tbody>
+                <tr>
+                  <td><div class="ano"><span>[---新規部隊を作成---]</span><br/></div></td>
+                  <td><div class="ano"><span>[---新規部隊を作成---]</span><br/></div></td>
+                  <td><div class="ano"><span>[---新規部隊を作成---]</span><br/></div></td>
+                  <td><div class="ano"><span>[---新規部隊を作成---]</span><br/></div></td>
+                  <td><div class="ano"><span>[---新規部隊を作成---]</span><br/></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <button id="energy">総攻防力</button><span id="power"></span>
-          <p id="v_head">
-          </p>
-          <div>
+          <div id="unitSet">
+          </div>
+          <div id="coloption">
             <button class="uldoption">列表示選択</button>
             <ul class="uldoption">
               <label><li><input type="checkbox" checked > : No</li></label>
@@ -60,8 +78,6 @@
               <label><li><input type="checkbox"> : 弓器</li></label>
             </ul>
           </div>
-          <div class="Loading">
-          </div>
           <div class="pager">
             <select class="pagesize">
               <option value="12">12</option>
@@ -71,8 +87,6 @@
               <option value="100">100</option>
               <option value="200">200</option>
             </select>
-          </div>
-          <div id="unitSet">
           </div>
           <table id="tb_unit" class="tablesorter">
             <thead><tr>

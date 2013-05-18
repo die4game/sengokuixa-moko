@@ -30,7 +30,7 @@
       if ( xhr.readyState == 4 && xhr.status == 200) {
         window.addEventListener( 'DOMContentLoaded', function () {
           createTagAndInsertHead( 'style', xhr.responseText);
-          createTagAndInsertHead( 'script', 'setTimeout( queMoko_main, 1);\n' + queMoko_main.toString());
+          createTagAndInsertHead( 'script', 'j$( function ( $) { Moko_main( $);});\n');
         });
       }
     };
@@ -51,19 +51,24 @@
   // localStorageのmoko設定をchrome.storageにセーブ
   chrome.storage.sync.get( world, function ( store) {
     //console.log( store);
-    if ( localStorage.crx_ixamoko_init_groups && localStorage.crx_ixamoko_init_groups_img && localStorage.crx_ixamoko_group_set) {
+    var storeWorld = store[world]? JSON.parse( store[world]): {};
+    storeWorld.crx_ixamoko_init_groups =
+      localStorage.crx_ixamoko_init_groups? JSON.parse( localStorage.crx_ixamoko_init_groups): {};
+    storeWorld.crx_ixamoko_group_set =
+      localStorage.crx_ixamoko_group_set? JSON.parse( localStorage.crx_ixamoko_group_set): {};
+    store[world] = JSON.stringify( storeWorld);
+    chrome.storage.sync.set( store);
+    //console.log( store);
+    chrome.storage.local.get( world, function ( store) {
       var storeWorld = store[world]? JSON.parse( store[world]): {};
-      storeWorld.crx_ixamoko_init_groups = JSON.parse( localStorage.crx_ixamoko_init_groups);
-      storeWorld.crx_ixamoko_group_set = JSON.parse( localStorage.crx_ixamoko_group_set);
+      storeWorld.crx_ixamoko_init_groups_img =
+        localStorage.crx_ixamoko_init_groups_img? JSON.parse( localStorage.crx_ixamoko_init_groups_img): {};
+      storeWorld.crx_ssID =
+        localStorage.crx_ssID? JSON.parse( localStorage.crx_ssID): {};
       store[world] = JSON.stringify( storeWorld);
-      chrome.storage.sync.set( store);
-      chrome.storage.local.get( world, function ( store) {
-        var storeWorld = store[world]? JSON.parse( store[world]): {};
-        storeWorld.crx_ixamoko_init_groups_img = JSON.parse( localStorage.crx_ixamoko_init_groups_img);
-        store[world] = JSON.stringify( storeWorld);
-        chrome.storage.local.set( store);
-      });
-    }
+      chrome.storage.local.set( store);
+      //console.log( store);
+    });
   });
 
   // moko設定のセーブ(storageが変化したとき)

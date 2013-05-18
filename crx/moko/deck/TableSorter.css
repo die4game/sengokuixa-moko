@@ -22,28 +22,32 @@ table#tb_unit th { padding-right: 18px; }
   margin-top: 4px;
 }
 
-#unitlistdialog>div>button.uldoption {
+#coloption {
+  clear: both;
+}
+
+#coloption>button.uldoption {
   float: left;
   padding: 0 4px;
   margin-bottom: 5px;
 }
 
-#unitlistdialog>div>ul.uldoption {
+#coloption>ul.uldoption {
   clear: both;
   display: none;
 }
 
-#unitlistdialog>div>ul>label>li {
+#coloption>ul>label>li {
   float: left;
   width: 5.5em;
   margin-bottom: 4px;
 }
 
-#unitlistdialog>div.Loading {
+#mokotool>div.Loading {
   position: absolute;
-  top: 80px;
-  left: 460px;
-  opacity: 0.6;
+  top: 50%;
+  left: 50%;
+  opacity: 0.8;
   width: 20px;
 }
 
@@ -58,10 +62,18 @@ table#tb_unit th { padding-right: 18px; }
 }
 
 #unitSet {
-  float: left;
-  margin-left: 1em;
 }
 
 #unit_cnt_text {
   width: 4em;
+}
+
+#v_head div.ano {
+  float: left;
+  margin: 1ex;
+  min-height: 16ex;
+}
+
+#v_head>table {
+  white-space: nowrap;
 }
