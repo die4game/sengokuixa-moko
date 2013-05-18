@@ -28,7 +28,8 @@
         xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
       if ( xhr.readyState == 4 && xhr.status == 200) {
-        window.addEventListener( 'DOMContentLoaded', function () {
+//        window.addEventListener( 'DOMContentLoaded', function () {
+        $( function () {
           createTagAndInsertHead( 'style', xhr.responseText);
           createTagAndInsertHead( 'script', 'j$( function () { queMoko_main();});\n' + queMoko_main.toString());
         });

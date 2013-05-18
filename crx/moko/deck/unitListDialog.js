@@ -454,7 +454,7 @@
           var bushoname = busho_list[i].find('#kanji').text(),
             regexpname = new RegExp(bushoname);
           if ( $(html).find('#ig_deckboxInner').find('div.common_box1')[0] ) {
-            alert(busho_list[i].find('#kanji').text() + 'をセットできませんでした。');
+//            alert( busho_list[ i].find( '#kanji').text() + 'をセットできませんでした。');
             getButai( $( html), select_assign_no);
           } else {
             busho_list[i].find('td.選択').css({'background-color':'#BA8BE5'});
@@ -464,13 +464,15 @@
                 if ( !set_assign_id ) {
                   set_assign_id = $(html).find('#set_assign_id').val();
                 }
+//                console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
                 setTimeout(set_card_to_deck, 100, select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i + 1);
               } else {
                 alert(busho_list[i+1].find('#kanji').text() + 'をセットできませんでした。');
+//                console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
                 getButai( $( html), select_assign_no);
               }
             } else {
-              alert('完了');
+//              alert('完了');
               getButai( $( html), select_assign_no);
             }
           }
