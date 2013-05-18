@@ -1,14 +1,14 @@
 (function() {
 
+  // ワールド選択
   if (location.pathname === '/world/select_world.php') {
 
-    //ワールド選択でログイン時間のクッキー登録のみ実行
+    // ログイン時間のクッキー登録
     var time = new Date() / 1000;
     document.cookie = 'im_st=' + time + '; domain=.sengokuixa.jp; path=/;';
 
+  // セッションタイムアウト画面以外
   } else if (location.pathname !== '/false/login_sessionout.php') {
-
-    // セッションタイムアウト画面以外
 
     // backgroundページからオブジェクトをロード
     var objectArray = [
@@ -30,7 +30,7 @@
       if ( xhr.readyState == 4 && xhr.status == 200) {
         window.addEventListener( 'DOMContentLoaded', function () {
           createTagAndInsertHead( 'style', xhr.responseText);
-          createTagAndInsertHead( 'script', 'j$( function ( $) { Moko_main( $);});\n');
+          createTagAndInsertHead( 'script', 'j$( function () { queMoko_main();});\n' + queMoko_main.toString());
         });
       }
     };
