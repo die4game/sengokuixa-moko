@@ -1,6 +1,7 @@
 ( function () {
   var world, tabId, options = {}, ssID, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images,
-    column = localStorage.column? JSON.parse( localStorage.column): [];
+    column = localStorage.column? JSON.parse( localStorage.column): [],
+    villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {};
 
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
@@ -99,17 +100,47 @@
     // 秘境
     $( '#dungeon').on( 'click', 'button', function () {
       var url = 'http://'+world+'.sengokuixa.jp/facility/dungeon.php',
+        village = {},
         data = {
           dungeon_select: $( this).nextAll().find( ':checked').val(),
-          unit_select:[],
+          unit_select: [],
           btn_send: true
-        };
+        }, key;
       $( '#v_head button.set_unitlist').each( function ( i, el) {
-        data.unit_select.push( $( el).val());
+        var base = $( el).parent().prev( 'span.base').text().match(/\S+/g);
+        if ( base[1] === '未設定') {
+          console.log( base[1]);
+          return false;
+        } else {
+          if ( !villageIds[ base[ 1]]) get_villageId();
+          village[ base[ 1]] = 'http://' + world + '.sengokuixa.jp/village_change.php?village_id=' + villageIds[ base[ 1]];
+          data.unit_select.push( $( el).val());
+        }
       });
-      $.post( url, data, function ( data, textStatus, jqXHR) {
-        alert( textStatus + '\n' + '秘境のページを確認して下さい');
-      });
+      for ( key in village) {
+        $.ajax({
+          url: village[ key],
+          async: false,
+          success: function ( html, textStatus, jqXHR) {
+            $.ajax({
+              url: url,
+              type: 'POST',
+              async: false,
+              data: data,
+              success: function ( html, textStatus, jqXHR) {
+                var obj = $( $.parseHTML( html)).find( 'td.radio_frame');
+                if ( obj.length && obj.has('input').length) {
+                  alert( textStatus + '\n' + '秘境へ送れませんでした。');
+                } else if ( obj.length > 0) {
+                  alert( textStatus + '\n' + '秘境へ送りました。');
+                } else {
+                  alert( textStatus + '\n' + '秘境のページを確認してください。');
+                }
+              }
+            });
+          }
+        });
+      }
     });
   }
 
@@ -472,6 +503,7 @@
           if ( $(html).find('#ig_deckboxInner').find('div.common_box1')[0] ) {
             alert( busho_list[ i].find( '#kanji').text() + 'をセットできませんでした。');
             getButai( $( html), select_assign_no);
+            $( '#tb_unit').trigger( 'update');
           } else {
             busho_list[i].find('td.選択').css({'background-color':'#BA8BE5'}).find( ':checked').prop( 'checked', false);
             $('#v_head > span.deckcost').text($(html).find('#ig_deckcost > span.ig_deckcostdata').text());
@@ -486,10 +518,12 @@
                 alert(busho_list[i+1].find('#kanji').text() + 'をセットできませんでした。');
 //                console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
                 getButai( $( html), select_assign_no);
+                $( '#tb_unit').trigger( 'update');
               }
             } else {
 //              alert('完了');
               getButai( $( html), select_assign_no);
+              $( '#tb_unit').trigger( 'update');
             }
           }
         },
@@ -628,6 +662,26 @@
         }
       });
     }
+  }
+
+  // 拠点IDを取得
+  function get_villageId() {
+    // 拠点名と拠点IDの対応表を作成
+    $.ajax({
+      url: 'http://' + world + '.sengokuixa.jp/user/',
+      cache: true,
+      async: false,
+      timeout: 2000,
+      dataType: "text",
+      success: function(html) {
+        $( $.parseHTML( html)).find('table.common_table1.center').find('.fs14').each(function() {
+          var anc = $(this).find('td').eq(1).find('a');
+          villageIds[ anc.prop( 'innerText').replace( /^\s+|\s+$/g, '')] = anc.prop( 'href').match( /village_change\.php\?village_id=(\d+)$/)[1];
+        });
+      }
+    });
+    localStorage.villageIds = JSON.stringify( villageIds);
+    console.log( villageIds);
   }
 
   function cal_energy($power) {
