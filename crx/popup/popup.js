@@ -49,6 +49,7 @@ $( function () {
         false,
         false,
         true,
+        false,
         false
       ],
       def_num_of_soldier: "100",
