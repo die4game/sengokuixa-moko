@@ -1991,7 +1991,7 @@ function Moko_main( $) {
     function mouseover() {
       $(this).css('background-color', '#725E1E');
       $('area[href*="' + $(this).attr('coord') + '"]').trigger('mouseover');
-      console.log($('area[href*="' + $(this).attr('coord') + '"]'));
+     //console.log($('area[href*="' + $(this).attr('coord') + '"]'));
       if (options.map_minimap) {
         var ctx = $('#ixamoko_maplist3 > canvas')[0].getContext('2d');
         var coord = $(this).attr('coord').match(/(\-?\d+).+?(\-?\d+)/);
@@ -11254,8 +11254,9 @@ function Moko_main( $) {
   function enemyCheckR(rst) {
     var d = (new Date() / 1000) | 0;
     var rrr = { 'date': 0, 'raid': { 'time': [-1], 'num': 0} };
-    if (localStorage.getItem("crx_enemyCheckR")) {
-      rrr = secureEvalJSON(localStorage.getItem("crx_enemyCheckR"));
+   //console.log( 'enemyCheckR 1', rrr, toJSON( rrr), JSON.parse( toJSON( rrr)), JSON.parse(localStorage.crx_enemyCheckR || "false" ));    
+    if ( localStorage.crx_enemyCheckR) {
+      rrr = JSON.parse( localStorage.crx_enemyCheckR);
     }
     var dd = d - rrr.date, raidnum = rrr.raid.num;
     if (dd >= rst) {
@@ -11264,7 +11265,8 @@ function Moko_main( $) {
         function(html) {
           rrr.date = d;
           rrr.raid = get_raid(html);
-          localStorage.setItem("crx_enemyCheckR", toJSON(rrr));
+          localStorage.crx_enemyCheckR = toJSON( rrr);
+         //console.log( 'enemyCheckR 5', rrr, toJSON( rrr), JSON.parse( toJSON( rrr)), JSON.parse(localStorage.crx_enemyCheckR));
           if (rrr.raid.time[0] > 0 && (raidnum < rrr.raid.num || rrr.raid.time[0] < 180)) {
             if ( webkitNotifications.checkPermission() === 0 ) {
               var n = parseInt(Math.random()*5) + 1;
@@ -11332,6 +11334,7 @@ function Moko_main( $) {
       });
       enemyT.sort();
     }
+   //console.log( 'get_raid', enemyT);
     return {'html': enemyL, 'time': enemyT,  'num': cnt};
   }
   //資源バー
@@ -12011,8 +12014,7 @@ function Moko_main( $) {
 */
 
   function toJSON( o) {
-    return JSON.stringify( o);
-/*
+    //return JSON.stringify( o);
     //if (typeof(JSON) == 'object' && JSON.stringify)return JSON.stringify(o);
     var type = typeof (o);
     if (o === null)
@@ -12072,13 +12074,12 @@ function Moko_main( $) {
       }
       return "{" + pairs.join(", ") + "}";
     }
-*/
   }
 
   function secureEvalJSON(src) {
       return JSON.parse(src);
   }
-/*
+
   function quoteString(string) {
     var _escapeable = /["\\\x00-\x1f\x7f-\x9f]/g;
     var _meta = {'\b': '\\b','\t': '\\t','\n': '\\n','\f': '\\f','\r': '\\r','"': '\\"','\\': '\\\\'};
@@ -12093,7 +12094,7 @@ function Moko_main( $) {
     }
     return '"' + string + '"';
   }
-*/
+
 
 /*
 * Cookie plugin

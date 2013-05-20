@@ -89,7 +89,11 @@
   function saveSettings( obj) {
     if ( obj) {
       for ( var key in obj) {
-        localStorage[ key] = JSON.stringify( obj[ key]);
+        if ( obj[key] === 'remove') {
+          localStorage.removeItem( key);
+        } else {
+          localStorage[ key] = JSON.stringify( obj[ key]);
+        }
       }
     } else {
       localStorage.removeItem( 'crx_ixamoko_optio');

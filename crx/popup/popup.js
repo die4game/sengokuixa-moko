@@ -313,7 +313,7 @@ $( function () {
 
   // 敵襲情報クリア
   $('#clear_enemyCheckR').click(function(e) {
-    setStorage( 'crx_enemyCheckR', false, true);
+    setStorage( 'crx_enemyCheckR', 'remove', true);
     alert('Done.');
   });
 
