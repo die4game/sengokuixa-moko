@@ -1,6 +1,6 @@
 ( function () {
   var world, tabId, options = {}, ssID, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images,
-    column = localStorage.column? JSON.parse( localStorage.column): [],
+    column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
     villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {};
 
   // カレントタブ取得
@@ -10,19 +10,15 @@
     //console.log( world, tabId, tab);
 
     // options、set_squad_id、グループ設定の取得
-    chrome.storage.sync.get( world, function ( store) {
+    chrome.storage.local.get( world, function ( store) {
       var storeWorld = JSON.parse( store[world]);
       //console.log( storeWorld);
       options = storeWorld.crx_ixa_moko_options;
       group_setting = storeWorld.crx_ixamoko_group_set;
       groups = storeWorld.crx_ixamoko_init_groups;
-      chrome.storage.local.get( world, function ( store) {
-        var storeWorld = JSON.parse( store[world]);
-        //console.log( storeWorld);
-        groups_img = storeWorld.crx_ixamoko_init_groups_img;
-        ssID = storeWorld.crx_ssID || {};
-        $(unitListDialog);
-      });
+      groups_img = storeWorld.crx_ixamoko_init_groups_img;
+      ssID = storeWorld.crx_ssID || {};
+      $(unitListDialog);
     });
   });
   tableSorter_($);
@@ -117,7 +113,9 @@
           data.unit_select.push( $( el).val());
         }
       });
+      var i = Object.keys( village).length;
       for ( key in village) {
+        i--;
         $.ajax({
           url: village[ key],
           async: false,
@@ -127,6 +125,10 @@
               type: 'POST',
               async: false,
               data: data,
+              beforeSend: function () {
+                $('#unitlistdialog').css({'opacity': '0.3'});
+                $('div.Loading').show();
+              },
               success: function ( html, textStatus, jqXHR) {
                 var obj = $( $.parseHTML( html)).find( 'td.radio_frame');
                 if ( obj.length && obj.has('input').length) {
@@ -135,6 +137,10 @@
                   alert( textStatus + '\n' + '秘境へ送りました。');
                 } else {
                   alert( textStatus + '\n' + '秘境のページを確認してください。');
+                }
+                if ( i < 1) {
+                  $('#unitlistdialog').css({'opacity': '1.0'});
+                  $('div.Loading').hide();
                 }
               }
             });
@@ -832,8 +838,8 @@
         41: {sorter: 'ability'},
         44: {sorter: 'ability'},
         47: {sorter: 'ability'},
-      },
-      sortForce: [[0,1]]
+      }
+      //sortForce: [[0,1]]
     })
     .tablesorterPager({
 

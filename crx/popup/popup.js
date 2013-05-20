@@ -3,7 +3,7 @@ $( function () {
   var allSettings ={},
     groups = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     groups_def = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-    groups_img, groups_img_def = [], SOUND, group_setting = {}, options = {}, WORLD,
+    groups_img, groups_img_def = [], SOUND, group_setting = {}, WORLD,
 
     // moko設定のデフォルト値
     options_def = {
@@ -91,7 +91,7 @@ $( function () {
       market_desc: true,
       market_maxsoldier: true,
       market_radiobutton: true,
-      menu_reversal: true,
+      menu_reversal: false,
       merge_fight_info: true,
       mod_status_left: true,
       move_nearby: true,
@@ -160,7 +160,7 @@ $( function () {
       WORLD = tmp? tmp[1]: false;
 
       // 設定があるworldを取得し、world選択をセット
-      chrome.storage.sync.get( 'worldKey', function ( store) {
+      chrome.storage.local.get( 'worldKey', function ( store) {
         var worldArray = store.worldKey || [];
         if ( $.inArray( WORLD, worldArray) < 0)
           worldArray.push( WORLD);
@@ -168,27 +168,20 @@ $( function () {
         worldArray.forEach( function ( world) {
           $( '#worldSelect').append( '<option value="' + world + '">' + world + '</option>').val( world);
         });
-        chrome.storage.sync.set( { 'worldKey': worldArray}, function () {
+        chrome.storage.local.set( { 'worldKey': worldArray}, function () {
           //console.log( worldArray);
         });
         $('#worldSelect').val(WORLD);
       });
 
       // moko設定をロード
-      chrome.storage.sync.get( WORLD, function ( store) {
+      chrome.storage.local.get( WORLD, function ( store) {
         setSetting( store, WORLD);
       });
 
       $('#ixamoko_set_tab_all').show();
       $('#ixamoko_set_grp>div').eq(0).css('background-color', '#aaf');
 
-      // groupSettingをロード
-      chrome.tabs.sendMessage( tab.id, 'send groupSetting', function ( obj) {
-        //console.log( obj);
-        groups = obj? obj.crx_ixamoko_init_groups: groups_def;
-        groups_img = obj? obj.crx_ixamoko_init_groups_img: groups_img_def;
-        setGroup( groups, groups_img);
-      });
     });
   });
 
@@ -214,7 +207,7 @@ $( function () {
       options = options_def;
       setOptions( options_def);
     } else {
-      chrome.storage.sync.get( world, function ( store) {
+      chrome.storage.local.get( world, function ( store) {
         setSetting( store, world);
       });
     }
@@ -232,7 +225,7 @@ $( function () {
   $('#delete').click( function () {
     var world = $('#worldSelect').val();
     if ( world !== 'default' && confirm( world + 'の設定を削除します。')) {
-      chrome.storage.sync.remove( world);
+      chrome.storage.local.remove( world);
       $('#worldSelect').find('[value="'+world+'"]').remove();
       $('#worldSelect').val( WORLD).trigger( 'change');
     }
@@ -261,14 +254,14 @@ $( function () {
       groups[parseInt($parent.attr('grpid'), 10)] = color.replace('"', '%22');
       groups_img[parseInt($parent.attr('grpid'), 10)] = icon.replace('"', '%22');
       $parent.find('IMG').attr('src', icon);
-      setStorage( 'crx_ixamoko_init_groups', groups);
-      setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img);
+      setStorage( { 'crx_ixamoko_init_groups': groups, 'crx_ixamoko_init_groups_img': groups_img});
     }
   });
   $( '#ixamoko_grp_list').on( 'click', 'INPUT.ixamoko_set_grp_del', function(e) {
     if (confirm('本当に削除して良いですか。')) {
       var $parent = $(this).parent();
       var id = parseInt($parent.attr('grpid'), 10);
+      $parent.remove();
       groups.splice(id, 1);
       groups_img.splice(id, 1);
       for (var cardid in group_setting) {
@@ -278,19 +271,22 @@ $( function () {
           --group_setting[cardid];
         }
       }
-      setStorage( 'crx_ixamoko_group_set', group_setting);
-      $parent.remove();
-      setStorage( 'crx_ixamoko_init_groups', groups);
-      setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img);
+      setStorage( {
+        'crx_ixamoko_group_set': group_setting,
+        'crx_ixamoko_init_groups': groups,
+        'crx_ixamoko_init_groups_img': groups_img
+      });
     }
   });
   $('INPUT.ixamoko_set_grp_default').click(function(e) {
     if (confirm('"標準"に戻してよろしいですか？グループ順記録も破棄されます。')) {
-      group_setting = {};
-      setStorage( 'crx_ixamoko_group_set', group_setting);
       setGroup( groups_def, groups_img_def);
-      setStorage( 'crx_ixamoko_init_groups', groups_def);
-      setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img_def);
+      group_setting = {};
+      setStorage( {
+        'crx_ixamoko_group_set': group_setting,
+        'crx_ixamoko_init_groups': groups_def,
+        'crx_ixamoko_init_groups_img': groups_img_def
+      });
     }
   });
   $('INPUT.ixamoko_set_grp_add').click(function(e) {
@@ -300,20 +296,19 @@ $( function () {
     $list.append(html);
     groups[i] = '';
     groups_img[i] = groups_img[0];
-    setStorage( 'crx_ixamoko_init_groups', groups);
-    setStorageLocal( 'crx_ixamoko_init_groups_img', groups_img);
+    setStorage( { 'crx_ixamoko_init_groups': groups, 'crx_ixamoko_init_groups_img': groups_img});
   });
   // group設定ここまで
 
   // 戦況マップクリア
   $('#clear_all_map_status').click(function(e) {
-    setStorage('crx_ixakaizou_map_status', false, true);
+    setStorage( { 'crx_ixakaizou_map_status': 'remove'}, true);
     alert('Done.');
   });
 
   // 敵襲情報クリア
   $('#clear_enemyCheckR').click(function(e) {
-    setStorage( 'crx_enemyCheckR', 'remove', true);
+    setStorage( { 'crx_enemyCheckR': 'remove'}, true);
     alert('Done.');
   });
 
@@ -332,9 +327,11 @@ $( function () {
   // 広域マップクリア
   $('#clear_all_area_map').click(function(e) {
     if (confirm('表示設定と記録した同盟データをすべて消去してよろしいですか？')) {
-      setStorage('crx_areamaptoride', false, true);
-      setStorage('crx_areamapcountry', false, true);
-      setStorage('crx_alliesObj', false, true);
+      setStorage( {
+        'crx_areamaptoride': 'remove',
+        'crx_areamapcountry': 'remove',
+        'crx_alliesObj': 'remove'
+      }, true);
     }
   });
 
@@ -342,7 +339,7 @@ $( function () {
   $('#clear_map_reg').click(function(e) {
     if (confirm('記録した座標をすべて消去してよろしいですか？')) {
       var map_list = {};
-      setStorage( "crx_map_list", map_list, true);
+      setStorage( { "crx_map_list": map_list}, true);
     }
   });
 
@@ -350,7 +347,7 @@ $( function () {
   $('#clear_grp_reg').click(function(e) {
     if (confirm('記録したグループをすべて消去してよろしいですか？')) {
       var tmp_list = {};
-      setStorage( "crx_ixamoko_group_set", tmp_list, true);
+      setStorage( { "crx_ixamoko_group_set": tmp_list}, true);
     }
   });
 
@@ -358,7 +355,7 @@ $( function () {
   $('#clear_facility_reg').click(function(e) {
     if (confirm('記録した施設をすべて消去してよろしいですか？')) {
       var facility_list = {};
-      setStorage( "crx_facility_list", facility_list, true);
+      setStorage( { "crx_facility_list": facility_list}, true);
     }
   });
 
@@ -376,7 +373,7 @@ $( function () {
         ) {
           continue;
         } else {
-          setStorage( key, false, true);
+          setStorage( { key: 'remove'}, true);
         }
       }
     }
@@ -423,34 +420,22 @@ $( function () {
         options[key] = $(this).prop('checked') === true ? true : false;
       }
     });
-    setStorage( 'crx_ixa_moko_options', options, false, world);
+    setStorage( { 'crx_ixa_moko_options': options}, false, world);
     return false;
   }
 
 
-  // storage.sync.setの部分
-  function setStorage (  key, options, toggle, world) {
-    var world = world? world: $('#worldSelect').val();
-    chrome.storage.sync.get( world, function ( store) {
-      allSettings = store[world]? JSON.parse(store[world]): {};
-      allSettings[key] = options;
-      allSettings.toggle ^= toggle;
-      store[world] = JSON.stringify(allSettings);
-      chrome.storage.sync.set( store, function(){
-        //console.log(allSettings)
-      });
-    });
-  }
-  // storage.local.set group_img用
-  function setStorageLocal (  key, options, toggle, world) {
-    var world = world? world: $('#worldSelect').val();
+  // storage.local.set
+  function setStorage (  obj, toggle, world) {
+    var world = world? world: $('#worldSelect').val(), key;
     chrome.storage.local.get( world, function ( store) {
       allSettings = store[world]? JSON.parse(store[world]): {};
-      allSettings[key] = options;
+      for ( key in obj) {
+        allSettings[key] = obj[key];
+      }
       allSettings.toggle ^= toggle;
       store[world] = JSON.stringify(allSettings);
       chrome.storage.local.set( store, function(){
-        //console.log(allSettings)
       });
     });
   }
@@ -459,12 +444,16 @@ $( function () {
   // moko設定をロード
   function setSetting ( store, world) {
     //console.log( store);
-    var options;
-    if ( !store[world] || !( options = JSON.parse( store[world]).crx_ixa_moko_options)) {
+    var storeWorld = store[world]? JSON.parse( store[world]): {},
+      options = storeWorld.crx_ixa_moko_options;
+    groups = storeWorld.crx_ixamoko_init_groups || groups_def;
+    groups_img = storeWorld.crx_ixamoko_init_groups_img || groups_img_def;
+    setGroup( groups, groups_img);
+    if ( options) {
+      setOptions( options);
+    } else {
       saveSetting();
-      return;
     }
-    setOptions( options);
   }
 
   // optionsを渡してセット
