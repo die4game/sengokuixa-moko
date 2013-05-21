@@ -151,14 +151,12 @@ function Moko_main( $) {
   war_detail_navi();
   facility_tool();
   card_tool();
-//      prohibitionArea();  //旧陣張禁止区域
   panelAttack();
   now_select_point();
   zoomMap();
   card_deck_layout();
   favoriteSort();
   deal_favorite();
-//  unitListDialog();
   fall_check();
   lv_check();
   panel_func_change();
@@ -461,15 +459,14 @@ function Moko_main( $) {
     
     var menu02 = $('li.gMenu02'),
         menu07 = $('li.gMenu07');
-    menu02.find('li').slice(0, 3).remove();
+    menu02.find('li').slice(0, 4).remove();
     menu02.find('ul')
     .prepend(
-        '<li><a href="/facility/set_unit_list.php?show_num=100&select_card_group=1">兵士編成【第一組】</a></li>' +
-        '<li><a href="/facility/set_unit_list.php?show_num=100&select_card_group=2">兵士編成【第二組】</a></li>' +
-        '<li><a href="/facility/set_unit_list.php?show_num=100&select_card_group=3">兵士編成【第三組】</a></li>' +
-        '<li><a href="/facility/set_unit_list.php?show_num=100&select_card_group=4">兵士編成【第四組】</a></li>' +
-        '<li><a href="/facility/set_unit_list.php?show_num=100&select_card_group=5">兵士編成【未設定】</a></li>' +
-        '<li><a href="/facility/set_unit_list.php?show_num=100&select_card_group=0">兵士編成【全武将】</a></li>'
+      '<li><a href="/card/deck.php?ano=0">部隊編成 [デッキ1]</a></li>' +
+      '<li><a href="/card/deck.php?ano=1">部隊編成 [デッキ2]</a></li>' +
+      '<li><a href="/card/deck.php?ano=2">部隊編成 [デッキ3]</a></li>' +
+      '<li><a href="/card/deck.php?ano=3">部隊編成 [デッキ4]</a></li>' +
+      '<li><a href="/card/deck.php?ano=4">部隊編成 [デッキ5]</a></li>'
        );
     menu02.find('a:contains("カード一括破棄")').attr('href', '/card/deck_card_delete.php?show_num=100');
     menu07.find('ul').append('<li><a href="/alliance/alliance_gold_mine_history.php">発掘履歴</a></li>');
@@ -621,26 +618,31 @@ function Moko_main( $) {
     if( options.raid_system ) { $('#敵襲 > a').css('color', 'yellow'); }
     
     $('<div style="display: none;">' + 
-      '<a id="friendly" href="/facility/unit_status.php?dmo=help">友軍</a>' +
-      '<a href="/facility/unit_list.php">待機兵士一覧</a>' +
+        '<a id="friendly" href="/facility/unit_status.php?dmo=help">友軍</a>' +
       '</div>'
     ).appendTo('#全部隊');
     
     var newBattle = $('#sideboxBottom').find('table.situationWorldTable').find('img[alt="合戦中"]').attr('title');
     if( newBattle == '新合戦中' ){ $('#friendly').remove(); }
     
-    $('<div style="display: none;">' + 
-      '<a href="/facility/set_unit_list.php?show_num=50">兵士編成 【50】</a>' +
-      '<a href="/facility/set_unit_list.php?show_num=20">兵士編成 【20】</a>' +
+    $('<div style="display: none; width: auto;">' + 
+        '<a href="/facility/set_unit_list.php?show_num=100&select_card_group=1">【第一組】兵士編成</a>' +
+        '<a href="/facility/set_unit_list.php?show_num=100&select_card_group=2">【第二組】兵士編成</a>' +
+        '<a href="/facility/set_unit_list.php?show_num=100&select_card_group=3">【第三組】兵士編成</a>' +
+        '<a href="/facility/set_unit_list.php?show_num=100&select_card_group=4">【第四組】兵士編成</a>' +
+        '<a href="/facility/set_unit_list.php?show_num=100&select_card_group=5">【未設定】兵士編成</a>' +
+        '<a href="/facility/unit_list.php">待機兵士一覧</a>' +
       '</div>'
     ).appendTo('#全兵士編成');
     
     $('#全部隊, #全兵士編成').hover(function(){
-      $(this).height('22px').children('div').slideDown(200);
-      $(this).prev().height('22px');
-    },function(){
-      $(this).height('').children('div').slideUp(200);
-      $(this).prev().height('');
+        $(this).css('background-color', 'darkred');
+        $(this).height('22px').children('div').slideDown(200);
+        $(this).prev().height('22px');
+      },function(){
+        $(this).css('background-color', '');
+        $(this).height('').children('div').slideUp(200);
+        $(this).prev().height('');
     })
     
     //チャット欄に敵襲タブを追加
@@ -839,16 +841,19 @@ function Moko_main( $) {
       '<div style="display: none;">' + 
         '<a href="/senkuji/senkuji.php">戦国くじ</a>' +
         '<a href="/card/trade.php?t=name&k=&s=no&o=a">取引</a>' +
+        '<a href="/card/trade_card.php">出品</a>' +
         '<a href="/union/index.php">合成</a>' +
         '<a href="/card/card_album.php">カードアルバム</a>' +
       '</div>' +
       '<li>'
     ).hover(function(){
-      $(this).height('22px').children('div').slideDown(200);
-      $(this).prev().height('22px');
-    },function(){
-      $(this).height('').children('div').slideUp(200);
-      $(this).prev().height('');
+        $(this).css('background-color', 'darkred');
+        $(this).height('22px').children('div').slideDown(200);
+        $(this).prev().height('22px');
+      },function(){
+        $(this).css('background-color', '');
+        $(this).height('').children('div').slideUp(200);
+        $(this).prev().height('');
     }).appendTo($('#status_left > ul'));
     
     var sideboxToolHead = $('#sideboxTop').find('div.sideBoxHead:eq(0)');
@@ -1618,21 +1623,60 @@ function Moko_main( $) {
     var Otono = $('img.otono_name')
           .css({'cursor':'pointer', 'margin-top':'-6px', 'margin-left':'-5px'})
           .wrap('<span id="country_change"></span>');
+    //4章
+    if ( options.chapter_change === '0' ) {
+      $('<div id="change_menu">' +
+        '<a href="' + center_code + '12">最上家</a>' +
+        '<a href="' + center_code + '7">浅井家</a>' +
+        '<a href="' + center_code + '4">上杉家</a>' +
+        '<a href="' + center_code + '8">北条家</a>' +
+        '<a href="' + center_code + '3">武田家</a>' +
+        '<a href="' + center_code + '5">徳川家</a>' +
+        '<a href="' + center_code + '1">織田家</a>' +
+        '<a href="' + center_code + '2">足利家</a>' +
+        '<a href="' + center_code + '11">大友家</a>' +
+        '<a href="' + center_code + '6">毛利家</a>' +
+        '<a href="' + center_code + '9">長宗我部家</a>' +
+        '<a href="' + center_code + '10">島津家</a>' +
+        '</div>'
+      ).appendTo('#country_change');
+    }
+    //6章
+    else if ( options.chapter_change === '6' ) {
+      $('<div id="change_menu">' +
+        '<a href="' + center_code + '12">石田家</a>' +
+        '<a href="' + center_code + '7">伊達家</a>' +
+        '<a href="' + center_code + '4">上杉家</a>' +
+        '<a href="' + center_code + '8">今川家</a>' +
+        '<a href="' + center_code + '3">武田家</a>' +
+        '<a href="' + center_code + '5">徳川家</a>' +
+        '<a href="' + center_code + '1">織田家</a>' +
+        '<a href="' + center_code + '2">黒田家</a>' +
+        '<a href="' + center_code + '11">豊臣家</a>' +
+        '<a href="' + center_code + '6">毛利家</a>' +
+        '<a href="' + center_code + '9">長宗我部家</a>' +
+        '<a href="' + center_code + '10">島津家</a>' +
+        '</div>'
+      ).appendTo('#country_change');
+    }
+    //5章
+    else {
     $('<div id="change_menu">' +
-      '<a href="' + center_code + '12">最上家</a>' +
-      '<a href="' + center_code + '7">伊達家｜浅井家</a>' +
-      '<a href="' + center_code + '4">上杉家</a>' +
-      '<a href="' + center_code + '8">北条家</a>' +
-      '<a href="' + center_code + '3">武田家</a>' +
-      '<a href="' + center_code + '5">徳川家</a>' +
-      '<a href="' + center_code + '1">織田家</a>' +
-      '<a href="' + center_code + '2">足利家</a>' +
-      '<a href="' + center_code + '11">豊臣家｜大友家</a>' +
-      '<a href="' + center_code + '6">毛利家</a>' +
-      '<a href="' + center_code + '9">長宗我部家</a>' +
-      '<a href="' + center_code + '10">島津家</a>' +
-     '</div>'
-    ).appendTo('#country_change');
+        '<a href="' + center_code + '12">最上家</a>' +
+        '<a href="' + center_code + '7">伊達家</a>' +
+        '<a href="' + center_code + '4">上杉家</a>' +
+        '<a href="' + center_code + '8">北条家</a>' +
+        '<a href="' + center_code + '3">武田家</a>' +
+        '<a href="' + center_code + '5">徳川家</a>' +
+        '<a href="' + center_code + '1">織田家</a>' +
+        '<a href="' + center_code + '2">足利家</a>' +
+        '<a href="' + center_code + '11">豊臣家</a>' +
+        '<a href="' + center_code + '6">毛利家</a>' +
+        '<a href="' + center_code + '9">長宗我部家</a>' +
+        '<a href="' + center_code + '10">島津家</a>' +
+       '</div>'
+      ).appendTo('#country_change');
+    }
     
     if(newBattle == '新合戦中'){
       $('<a href="' + center_code + '20">東西戦場 1</a><a href="' + center_code + '21">東西戦場 2</a>')
@@ -1811,8 +1855,9 @@ function Moko_main( $) {
       map_tool_button_grp.prepend(status_box_btn);
       
       $('tr.ixamoko_regmap')
-      .live('click', function(e) {
-          location.href = $(this).attr('url');
+      .live('contextmenu', function(e) {
+        e.preventDefault();
+        location.href = $(this).attr('url');
       })
       .live('mouseover', function(e) {
         $('area[balloon="' + $(this).attr('alt') + '"]').trigger('mouseover');
@@ -1820,12 +1865,11 @@ function Moko_main( $) {
       .live('mouseout', function(e) {
         $('#ixamoko_zoommap').remove();
       })
-      .live('contextmenu', function(event) {
+      .live('click', function(event) {
         var ev = options.map_leftclick? 'click': (options.map_rightclick? 'contextmenu': false);
         if (!ev) return;
         event.preventDefault();
         $('area[balloon="' + $(this).attr('alt') + '"]').trigger(ev);
-        //openToolMap( $('area[balloon="' + $(this).attr('alt') + '"]'), event.pageX, event.pageY );
       });
       map_list2();
     }
@@ -1910,9 +1954,15 @@ function Moko_main( $) {
       }
       
       var x = tmp[1], y = tmp[2], c = tmp[3];
+      //4章
       if ( options.chapter_change === '0' ) {
         var world = { 1:'織田家', 2:'足利家', 3: '武田家', 4: '上杉家', 5: '徳川家', 6: '毛利家', 7: '浅井家', 8: '北条家', 9: '長宗我部家', 10: '島津家', 11: '大友家', 12: '最上家', 20:'東西戦場1', 21:'東西戦場2' };
       }
+      //6章
+      else if ( options.chapter_change === '6' ) {
+        var world = { 1:'織田家', 2:'黒田家', 3: '武田家', 4: '上杉家', 5: '徳川家', 6: '毛利家', 7: '伊達家', 8: '今川家', 9: '長宗我部家', 10: '島津家', 11: '大友家', 12: '石田家', 20:'東西戦場1', 21:'東西戦場2' };
+      }
+      //5章
       else {
         var world = { 1:'織田家', 2:'足利家', 3: '武田家', 4: '上杉家', 5: '徳川家', 6: '毛利家', 7: '伊達家', 8: '北条家', 9: '長宗我部家', 10: '島津家', 11: '豊臣家', 12: '最上家', 20:'東西戦場1', 21:'東西戦場2' };
       }
@@ -1930,9 +1980,15 @@ function Moko_main( $) {
       $('#reg_info').remove();
     }
     
+    $( '#reg_box>tr').live( 'contextmenu', function (e) {
+      e.preventDefault();
+      location.href = '/land.php?' + $(this).attr('coord');
+    });
+
     function mouseover() {
       $(this).css('background-color', '#725E1E');
       $('area[href*="' + $(this).attr('coord') + '"]').trigger('mouseover');
+      //console.log($('area[href*="' + $(this).attr('coord') + '"]'));
       if (options.map_minimap) {
         var ctx = $('#ixamoko_maplist3 > canvas')[0].getContext('2d');
         var coord = $(this).attr('coord').match(/(\-?\d+).+?(\-?\d+)/);
@@ -1963,15 +2019,10 @@ function Moko_main( $) {
       }
     }
     function mouseclick() {
-      var coord = $(this).attr('coord').match(/(\-?\d+),(\-?\d+)/),
-        dist = $(this).find('td.coorddist').text(),
-        url;
-      
-      if (coord) { url = '/map.php?x=' + coord[1] + '&y=' + coord[2]; }
-      else { url = '/map.php?' + $(this).attr('coord'); }
-      
-      if( dist == "-" ){ location.href = url; }
-      else { map_Ajax_Move(url); }
+      var ev = options.map_leftclick? 'click': (options.map_rightclick? 'contextmenu': false);
+      if (!ev) return;
+      event.preventDefault();
+      $('area[href*="' + $(this).attr('coord') + '"]').trigger(ev);
     }
   }
 
@@ -3116,7 +3167,7 @@ function Moko_main( $) {
       var mnbrData = {};
       var alliesObj = {};
       var fmlynm = $('.family_name p.name').text();
-      var cc = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,'北条家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
+      var cc = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,'北条家': 8,'今川家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
       if (localStorage.getItem('crx_alliesObj'))
         alliesObj = secureEvalJSON(localStorage.getItem('crx_alliesObj'));
       if (!alliesObj[fmlynm])
@@ -3281,7 +3332,7 @@ function Moko_main( $) {
                   }
       setTimeout(waite_TB_window,1);
       var tmp = '<div class="map_status" style="border-collapse: collapse; background: transparent; width: 100%; height: 100%; color: white;"><table id="all_map_status" style="border-spacing: 1px; background: #B1912C;"><tbody>';
-      tmp += '<tr><td colspan=14><select id="target"><option value="1">織田</option><option value="2">足利/黒田</option><option value="3">武田</option><option value="4">上杉</option><option value="5">徳川</option><option value="6">毛利</option><option value="7">浅井/伊達</option><option value="8">北条</option><option value="9">長宗</option><option value="10">島津</option><option value="11">大友/豊臣</option><option value="12">最上/石田</option></select><div id="lastmodify" style="padding:2px;"></div></td></tr>';
+      tmp += '<tr><td colspan=14><select id="target"><option value="1">織田</option><option value="2">足利/黒田</option><option value="3">武田</option><option value="4">上杉</option><option value="5">徳川</option><option value="6">毛利</option><option value="7">浅井/伊達</option><option value="8">北条/今川</option><option value="9">長宗</option><option value="10">島津</option><option value="11">大友/豊臣</option><option value="12">最上/石田</option></select><div id="lastmodify" style="padding:2px;"></div></td></tr>';
       if ( options.chapter_change === '0' ) {
       //4章の場合
       var x = new Array(7);
@@ -3700,7 +3751,7 @@ function Moko_main( $) {
             if(fs[i].match(/待機/)) {
               $('td.invalid_single').eq(i).addClass('single_diss');
               $('td.invalid_all').addClass('all_diss');
-              $('div.fstatus').eq(i).addClass('set_unit').attr('title', '兵編成');
+              $('div.fstatus').eq(i).addClass('set_unit').attr('title', '部隊の兵士編成');
               
               $('div.set_unit').click(function(){
                 var ano = $(this).closest('tr').find('td.invalid_single').attr('id'),
@@ -3899,8 +3950,9 @@ function Moko_main( $) {
     
     var fort_red = $('#ig_mapsAll').find('img[src*="/img/panel/fort_r"]').size();
     var village_red = $('#ig_mapsAll').find('img[src*="/img/panel/village_r"]').size();
+    var branch_red = $('#ig_mapsAll').find('img[src*="/img/panel/branch_r"]').size();
     
-    if( fort_red > 0 || village_red > 0  ) {
+    if( fort_red > 0 || village_red > 0 || branch_red > 0  ) {
       $('#fall_check').show();
     }
     else {
@@ -3914,7 +3966,7 @@ function Moko_main( $) {
       $('#mapOverlayMap > area').each(function(){
         var tmp2 = $(this).attr('onMouseOver').match(/'.*?'/g);
         var href = $(this).attr('href').replace('land', 'map');
-        if( tmp2[13].match(/\/img\/panel\/fort_r/) || tmp2[13].match(/\/img\/panel\/village_r/) ) {
+        if( tmp2[13].match(/\/img\/panel\/fort_r/) || tmp2[13].match(/\/img\/panel\/village_r/) || tmp2[13].match(/\/img\/panel\/branch_r/) ) {
           overlayOperationFM( tmp2, href );
         }
         
@@ -3971,7 +4023,7 @@ function Moko_main( $) {
     $('#mapOverlayMap > area').each(function(){
       var tmp2 = $(this).attr('onMouseOver').match(/'.*?'/g);
       var href = $(this).attr('href').replace('land', 'map');
-      if ( tmp2[13].match(/\/img\/panel\/capital_r_/) ) {
+      if ( tmp2[13].match(/\/img\/panel\/capital_r_/) || tmp2[13].match(/\/img\/panel\/castle_1_r/) || tmp2[13].match(/\/img\/panel\/castle_2_r/) || tmp2[13].match(/\/img\/panel\/castle_3_r/) || tmp2[13].match(/\/img\/panel\/castle_4_r/) ) {
         overlayOperationL( tmp2, href );
       }
     });
@@ -4065,6 +4117,12 @@ function Moko_main( $) {
             .appendTo( Required_val );
           }
         
+        } else if ( options.chapter_change === '6') {
+
+          if (tiles_text in POTENTIAL_LIST_6) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6[tiles_text] +'</div>')
+            .appendTo( Required_val );
+          }
         } else if ( options.chapter_change === '5') {
         
           if (tiles_text in POTENTIAL_LIST_5_5) {
@@ -4476,12 +4534,15 @@ function Moko_main( $) {
       soldiertype['騎馬鉄砲'] = [67, 90, 72, 75];
     }
     if (options.def_kind_soldier[12]) {
-      soldiertype['破城鎚'] = [14, 7, 11, 9];
+      soldiertype['焙烙火矢'] = [77, 77, 77, 77];	//仮)焙烙火矢不明
     }
     if (options.def_kind_soldier[13]) {
-      soldiertype['攻城櫓'] = [22, 16, 11, 14];
+      soldiertype['破城鎚'] = [14, 7, 11, 9];
     }
     if (options.def_kind_soldier[14]) {
+      soldiertype['攻城櫓'] = [22, 16, 11, 14];
+    }
+    if (options.def_kind_soldier[15]) {
       soldiertype['大筒兵'] = [69, 81, 108, 45];
     }
 
@@ -5456,6 +5517,10 @@ function Moko_main( $) {
     if ( options.chapter_change === '0') {
       if (tiles_text in POTENTIAL_LIST_4) {
         $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_4[tiles_text] +'</div>');
+      }
+    } else if ( options.chapter_change === '6') {
+      if (tiles_text in POTENTIAL_LIST_6) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6[tiles_text] +'</div>');
       }
     } else if ( options.chapter_change === '5') {
       if (tiles_text in POTENTIAL_LIST_5_5) {
@@ -6523,7 +6588,7 @@ function Moko_main( $) {
       }
       name = lordName.join("");
       var world = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,
-             '北条家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
+      '北条家': 8,'今川家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
       var worldNo = parseInt(world[$('.name').text()]);
       $(this).parent().after(' <span style="font-weight: normal;font-size: 12px;">　' +
         '<a href="/war/list.php?m=&s=1&name=lord&word='+name+'&coord=map&x=&y=">[合戦報告書]</a> ' +
@@ -6737,35 +6802,38 @@ function Moko_main( $) {
     if(location.pathname != "/facility/dungeon.php") return;
     var sol_cnt = {};
     var counter = 0;
-    var txt_cnt = '<tr><th class="moko-th">兵数</th>';
-    var txt_kind = '<tr><td rowspan="2" class="blank"></td><th class="moko-th">兵種</th>';
+    var txt_cnt = '<tr><th class="moko-th subhead">兵数</th>';
+    var txt_kind = '<tr><th class="moko-th subhead">兵種</th>';
     var commandsol_hash = {
-        commandsol_yari1: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_ashigaru.png" alt="足軽">' ,
-        commandsol_yari2: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_ashigaru-spear.png" alt="長槍足軽">' ,
-        commandsol_yari3: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_bushi.png" alt="武士">' ,
-        commandsol_yari4: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_kunibito.png" alt="国人衆"</span>' ,
-        commandsol_yumi1: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_ashigary-bow.png" alt="弓足軽">' ,
-        commandsol_yumi2: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_longbow.png" alt="長弓兵">' ,
-        commandsol_yumi3: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_bowhorse.png" alt="弓騎馬">' ,
-        commandsol_yumi4: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_pirate.png" alt="海賊衆">' ,
-        commandsol_kiba1: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_houseporn.png" alt="騎馬兵">' ,
-        commandsol_kiba2: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_alitehorse.png" alt="精鋭騎馬">' ,
-        commandsol_kiba3: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_aka.png" alt="赤備え">' ,
-        commandsol_kiba4: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_omoi.png" alt="母衣衆">' ,
-        commandsol_heiki1: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_hummer.png" alt="破城鎚">' ,
-        commandsol_heiki2: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_castlehummer.png" alt="攻城櫓">' ,
-        commandsol_heiki3: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_bighorn.png" alt="大筒兵">' ,
-        commandsol_heiki4: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_shigaru-gun.png" alt="鉄砲足軽">' ,
-        commandsol_heiki5: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_gunhorse.png" alt="騎馬鉄砲">' ,
-        commandsol_heiki6: '<img src="http://cache.sengokuixa.jp/world/20110913-05/img/card/icon/icon_zatsuga.png" alt="雑賀衆">'
+      commandsol_yari1: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yari1.gif" alt="足軽">' ,
+      commandsol_yari2: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yari2.gif" alt="長槍足軽">' ,
+      commandsol_yari3: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yari3.gif" alt="武士">' ,
+      commandsol_yari4: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yari4.gif" alt="国人衆">' ,
+      commandsol_yumi1: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yumi1.gif" alt="弓足軽">' ,
+      commandsol_yumi2: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yumi2.gif" alt="長弓兵">' ,
+      commandsol_yumi3: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yumi3.gif" alt="弓騎馬">' ,
+      commandsol_yumi4: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_yumi4.gif" alt="海賊衆">' ,
+      commandsol_kiba1: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_kiba1.gif" alt="騎馬兵">' ,
+      commandsol_kiba2: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_kiba2.gif" alt="精鋭騎馬">' ,
+      commandsol_kiba3: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_kiba3.gif" alt="赤備え">' ,
+      commandsol_kiba4: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_kiba4.gif" alt="母衣衆">' ,
+      commandsol_heiki1: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki1.gif" alt="破城鎚">' ,
+      commandsol_heiki2: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki2.gif" alt="攻城櫓">' ,
+      commandsol_heiki3: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki3.gif" alt="大筒兵">' ,
+      commandsol_heiki4: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki4.gif" alt="鉄砲足軽">' ,
+      commandsol_heiki5: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki5.gif" alt="騎馬鉄砲">' ,
+      commandsol_heiki6: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki6.gif" alt="雑賀衆">' ,
+      commandsol_heiki7: '<img src="http://cache.sengokuixa.jp/world/20130516-01/img/deck/br_job_heiki7.gif" alt="焙烙火矢">' 
     };
+    $('table.table_waigintunit').find('tr:eq(0)').find('td:eq(0)').attr('rowspan','5');
+    $('table.table_waigintunit').find('tr:eq(1)').find('td:eq(0)').attr('rowspan','4').css('background-color', '#808080');
     $('table.table_waigintunit').find('tr:eq(1)').find('td:eq(0)').attr('rowspan','5');
     $('DIV[id^="cardWindow_"]').each(function() {
       var cid = $(this).attr('id').substring(11);
-      txt_cnt += '<td colspan="2" class="heisu"><span>';
+      txt_cnt += '<td colspan="2" class="busho_name"><span>';
       txt_cnt +=  $(this).find('div.cardfront').find('span.commandsol_no').find('SPAN[id^="card_commandsol_cnt_"]').text();
-      txt_cnt += '</span></td>';
-      txt_kind += '<td colspan="2" class="heishu">';
+      txt_cnt += '人</span></td>';
+      txt_kind += '<td colspan="2" class="busho_name">';
       var txt_kind_tmp = $(this).find('div.cardfront').find('div.parameta_area').find('SPAN[id^="card_commandsol_"]').attr('class');
       txt_kind += commandsol_hash[txt_kind_tmp];
       txt_kind += '</td>';
@@ -6807,8 +6875,8 @@ function Moko_main( $) {
         }
         if(sho_check.search(/-/) != -1){
           for (i = counter%4; i < 3; i++) {
-            txt_cnt += '<td colspan="2" class="heisu"> - </td>';
-            txt_kind += '<td colspan="2" class="heishu"> - </td>';
+            txt_cnt += '<td colspan="2" class="busho_name"> - </td>';
+            txt_kind += '<td colspan="2" class="busho_name"> - </td>';
           }
           txt_cnt += '</tr>';
           txt_kind += '</tr>';
@@ -6831,8 +6899,8 @@ function Moko_main( $) {
           default:
             break;
           }
-        txt_cnt = '<tr><th class="moko-th">兵数</th>';
-        txt_kind = '<tr><td rowspan="2" class="blank"></td><th class="moko-th">兵種</th>';
+          txt_cnt = '<tr><th class="moko-th subhead">兵数</th>';
+          txt_kind = '<tr><th class="moko-th subhead">兵種</th>';
           counter+= (3-(counter%4));
         }
       } else {
@@ -6857,8 +6925,8 @@ function Moko_main( $) {
         default:
           break;
         }
-      txt_cnt = '<tr><th class="moko-th">兵数</th>';
-      txt_kind = '<tr><td rowspan="2"  class="blank"></td><th class="moko-th">兵種</th>';
+        txt_cnt = '<tr><th class="moko-th subhead">兵数</th>';
+        txt_kind = '<tr><th class="moko-th subhead">兵種</th>';
       }
       counter++;
     });
@@ -6956,18 +7024,9 @@ function Moko_main( $) {
           cn = 1;
         this.className = this.className.replace(/\d/,cn);
       };
-//        
       $('#ig_deck_smallcardarea_out').find('div.ig_deck_smallcardarea').each(function() {
         $(this).find('div.ig_deck_unitbox div').click(toggle_unit_brigade_btn_func_moko);
-        //console.log($(this).find('div.ig_deck_unitbox div').eq(0)[0]);
-//            $(this).find('div.ig_deck_smallcardtitle.clearfix').find('div:first').removeAttr('class');
       });
-//          
-//          var style = document.createElement("style");
-//          style.innerHTML = 'div[class^="unit_brigade"] { cursor: not-allowed; }' +
-//                   'div[class^="unit_brigade"]:hover { background-position: 0 0; }'
-//          document.head.appendChild(style);
-//        
     }
     //出品中カードを暗色表示
     if (options.being_exhibited) {
@@ -7704,6 +7763,7 @@ function Moko_main( $) {
             
             if (options.width_display){
               var Total = $('select.sortTotal').find('option:selected').val();
+              if ( location.pathname == "/card/deck.php") $('div.ig_decksection_top').remove();
               if (options.width_display_mod == '0' && Total == 9)       { new_ig_decksection3.addClass('vertical_3'); }
               else if (options.width_display_mod == '0' && Total == 12) { new_ig_decksection3.addClass('vertical_3'); }
               else if (options.width_display_mod == '0' && Total == 15) { new_ig_decksection3.addClass('vertical_4'); }
@@ -7835,24 +7895,7 @@ function Moko_main( $) {
     //ランク★1以上の時
     if (rank > 0) {
       //剣豪
-      if(  jobType === 'jobtype_2'|| cardNo == 2007 ||  //柳生石舟斎
-        cardNo == 2010 ||  //足利義輝
-        cardNo == 2018 ||  //宮本武蔵
-        cardNo == 2019 ||  //佐々木小次郎
-        cardNo == 2040 ||  //柳生宗矩
-        cardNo == 3001 ||  //上泉信綱
-        cardNo == 3029 ||  //宝蔵院胤栄
-        cardNo == 3039 ||  //草薙かさね
-        cardNo == 3072 ||  //細川幽斎(特)
-        cardNo == 4022 ||  //塚原卜伝
-        cardNo == 4041 ||  //丸目長恵
-        cardNo == 4049 ||  //富田重政
-        cardNo == 4069 ||  //真壁氏幹
-        cardNo == 4078 ||  //細川藤孝
-        cardNo == 4116 ||  //シン
-        cardNo == 5008 ||  //細川幽斎(序)
-        cardNo == 5049    //可児才蔵
-      ){
+      if (  jobType === 'jobtype_2') {
         rate =  ( rank * 72 ) + HPres_kengou[lv];  //基本レートにランク1毎に +72 加算
         //console.log( 'No.' + cardNo + '/' + rea + '/' + '★' + rank + '/Lv.' + lv + '/剣豪 rate = ' + rate );
       }
@@ -7882,24 +7925,7 @@ function Moko_main( $) {
     else {
     //ランク★0の時
     //剣豪
-      if( jobType === 'jobtype_2'|| cardNo == 2007 ||  //柳生石舟斎
-        cardNo == 2010 ||  //足利義輝
-        cardNo == 2018 ||  //宮本武蔵
-        cardNo == 2019 ||  //佐々木小次郎
-        cardNo == 2040 ||  //柳生宗矩
-        cardNo == 3001 ||  //上泉信綱
-        cardNo == 3029 ||  //宝蔵院胤栄
-        cardNo == 3039 ||  //草薙かさね
-        cardNo == 3072 ||  //細川幽斎(特)
-        cardNo == 4022 ||  //塚原卜伝
-        cardNo == 4041 ||  //丸目長恵
-        cardNo == 4049 ||  //富田重政
-        cardNo == 4069 ||  //真壁氏幹
-        cardNo == 4078 ||  //細川藤孝
-        cardNo == 4116 ||  //シン
-        cardNo == 5008 ||  //細川幽斎(序)
-        cardNo == 5049    //可児才蔵
-      ){
+      if( jobType === 'jobtype_2') {
         rate = HPres_kengou[lv];  //剣豪の基本レート
         //console.log( 'No.' + cardNo + '/' + rea + '/' + '★' + rank + '/Lv.' + lv + '/剣豪 rate = ' + rate );
       }
@@ -8028,7 +8054,7 @@ function Moko_main( $) {
       var defense_yumi = $('div.ig_deck_smallcardarea:contains("鉄砲足軽"), .ig_deck_smallcardarea:contains("弓足軽"), .ig_deck_smallcardarea:contains("長弓兵"), .ig_deck_smallcardarea:contains("弓騎馬")');
       var defense_kiba = $('div.ig_deck_smallcardarea:contains("鉄砲足軽"), .ig_deck_smallcardarea:contains("騎馬兵"), .ig_deck_smallcardarea:contains("精鋭騎馬"), .ig_deck_smallcardarea:contains("赤備え")');
       var attack_hou = $('div.ig_deck_smallcardarea:contains("騎馬鉄砲"), .ig_deck_smallcardarea:contains("雑賀衆")');
-      var hakai_g = $('div.ig_deck_smallcardarea:contains("破城鎚"), .ig_deck_smallcardarea:contains("攻城櫓"), .ig_deck_smallcardarea:contains("大筒兵")');
+      var hakai_g = $('div.ig_deck_smallcardarea:contains("破城鎚"), .ig_deck_smallcardarea:contains("攻城櫓"), .ig_deck_smallcardarea:contains("大筒兵"), .ig_deck_smallcardarea:contains("焙烙火矢")');
       
       $('#all').click(function() {
         $('div.ig_deck_smallcardarea').show();
@@ -8113,7 +8139,7 @@ function Moko_main( $) {
       yumi1:  "弓足軽"   , yumi2: "長弓兵"   , yumi3: "弓騎馬" , yumi4: "海賊衆" , 
       kiba1:  "騎馬兵"   , kiba2: "精鋭騎馬" , kiba3: "赤備え" , kiba4: "母衣衆" , 
       heiki1: "破城鎚"   , heiki2:"攻城櫓"   , heiki3:"大筒兵" , 
-      heiki4: "鉄砲足軽" , heiki5:"騎馬鉄砲" , heiki6:"雑賀衆" };
+      heiki4: "鉄砲足軽" , heiki5:"騎馬鉄砲" , heiki6:"雑賀衆", heiki7:"焙烙火矢" };
     var rank    = {
       sss: 1.20, ss: 1.15, s: 1.10,
       a: 1.05, b: 1, c: 0.95, d: 0.9, e: 0.85, f: 0.80,
@@ -8139,6 +8165,7 @@ function Moko_main( $) {
       "鉄砲足軽":{typeno:336, off:18,def:26,mov:15,des: 1,tp1:"t1",tp2:"t4", cmd1:"yari" ,cmd2:"heiki", drill:true , order:10},
       "騎馬鉄砲":{typeno:337, off:26,def:18,mov:21,des: 1,tp1:"t2",tp2:"t4", cmd1:"kiba" ,cmd2:"heiki", drill:true , order:11},
       "雑賀衆"  :{typeno:338, off:23,def:27,mov:18,des: 5,tp1:"t1",tp2:"t4", cmd1:"yari" ,cmd2:"heiki", drill:false, order:18},
+      "焙烙火矢"  :{typeno:345, off:23,def:23,mov:19,des: 2,tp1:"t3",tp2:"t4", cmd1:"yumi" ,cmd2:"heiki", drill:false, order:19}
     };
     
     var attack_power = 0, defense_power = 0, destruct_power = 0 ;
@@ -9149,7 +9176,7 @@ function Moko_main( $) {
     if( groupSelect == 0 && showNum == 100 && btn_select.length == 1 ){
       $('#title_00').after('<span id="max" style="float: right; color: white; margin: 18px 150px 0 0;">全カード最大指揮数：<span id="all_sol"></span></span>');
       var val = 0;
-      $('div[id^="cardWindow"]').find('span.commandsol_no').each(function(){
+      $('div[id^="cardWindow"]').find('span[class^="commandsol_no"]').each(function(){
         var max_sol = $(this).text().split('/')[1];
         val += parseFloat( max_sol );
         $('#all_sol').html(val);
@@ -9208,7 +9235,7 @@ function Moko_main( $) {
       });
 
     //総兵数を表示
-    var type_list = {1: '足軽',2: '長槍足軽',3: '武士',4: '弓足軽',5: '長弓兵',6: '弓騎馬',7: '騎馬兵',8: '精鋭騎馬',9: '赤備え',10: '鉄砲足軽',11: '騎馬鉄砲',12: '破城鎚',13: '攻城櫓',14: '大筒兵',15: '国人衆',16: '海賊衆',17: '母衣衆',18: '雑賀衆'};
+    var type_list = {1: '足軽',2: '長槍足軽',3: '武士',4: '弓足軽',5: '長弓兵',6: '弓騎馬',7: '騎馬兵',8: '精鋭騎馬',9: '赤備え',10: '鉄砲足軽',11: '騎馬鉄砲',12: '焙烙火矢',13: '破城鎚',14: '攻城櫓',15: '大筒兵',16: '国人衆',17: '海賊衆',18: '母衣衆',19: '雑賀衆'};
     if (options.unit_list_total) {
       var tmp = '';
       var total = 0;
@@ -9417,7 +9444,7 @@ function Moko_main( $) {
         足軽: '#F5DED5', 長槍足軽: '#F6CBBF', 武士: '#ECA896', 国人衆: '#FFA3A3',
         弓足軽: '#E9D8F4', 長弓兵: '#DABDF8', 弓騎馬: '#BB93E2', 海賊衆: '#D6A1FF',
         騎馬兵: '#F6DC8D', 精鋭騎馬: '#F8D165', 赤備え: '#E7BB43', 母衣衆: '#FDEC6D',
-        破城鎚: '#B5BEBC', 攻城櫓: '#7198B8', 大筒兵: '#798D9D', 鉄砲足軽: '#9E8680', 騎馬鉄砲: '#B1A178', 雑賀衆: '#ACAC4F'
+        破城鎚: '#B5BEBC', 攻城櫓: '#7198B8', 大筒兵: '#798D9D', 鉄砲足軽: '#9E8680', 騎馬鉄砲: '#B1A178', 焙烙火矢: '#86079E', 雑賀衆: '#ACAC4F'
     };
     
     $.each( nowsol, function( sol, color ) {
@@ -9438,7 +9465,7 @@ function Moko_main( $) {
         '': '', 321: '#F5DED5', 322: '#F6CBBF', 323: '#ECA896', 324: '#FFA3A3',
         325: '#E9D8F4', 326: '#DABDF8', 327: '#BB93E2', 328: '#D6A1FF',
         329: '#F6DC8D', 330: '#F8D165', 331: '#E7BB43', 332: '#FDEC6D',
-        333: '#B5BEBC', 334: '#7198B8', 335: '#798D9D', 336: '#9E8680', 337: '#B1A178', 338: '#ACAC4F'
+        333: '#B5BEBC', 334: '#7198B8', 335: '#798D9D', 336: '#9E8680', 337: '#B1A178', 345: '#86079E', 338: '#ACAC4F'
     };
     
     $.each( nowcolor, function( solnm, color ) {
@@ -9801,6 +9828,7 @@ function Moko_main( $) {
         '<div>' +
           '<a id="teppou">鉄砲足軽</a>' +
           '<a id="kibatetsu">騎馬鉄砲</a>' +
+          '<a id="horokuhiya">焙烙火矢</a>' +
           '<a id="saika">雑賀衆</a>' +
           '<a id="hajyou">破城鎚</a>' +
           '<a id="kohjyou">攻城櫓</a>' +
@@ -9959,7 +9987,7 @@ function Moko_main( $) {
 
     $('#heiki').click(function() {
       hidebox();
-      $('tr.tr_gradient').slice(1).filter(':has(div.force_type:has(img[alt="鉄砲足軽"], img[alt="騎馬鉄砲"], img[alt="雑賀衆"], img[alt="破城鎚"], img[alt="攻城櫓"], img[alt="大筒兵"]) )')
+      $('tr.tr_gradient').slice(1).filter(':has(div.force_type:has(img[alt="鉄砲足軽"], img[alt="騎馬鉄砲"], img[alt="焙烙火矢"], img[alt="雑賀衆"], img[alt="破城鎚"], img[alt="攻城櫓"], img[alt="大筒兵"]) )')
       .show();
       showCount();
     });
@@ -9971,6 +9999,11 @@ function Moko_main( $) {
       $('#kibatetsu').click(function() {
         hidebox();
         $('tr.tr_gradient').slice(1).filter(':has(div.force_type:has(img[alt="騎馬鉄砲"]))').show();
+        showCount();
+      });
+      $('#horokuhiya').click(function() {
+        hidebox();
+        $('tr.tr_gradient').slice(1).filter(':has(div.force_type:has(img[alt="焙烙火矢"]))').show();
         showCount();
       });
       $('#saika').click(function() {
@@ -10061,7 +10094,7 @@ function Moko_main( $) {
         tb_init('a.thickbox');
       });
       
-      $('#now_group_type').find('option:first').attr('label','ページ表示中の武将【不可】');
+      $('#now_group_type').find('option:first').remove();
       
       unitList_check();
       unitListDefaultView();
@@ -10088,7 +10121,7 @@ function Moko_main( $) {
       TargetArea = $('div.ig_deck_smallcardimage');
     }
     else if(location.pathname == "/facility/set_unit_list.php"){
-      TargetArea = $('#busho_info').find('tr.tr_gradient td:lt(3)');//.children( 'td:lt(3)');console.log(TargetArea);
+      TargetArea = $('#busho_info').find('tr.tr_gradient td:lt(3)');
     }
     else if(location.pathname == "/card/trade_card.php"){
       TargetArea = $('div.ig_deck_subcardarea');
@@ -10819,7 +10852,7 @@ function Moko_main( $) {
     if ( tmp[4] != "''" ) {
       var tgTable = $('#quick_layer').find('tbody'),
           Country = center_href.split('=')[3],
-          cc = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,'北条家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
+          cc = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,'北条家': 8,'今川家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
       
       $('#box').one('click',function(){
         $('#quick_layer').slideUp(200);
@@ -11166,8 +11199,9 @@ function Moko_main( $) {
   function enemyCheckR(rst) {
     var d = (new Date() / 1000) | 0;
     var rrr = { 'date': 0, 'raid': { 'time': [-1], 'num': 0} };
-    if (localStorage.getItem("crx_enemyCheckR")) {
-      rrr = secureEvalJSON(localStorage.getItem("crx_enemyCheckR"));
+   //console.log( 'enemyCheckR 1', rrr, toJSON( rrr), JSON.parse( toJSON( rrr)), JSON.parse(localStorage.crx_enemyCheckR || "false" ));    
+    if ( localStorage.crx_enemyCheckR) {
+      rrr = JSON.parse( localStorage.crx_enemyCheckR);
     }
     var dd = d - rrr.date, raidnum = rrr.raid.num;
     if (dd >= rst) {
@@ -11176,7 +11210,8 @@ function Moko_main( $) {
         function(html) {
           rrr.date = d;
           rrr.raid = get_raid(html);
-          localStorage.setItem("crx_enemyCheckR", toJSON(rrr));
+          localStorage.crx_enemyCheckR = toJSON( rrr);
+         //console.log( 'enemyCheckR 5', rrr, toJSON( rrr), JSON.parse( toJSON( rrr)), JSON.parse(localStorage.crx_enemyCheckR));
           if (rrr.raid.time[0] > 0 && (raidnum < rrr.raid.num || rrr.raid.time[0] < 180)) {
             if ( webkitNotifications.checkPermission() === 0 ) {
               var n = parseInt(Math.random()*5) + 1;
@@ -11244,6 +11279,7 @@ function Moko_main( $) {
       });
       enemyT.sort();
     }
+   //console.log( 'get_raid', enemyT);
     return {'html': enemyL, 'time': enemyT,  'num': cnt};
   }
   //資源バー
@@ -11328,7 +11364,7 @@ function Moko_main( $) {
       .each(function() {
         var base_view = $(this).text();
         if( base_view == point_view ){
-          $(this).css({'text-decoration':'none', 'border-bottom':'1px solid red'});
+          $(this).css({'text-decoration':'none', 'border-bottom':'2px solid red'});
         }
       });
     });
@@ -11377,7 +11413,6 @@ function Moko_main( $) {
             
             if( enemy_ss == enemy_point ){
               var villageID = $(this).attr('href');
-              $(this).css({'text-decoration':'none', 'border-bottom':'2px solid red'});
               if(villageID == undefined){
                 location.href = slot + '&select_card_group=' + groupNo;
               }
@@ -11502,7 +11537,7 @@ function Moko_main( $) {
 
   //全体格付テーブル表示補正
   $(function () {
-    if (location.pathname !="/user/ranking.php")
+    if (location.pathname !="/user/ranking.php" && location.pathname !="/alliance/list.php")
       return;
     $('.common_box3bottom').find('.common_table1.center')
     .find('strong').css({'display':'inline-block', 'width':'5em'});
@@ -11924,8 +11959,7 @@ function Moko_main( $) {
 */
 
   function toJSON( o) {
-    return JSON.stringify( o);
-/*
+    //return JSON.stringify( o);
     //if (typeof(JSON) == 'object' && JSON.stringify)return JSON.stringify(o);
     var type = typeof (o);
     if (o === null)
@@ -11985,13 +12019,12 @@ function Moko_main( $) {
       }
       return "{" + pairs.join(", ") + "}";
     }
-*/
   }
 
   function secureEvalJSON(src) {
       return JSON.parse(src);
   }
-/*
+
   function quoteString(string) {
     var _escapeable = /["\\\x00-\x1f\x7f-\x9f]/g;
     var _meta = {'\b': '\\b','\t': '\\t','\n': '\\n','\f': '\\f','\r': '\\r','"': '\\"','\\': '\\\\'};
@@ -12006,7 +12039,7 @@ function Moko_main( $) {
     }
     return '"' + string + '"';
   }
-*/
+
 
 /*
 * Cookie plugin

@@ -6,7 +6,12 @@
   "description": "sengokuixa-moko.crx版 @author: nameless, osafune, sengokuixa-moko @special thanks: hatt",
 
   "background": {
-    "page": "background/background.html",
+    "scripts": [
+      "moko/sengokuixa-moko.js",
+      "moko/data.js",
+      "plugin/TableSorter.js",
+      "background/background.js"
+   ],
     "persistent": false
   },
 
