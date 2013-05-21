@@ -5332,7 +5332,7 @@ function Moko_main( $) {
         if ($count.get().length > 0) {
           if (j % 2 === 0)
             tmp += '<tr>';
-          tmp += '<td>　LV.' + i + ' : ' + $count.get().length + '</td>';
+          tmp += '<td>　LV.' + i + ':' + $count.get().length + '</td>';
           j++;
           if (j % 2 === 0)
             tmp += '</tr>';
