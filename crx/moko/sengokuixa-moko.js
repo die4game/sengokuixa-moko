@@ -5329,7 +5329,7 @@ function Moko_main( $) {
         if ($count.get().length > 0) {
           if (j % 2 === 0)
             tmp += '<tr>';
-          tmp += '<td>　LV.' + i + ' : ' + $count.get().length + '</td>';
+          tmp += '<td>　LV.' + i + ':' + $count.get().length + '</td>';
           j++;
           if (j % 2 === 0)
             tmp += '</tr>';
@@ -9071,14 +9071,14 @@ function Moko_main( $) {
                   unset_unit_squad_id = Unregist[1].replace(/'/g, ''),
                   p = $(html).find('input[id="p"]').val(),
                   select_card_group = $(html).find('input[id="select_card_group"]').val();
-            var data = {
-                  select_assign_no: ano,
-                  unit_assign_id: unit_assign_id,
-                  unset_unit_squad_id: unset_unit_squad_id,
-                  deck_mode: 'nomal',
-                  p: p,
-                  select_card_group: select_card_group
-                };
+              var data = {
+                select_assign_no: ano,
+                unit_assign_id: unit_assign_id,
+                unset_unit_squad_id: unset_unit_squad_id,
+                deck_mode: 'nomal',
+                p: p,
+                select_card_group: select_card_group
+              };
               $.post(
                 '/card/deck.php', data,
                 function(data) {
