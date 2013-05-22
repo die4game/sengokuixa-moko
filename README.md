@@ -7,27 +7,34 @@ crx化によって誰でも開発し易くなった！あとはよろしく！
 　Chrome拡張機能のページ右上にあるデベロッパーモードをチェック。「パッケージ化されていない拡張機能を読み込む…」からフォルダcrxを選択して読み込む。ドラッグ&ドロップできないので注意。
 
 ## 開発の手引き
-　Chrome Extensionの基本に関しては「[Getting Started: Building a Chrome Extension](http://developer.chrome.com/extensions/getstarted.html)」を参照。以下ざっくり。
+　Chrome Extensionの基本に関しては「[Getting Started: Building a Chrome Extension](http://developer.chrome.com/extensions/getstarted.html)」を参照。sengokuixa-moko-****.user.jsをデータ、css、js、htmlなどに分解することによって保守更新しやすくなっているはず。user.js版と部分的な差分を取ることも可能。以下内容物をざっくり。
 
 ### 実行の流れ
-* まずloder.jsが実行される。これにより、mokoStyle.css, TableSorter.js, sengokuixa-moko.js, data.jsonが読み込まれる。
-* そしてmain.jsが実行される。これによりmoko本体のMoko_main()が実行される。
-* loder.js, main.jsは直接読み込み、他はloder.jsによる間接読み込みといえる。直接間接は使い分ける必要がある。
+* まずbackgroundでmokoメイン関数やpluginなどが読み込まれる。
+* そしてmain.jsが実行される。これによりmoko本体のMoko\_main()が実行され、さらにpageActionとしてpopup.htmlが呼び出される。
+* pageActionが呼び出されるとアドレスバーの端にmokoアイコンが表示され、クリックするとmoko設定が開く。
+* 初回起動時はmoko設定を開き、グループタブの標準に戻すボタンを押すこと。ページをリロードすればmokoが適用される。
 
 ### 各ファイルの中身とポイント
 　ざっくりざっくり。
-#### loader.js
-　ここに記述された各ファイルを読み込み\<script>や\<style>として\<head>に挿入する。css, js, jsonを読み込むことを想定している。\<head>に読み込むとixa公式の関数等にアクセスできるが、chrome.extensionのメソッドが使えなくなる。
+#### manifest.json
+　chrome extentionにとって最も大切なファイル。バージョン情報や読み込むファイルなどがここで定義される。
+#### background.js
+　backgroundに常駐しタブ間の橋渡し役を担う。今のところあまり役立ってない。
 #### main.js
-　Moko_mainの実行担当。ixa公式のjQuery, j$とdata.jsonオブジェクトを渡して実行する\<script>を\<head>に挿入。
+　Moko_mainの実行担当。さらにmoko設定をlocalStorageとchrome.storageの間でやりとりする役も担当。
 #### mokoStyle.css
-　スタイルシート。読み込まれる順番がものをいうのでloader.jsからDOMContentLoadedで最後に読み込む。cssも直接読み込み可能だがタイミングを選択できないので間接読み込み。
+　スタイルシート。読み込まれる順番がものをいうのでmain.jsから最後に読み込む。cssも直接読み込み可能だがタイミングがうまくいかないので間接読み込み。
+#### jquery-2.0.0.min.js
+　jQueryの最新版。
 #### TableSorter.js
-　便利なプラグイン。「待機武将一覧」で使用している。他は使ってないはず。Moko\_mainが間接なので間接でないとMoko\_mainから実行できない。ixa公式のjQueryを使用。
+　便利なプラグイン。「武将カードページ」で使用。jQueryが必要。古いので内部でevalを使っている。
 #### sengokuixa-moko.js
 　Moko_main関数。御本尊。定義のみで実行はmain.jsによる。loader.jsで読み込む。当然だが、main.jsより早く読み込まなければならない。公式の関数を書き替えたりしたいので間接。
-#### data.json
-　mokoで使用する画像、音、空地戦力等のデータの詰め合わせJSON。loder.jsにより、指定した名前のオブジェクトに代入される\<script>として\<head>内に読み込まれる。もちろんこれもmain.jsより早く読み込まなければならない。Moko_mainとの順番は不同。後でも構わない。
+#### data.js
+　mokoで使用する画像、音、空地戦力等のデータの詰め合わせのオブジェクト定義。
+#### deck
+　武将カードページ用ファイルが入っている。武将カードページは待機武将一覧を拡張したページ。
 
 ## ライセンス
 　┐(´～`；)┌ 。商用利用しない限りトラブルにはならないでしょうたぶん。
