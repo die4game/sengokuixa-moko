@@ -78,3 +78,7 @@ table#tb_unit th { padding-right: 18px; }
 #v_head>table {
   white-space: nowrap;
 }
+
+#tb_unitlist td.隊 {
+  background-color: #BA8BE5;
+}

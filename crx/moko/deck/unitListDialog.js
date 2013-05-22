@@ -1,5 +1,5 @@
 ( function () {
-  var world, tabId, options = {}, ssID, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images,
+  var world, tabId, options = {}, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images,
     column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
     villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {};
 
@@ -17,13 +17,18 @@
       group_setting = storeWorld.crx_ixamoko_group_set;
       groups = storeWorld.crx_ixamoko_init_groups;
       groups_img = storeWorld.crx_ixamoko_init_groups_img;
-      ssID = storeWorld.crx_ssID || {};
       $(unitListDialog);
     });
   });
   tableSorter_($);
   tablesorter_pager_plugin($);
 
+
+  //////////////////
+  // function定義 //
+  //////////////////
+
+  // 初期設定、イベント設定
   function unitListDialog () {
 
     // imgのロード
@@ -75,9 +80,9 @@
       elm.checked = column[idx];
     });
 
-    // デッキセットボタン
+    // 配置
     $('#v_head').on('click', 'button.set_unitlist', function() {
-      unit_set($(this).parent().parent());
+      unit_set( $(this).parent().parent());
     });
 
     // 総攻防力
@@ -102,58 +107,89 @@
           unit_select: [],
           btn_send: true
         }, key;
-      $( '#v_head button.set_unitlist').each( function ( i, el) {
-        var base = $( el).parent().prev( 'span.base').text().match(/\S+/g);
-        if ( base[1] === '未設定') {
-          console.log( base[1]);
-          return false;
-        } else {
-          if ( !villageIds[ base[ 1]]) get_villageId();
-          village[ base[ 1]] = 'http://' + world + '.sengokuixa.jp/village_change.php?village_id=' + villageIds[ base[ 1]];
-          data.unit_select.push( $( el).val());
-        }
-      });
-      var i = Object.keys( village).length;
-      for ( key in village) {
-        i--;
-        $.ajax({
-          url: village[ key],
-          async: false,
-          success: function ( html, textStatus, jqXHR) {
-            $.ajax({
-              url: url,
-              type: 'POST',
-              async: false,
-              data: data,
-              beforeSend: function () {
-                $('#unitlistdialog').css({'opacity': '0.3'});
-                $('div.Loading').show();
-              },
-              success: function ( html, textStatus, jqXHR) {
-                var obj = $( $.parseHTML( html)).find( 'td.radio_frame');
-                if ( obj.length && obj.has('input').length) {
-                  alert( textStatus + '\n' + '秘境へ送れませんでした。');
-                } else if ( obj.length > 0) {
-                  alert( textStatus + '\n' + '秘境へ送りました。');
-                } else {
-                  alert( textStatus + '\n' + '秘境のページを確認してください。');
-                }
-                if ( i < 1) {
-                  $('#unitlistdialog').css({'opacity': '1.0'});
-                  $('div.Loading').hide();
-                }
-              }
-            });
+      if ( !data.dungeon_select) return;
+      $('#unitlistdialog').css({'opacity': '0.3'});
+      $('div.Loading').show();
+      if ( confirm( '全部隊を秘境へ送ります')) {
+        $( '#v_head button.set_unitlist').each( function ( i, el) {
+          var base = $( el).parent().prev( 'span.base').text().match(/\S+/g);
+          if ( base[1] === '未設定') {
+            //console.log( base[1]);
+            return false;
+          } else {
+            if ( !villageIds[ base[ 1]]) get_villageId();
+            village[ base[ 1]] = 'http://' + world + '.sengokuixa.jp/village_change.php?village_id=' + villageIds[ base[ 1]];
+            data.unit_select.push( $( el).val());
           }
         });
+        var i = Object.keys( village).length;
+        for ( key in village) {
+          i--;
+          $.ajax({
+            url: village[ key],
+            async: false,
+            success: function ( html, textStatus, jqXHR) {
+              $.ajax({
+                url: url,
+                type: 'POST',
+                async: false,
+                data: data,
+                beforeSend: function () {
+                },
+                success: function ( html, textStatus, jqXHR) {
+                  var obj = $( $.parseHTML( html)).find( 'td.radio_frame');
+                  if ( obj.length && obj.has('input').length) {
+                    alert( textStatus + '\n' + '秘境へ送れませんでした。');
+                  } else if ( obj.length > 0) {
+                    alert( textStatus + '\n' + '秘境へ送りました。');
+                  } else {
+                    alert( textStatus + '\n' + '秘境のページを確認してください。');
+                  }
+                }
+              });
+            }
+          });
+        }
       }
+      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('div.Loading').hide();
+    });
+
+    // 解散、外す
+    $( '#v_head').on( 'click', 'div.ano>button', function () {
+      //console.log( 'click', $(this).val());
+      var div_ano = $( this).parent(), btn = $( this);
+      if ( !$( this).val()) return;
+      $('#unitlistdialog').css({'opacity': '0.3'});
+      $('div.Loading').show();
+      if ( confirm( btn.next().text() + 'を' + btn.text())) {
+        $.post( 'http://' + world + '.sengokuixa.jp/card/deck.php',
+          { select_assign_no: div_ano.attr( 'select_assign_no'),
+            unit_assign_id: div_ano.attr( 'unit_assign_id'),
+            unset_unit_squad_id: btn.val(),
+            deck_mode: 'nomal',
+            p: 1,
+            select_card_group: 0
+          },
+          function ( html) {
+            var $html = $( html), tag = btn.text();
+            if ( tag === '解散')
+              location.reload();
+            else {
+              var busho = $( '#tb_unitlist>tr>td.選択>input.unset_unit_squad_id[value="' + btn.val() + '"]').parent();
+              busho.toggleClass( '隊').find( 'input.unset_unit_squad_id').removeClass().addClass( 'set_squad_id');
+              busho.parent().find( 'td.組').text('');
+              btn.val( '').next().text( '[-----]');
+              //$( this).next();
+              //console.log( '外す', btn);
+            }
+          }
+        );
+      }
+      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('div.Loading').hide();
     });
   }
-
-
-  //////////////////
-  // function定義 //
-  //////////////////
 
   // 武将リスト取得
   function unitListLoad( p, ano) {
@@ -182,67 +218,128 @@
       url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
       data: data,
       cache: false,
-      success: function(html) {
+      success: function( html) {
+        var $html = $( html);
         //部隊情報の取得
         if (ano === 0) {
+
           //コストを取得
-          $('#v_head span.deckcost').prepend($(html).find('#ig_deckcost > span.ig_deckcostdata').text()).css({'margin-right': '1em'});
+          $('#v_head span.deckcost').prepend( $html.find('#ig_deckcost > span.ig_deckcostdata').text()).css({'margin-right': '1em'});
+/*
           //部隊を取得
-          var unitLeader = '';
-          $(html).find('#ig_unitchoice > li').each(function(i) {
-            var leader = $(this).text();
-            unitLeader = '<span value="' + i + '" class="ano' + i + '">' + leader + '</span><br/>';
-            $('#v_head div.ano:eq(' + i + ')').empty().append(unitLeader);
-            if (leader.match(/新規部隊を作成/)) {
+          $html.find( '#ig_unitchoice > li').each( function ( i) {
+            var leader = $( this).text(),
+              unitLeader = '<button>解散</button><span value="' + i + '" class="ano' + i + '">' + leader + '</span><br/>';
+            $('#v_head div.ano:eq(' + i + ')').empty().append( unitLeader);
+            if ( leader.match(/新規部隊を作成/)) {
               return false;
             }
           });
+*/
         }
+
         if (ano !== '') {
+          getButai( $html, ano);
+/*
           //部隊のIDを取得、DOMオブジェクトを取得
-          var set_assign_id = $(html).find('#set_assign_id').val();
-          var $ig_deck_unitdetailbox = $(html).find('#ig_deck_unitdetailbox');
-          var $v_head_span_ano = $('#v_head div.ano:eq(' + ano + ')');//.hide();
+          var set_assign_id = $html.find('#set_assign_id').val();
+          var $ig_deck_unitdetailbox = $html.find('#ig_deck_unitdetailbox');
+          var $v_head_div_ano = $('#v_head div.ano:eq(' + ano + ')');//.hide();
           var base = $ig_deck_unitdetailbox.parent().find('div.ig_deck_unitdata_assign.deck_wide_select').html()
-               || $(html).find('#select_village').parent().html();
+               || $html.find('#select_village').parent().html();
           if (set_assign_id) {
-            $v_head_span_ano.append(
-              '<span class="subleader"></span><br/><span class="subleader"></span><br/><span class="subleader"></span><br/>' +
+            $v_head_div_ano.append(
+              '<button>外す</button><span class="subleader"></span><br/>' +
+              '<button>外す</button><span class="subleader"></span><br/>' +
+              '<button>外す</button><span class="subleader"></span><br/>' +
               '<span class=condition></span><br/>' +
               '<span class=base style="margin-right: 1em;"></span>' +
               '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="' + set_assign_id + '">配置</button></span>'
             );
-            $( '#v_head div.ano' + ano).val( set_assign_id);
+            $v_head_div_ano.attr( { select_assign_no: ano, unit_assign_id: set_assign_id});
+
             //部隊副長を取得
             $ig_deck_unitdetailbox.find('span.ig_deck_unitdata_subleader').each(function(i) {
-              $v_head_span_ano.find('span.subleader:eq(' + i + ')').text('[' + $(this).text().match(/[\S]+/)[0] + ']');
+              $v_head_div_ano.find('span.subleader:eq(' + i + ')').text('[' + $(this).text().match(/[\S]+/)[0] + ']');
             });
+
             //部隊の状態を取得
             var unit_condition_text = $ig_deck_unitdetailbox.find('span.ig_deck_unitdata_condition').text().trim();
-            $v_head_span_ano.find('span.condition').text('(' + unit_condition_text + ')');
-//            if (!unit_condition_text.match(/待機/) || !$v_head_span_ano.text().match(/\[\-\-\-\-\-\]/)) {
-//              $v_head_span_ano.find('span.set_button').hide();
-//            }
+            $v_head_div_ano.find('span.condition').text('(' + unit_condition_text + ')');
+            $( function () {
+              var unset_unit_squad_id = [],
+                sols = { commandsol_yari1: '足軽', commandsol_yari2: '長槍足軽', commandsol_yari3: '武士', commandsol_yari4: '国人衆', commandsol_yumi1: '弓足軽', commandsol_yumi2: '長弓兵', commandsol_yumi3: '弓騎馬', commandsol_yumi4: '海賊衆', commandsol_kiba1: '騎馬兵', commandsol_kiba2: '精鋭騎馬', commandsol_kiba3: '赤備え', commandsol_kiba4: '母衣衆', commandsol_heiki1: '破城鎚', commandsol_heiki2: '攻城櫓', commandsol_heiki3: '大筒兵', commandsol_heiki4: '鉄砲足軽', commandsol_heiki5: '騎馬鉄砲', commandsol_heiki6: '雑賀衆', commandsol_heiki7: '焙烙火矢'},
+                rarerity = [ 0, '序', '上', '極', '天'],
+                tai = [ '一番隊', '二番隊', '三番隊', '四番隊', '五番隊'];
+              unset_unit_squad_id.push( $html.find( '#ig_deckunitdetail div.deck_navi a:eq(0)').attr( 'onclick'));
+              unset_unit_squad_id.push( $html.find( '#id_deck_card2 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
+              unset_unit_squad_id.push( $html.find( '#id_deck_card3 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
+              unset_unit_squad_id.push( $html.find( '#id_deck_card4 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
+              unset_unit_squad_id.forEach( function ( elm, idx, arr) {
+                if ( !elm) return false;
+                arr[ idx] = elm.match( /\d+/g)[1];
+                var card = $html.find( '#id_deck_card' + ++idx);
+                //console.log( card);
+                //console.log( unset_unit_squad_id);
+                var id = card.find( 'span[id^="card_commandsol_"]').prop( 'id').match( /\d+/)[0],
+                  p = '{ select_assign_no:' + ano + ', set_assign_id:' + set_assign_id + '}',
+                  ssID,
+                  no = card.find( 'span.ig_card_cardno').text(),
+                  grps = tai[ano],
+                  gp_1 = '',
+                  gp_2 = '',
+                  rr = rarerity[ card.find( 'span[class^="rarerity_"]').prop( 'class').replace( 'rarerity_', '')],
+                  hi = card.find( 'span.ig_card_name').attr( 'title'),
+                  nm = card.find( 'span.ig_card_name').text(),
+                  ct = card.find( 'span.ig_card_cost_over').text(),
+                  lv = [ card.find( 'span.level_star img').prop( 'width') / 20, card.find( 'span.ig_card_level').text()],
+                  hp = card.find( 'span.ig_card_status_hp').text().replace( '/100', ''),
+                  bg = card.find( 'span.ig_deck_battlepoint').text(),
+                  uc = card.find( 'span.commandsol_no').text().split( '/'),
+                  hs = sols[ card.find( 'span[class^=commandsol_]:eq(0)').prop( 'class')],
+                  at = card.find( 'span.ig_card_status_att').text(),
+                  df = card.find( 'span.ig_card_status_def').text(),
+                  hy = card.find( 'span.ig_card_status_int').text(),
+                  ya = card.find( 'span.yari').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+                  um = card.find( 'span.kiba').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+                  yu = card.find( 'span.yumi').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+                  ki = card.find( 'span.heiki').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+                  sk = [ card.find( 'span.ig_skill_name:eq(0)').text(), card.find( 'span.ig_skill_name:eq(1)').text(), card.find( 'span.ig_skill_name:eq(2)').text(),],
+                  select_assign_no = ano,
+                  unit_assign_id = set_assign_id,
+                  unset_unit_squad_id = elm.match( /\d+/g)[1];
+                if (options.unit_list_group && group_setting[id]) {
+                  gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
+                  gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
+                    '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
+                    group_setting[id] + '" hidden>';
+                }
+                //console.log( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
+                setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id, unset_unit_squad_id);
+              });
+            });
+            
           } else {
             base = $($.parseHTML(base)).removeAttr('onchange');
-            $v_head_span_ano.append(
+            $v_head_div_ano.append(
               '<span class=base style="margin-right: 1em;"></span>' +
               '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="">配置</button></span>'
             );
           }
 
           //部隊の拠点を取得
-          $v_head_span_ano.find('span.base').append('拠点：' ,base);
-          $('#v_head div.ano:eq('+ano+')').append($v_head_span_ano);
+          $v_head_div_ano.find('span.base').append('拠点：' ,base);
+          $('#v_head div.ano:eq('+ano+')').append($v_head_div_ano);
+*/
         }
 
         //武将情報の取得
-        if (p) {
-          $(html).find('div.ig_deck_smallcardarea').each(function() {
+        if ( p) {
+          $html.find( 'div.ig_deck_smallcardarea').each( function() {
             var $this = $(this);
             
             var cid = $this.find('a[href^="#TB_inline"]').attr('href').match(/\d+/g)[2];
-            var no = $(html).find('#cardWindow_' + cid ).find('span.ig_card_cardno').text();
+            var no = $html.find('#cardWindow_' + cid ).find('span.ig_card_cardno').text();
             var grps = $this.find('div[id^="unit_group_type_"]').attr('class').replace('unit_brigade', '');  //グループ
               if( grps == '5' ) {
                 grps = '未設定';
@@ -251,7 +348,7 @@
                 grps = '第' + grps + '組';
               }
             var rr = $this.find('span.ig_deck_smallcard_cardrarety').text();  //レアリティ
-            var hi = $(html).find('#cardWindow_' + cid ).find('span.ig_card_hiragana').text();//ひらがな
+            var hi = $html.find('#cardWindow_' + cid ).find('span.ig_card_hiragana').text();//ひらがな
             var nm = $this.find('span.ig_deck_smallcard_cardname').text();  //名前
             var ct = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(0)').text();
             var lv = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(1)').text().match(/\d+/g);
@@ -281,68 +378,15 @@
             }
             var set_squad_id = $this.find('a[id^="btn_gounit_"]').attr('onClick');
             set_squad_id = set_squad_id? set_squad_id.match(/'.*?'/g): false;
-            if (set_squad_id) {
+            if ( set_squad_id) {
               set_squad_id = set_squad_id[1].replace(/\'/g, '');
-              if ( set_squad_id) ssID[id] = set_squad_id;
             }
-            var tmp = '<tr>' +
-            '<td class="選択"><input type=checkbox name="id" value="' + id + '"><input name="page" value="' + p + '"  hidden><input class="set_squad_id" value="' + ssID[id] + '" hidden></td>' +
-            '<td class="No">' + no + '</td>' +
-            '<td class="組">' + grps + '</td>' +
-            '<td class="grp"' + gp_1 + '>' + gp_2 + '</td>' +
-            '<td class="ﾚｱ">' + rr + '</td>' +
-            '<td class="名前"><span id="kana" style="display: inline-block;text-indent: -9999px;">' + hi + '</span><span id="kanji">' + nm + '</span></td>' +
-            '<td class="ｺｽﾄ">' + ct + '</td>' +
-            '<td class="★">' + lv[0] + '</td>' +
-            '<td class="Lv">' + lv[1] + '</td>' +
-            '<td class="HP">' + hp + '</td>' +
-            '<td class="討伐">' + bg + '</td>' +
-            '<td class="指揮力">' + uc[1] + '</td>' +
-            '<td class="兵数">' + uc[0] + '</td>' +
-            '<td class="兵種">' + hs + '</td>' +
-            '<td class="攻撃">' + at + '</td>' +
-            '<td class="防御">' + df + '</td>' +
-            '<td class="兵法">' + hy + '</td>' +
-            '<td class="槍">' + ya + '</td>' +
-            '<td class="槍 実指揮">' + Math.round(uc[1] * rank[ya] / 100) + '</td>' +
-            '<td class="槍 ｺｽﾄ比">' + Math.round(uc[1] * rank[ya] / ct / 100) + '</td>' +
-            '<td class="馬">' + um + '</td>' +
-            '<td class="馬 実指揮">' + Math.round(uc[1] * rank[um] / 100) + '</td>' +
-            '<td class="馬 ｺｽﾄ比">' + Math.round(uc[1] * rank[um] / ct / 100) + '</td>' +
-            '<td class="弓">' + yu + '</td>' +
-            '<td class="弓 実指揮">' + Math.round(uc[1] * rank[yu] / 100) + '</td>' +
-            '<td class="弓 ｺｽﾄ比">' + Math.round(uc[1] * rank[yu] / ct / 100) + '</td>' +
-            '<td class="器">' + ki + '</td>' +
-            '<td class="器 実指揮">' + Math.round(uc[1] * rank[ki] / 100) + '</td>' +
-            '<td class="器 ｺｽﾄ比">' + Math.round(uc[1] * rank[ki] / ct / 100) + '</td>' +
-            '<td class="技1">' + sk[0] + '</td>' +
-            '<td class="技2">' + sk[1] + '</td>' +
-            '<td class="技3">' + sk[2] + '</td>' +
-            '<td class="槍馬">' + drank[rank[ya] + rank[um]] + '</td>' +
-            '<td class="槍馬 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / 100) + '</td>' +
-            '<td class="槍馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / ct / 100) + '</td>' +
-            '<td class="槍弓">' + drank[rank[ya] + rank[yu]] + '</td>' +
-            '<td class="槍弓 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / 100) + '</td>' +
-            '<td class="槍弓 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / ct / 100) + '</td>' +
-            '<td class="弓馬">' + drank[rank[yu] + rank[um]] + '</td>' +
-            '<td class="弓馬 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / 100) + '</td>' +
-            '<td class="弓馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / ct / 100) + '</td>' +
-            '<td class="槍器">' + drank[rank[ya] + rank[ki]] + '</td>' +
-            '<td class="槍器 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / 100) + '</td>' +
-            '<td class="槍器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / ct / 100) + '</td>' +
-            '<td class="馬器">' + drank[rank[um] + rank[ki]] + '</td>' +
-            '<td class="馬器 実指揮">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / 100) + '</td>' +
-            '<td class="馬器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / ct / 100) + '</td>' +
-            '<td class="弓器">' + drank[rank[yu] + rank[ki]] + '</td>' +
-            '<td class="弓器 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / 100) + '</td>' +
-            '<td class="弓器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / ct / 100) + '</td>' +
-            '</tr>';
-            $('#tb_unitlist').append(tmp);
+            setBushoToList( id, p, set_squad_id, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
           });
         }
 
         //次ページ取得の判断
-        var p2 = !$(html).find('ul.pager.cardstock:eq(0) > li.last > a:eq(1)')[0] ? '' : p + 1,
+        var p2 = !$html.find('ul.pager.cardstock:eq(0) > li.last > a:eq(1)')[0] ? '' : p + 1,
           ano2 = (ano === 4 || ano === '' ) ? '' : ano + 1;
 
         if ( ( p && p2 > p) || ( ano2 > ano && !$('#v_head > select.unit_ano').find('option:eq(' + ano + ')').text().match(/新規部隊を作成/))) {
@@ -356,17 +400,84 @@
           $('div.Loading').hide();
           $('#unitlistdialog').css({'opacity': '1.0'});
           $('#tb_unit').ready( setupTableSorter);
-          $( '#unitSet').append( $( html).find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
+          $( '#unitSet').append( $html.find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
           $('ul.uldoption').find('input').each(function() {
             if (!$(this).prop('checked')) {
               $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
             }
           });
-          setStorage( 'crx_ssID', ssID, false, world);
           return;
         }
       }
     });
+  }
+
+  function setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, butai, select_assign_no, unit_assign_id, unset_unit_squad_id) {
+
+    $( '#tb_unitlist').find( 'td.選択>input[value="' + id + '"]').parent().parent().remove();
+    var tmp = '<tr>' +
+    '<td class="選択"><input type=checkbox name="id" value="' + id + '">' +
+    ( butai? ( '<input class="select_assign_no" value="' + select_assign_no + '" hidden><input class="unit_assign_id" value="' + unit_assign_id + '" hidden><input class="unset_unit_squad_id" value="' + unset_unit_squad_id + '" hidden>'):
+      ( '<input name="page" value="' + p + '"  hidden><input class="set_squad_id" value="' + ssID + '" hidden></td>')
+    ) +
+    '<td class="No">' + no + '</td>' +
+    '<td class="組">' + grps + '</td>' +
+    '<td class="grp"' + gp_1 + '>' + gp_2 + '</td>' +
+    '<td class="ﾚｱ">' + rr + '</td>' +
+    '<td class="名前"><span id="kana" style="display: inline-block;text-indent: -9999px;">' + hi + '</span><span id="kanji">' + nm + '</span></td>' +
+    '<td class="ｺｽﾄ">' + ct + '</td>' +
+    '<td class="★">' + lv[0] + '</td>' +
+    '<td class="Lv">' + lv[1] + '</td>' +
+    '<td class="HP">' + hp + '</td>' +
+    '<td class="討伐">' + bg + '</td>' +
+    '<td class="指揮力">' + uc[1] + '</td>' +
+    '<td class="兵数">' + uc[0] + '</td>' +
+    '<td class="兵種">' + hs + '</td>' +
+    '<td class="攻撃">' + at + '</td>' +
+    '<td class="防御">' + df + '</td>' +
+    '<td class="兵法">' + hy + '</td>' +
+    '<td class="槍">' + ya + '</td>' +
+    '<td class="槍 実指揮">' + Math.round(uc[1] * rank[ya] / 100) + '</td>' +
+    '<td class="槍 ｺｽﾄ比">' + Math.round(uc[1] * rank[ya] / ct / 100) + '</td>' +
+    '<td class="馬">' + um + '</td>' +
+    '<td class="馬 実指揮">' + Math.round(uc[1] * rank[um] / 100) + '</td>' +
+    '<td class="馬 ｺｽﾄ比">' + Math.round(uc[1] * rank[um] / ct / 100) + '</td>' +
+    '<td class="弓">' + yu + '</td>' +
+    '<td class="弓 実指揮">' + Math.round(uc[1] * rank[yu] / 100) + '</td>' +
+    '<td class="弓 ｺｽﾄ比">' + Math.round(uc[1] * rank[yu] / ct / 100) + '</td>' +
+    '<td class="器">' + ki + '</td>' +
+    '<td class="器 実指揮">' + Math.round(uc[1] * rank[ki] / 100) + '</td>' +
+    '<td class="器 ｺｽﾄ比">' + Math.round(uc[1] * rank[ki] / ct / 100) + '</td>' +
+    '<td class="技1">' + sk[0] + '</td>' +
+    '<td class="技2">' + sk[1] + '</td>' +
+    '<td class="技3">' + sk[2] + '</td>' +
+    '<td class="槍馬">' + drank[rank[ya] + rank[um]] + '</td>' +
+    '<td class="槍馬 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / 100) + '</td>' +
+    '<td class="槍馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / ct / 100) + '</td>' +
+    '<td class="槍弓">' + drank[rank[ya] + rank[yu]] + '</td>' +
+    '<td class="槍弓 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / 100) + '</td>' +
+    '<td class="槍弓 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / ct / 100) + '</td>' +
+    '<td class="弓馬">' + drank[rank[yu] + rank[um]] + '</td>' +
+    '<td class="弓馬 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / 100) + '</td>' +
+    '<td class="弓馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / ct / 100) + '</td>' +
+    '<td class="槍器">' + drank[rank[ya] + rank[ki]] + '</td>' +
+    '<td class="槍器 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / 100) + '</td>' +
+    '<td class="槍器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / ct / 100) + '</td>' +
+    '<td class="馬器">' + drank[rank[um] + rank[ki]] + '</td>' +
+    '<td class="馬器 実指揮">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / 100) + '</td>' +
+    '<td class="馬器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / ct / 100) + '</td>' +
+    '<td class="弓器">' + drank[rank[yu] + rank[ki]] + '</td>' +
+    '<td class="弓器 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / 100) + '</td>' +
+    '<td class="弓器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / ct / 100) + '</td>' +
+    '</tr>';
+    var $tmp = $( tmp);
+    if ( butai) $tmp.find( 'td.選択').toggleClass( '隊');
+    $('ul.uldoption').find('input').each(function() {
+      if (!$(this).prop('checked')) {
+        $tmp.find('td.' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
+      }
+    });
+    $('#tb_unitlist').append( $tmp);
   }
 
   // set_squad_idのchrome.storage.localへの読み書き
@@ -411,44 +522,7 @@
         }
       );
     } else {
-      var url = ['http://'+world+'.sengokuixa.jp/facility/set_unit_list.php?show_num=100&p=1', 'http://'+world+'.sengokuixa.jp/facility/set_unit_list.php?show_num=100&p=2'];
-      $.get(
-        url[0],
-        function ( data) {
-          var $parseData = $( $.parseHTML( data));
-          $parseData.find( '#busho_info tr.tr_gradient').each( function () {
-            var id = $(this.firstElementChild.firstElementChild).prop('id'), tr;
-            if( id) {
-              tr = $('#tb_unitlist>tr:has(td.選択>input[value="'+id.match( /\d+/)[0]+'"])');
-              tr.find( 'td.兵種').text( $(this).find( '[id^="now_unit_img_"]').prop('alt'));
-              tr.find( 'td.兵数').text( $(this).find( '[id^="now_unit_cnt_"]').text());
-            }
-          });
-          $( '#unitSet>select').after( $parseData.find( '#unit_id_select_0').removeAttr( 'onchange')).remove();
-          $( '#tb_unit').trigger( 'update');
-          if ( $parseData.is( 'bar_card .pager')) {
-            $.get(
-              url[1],
-              function ( data) {
-                $( $.parseHTML( data)).find( '#busho_info tr.tr_gradient').each( function () {
-                  var id = $(this.firstElementChild.firstElementChild).prop('id'), tr;
-                  if( id) {
-                    tr = $('#tb_unitlist>tr:has(td.選択>input[value="'+id.match( /\d+/)[0]+'"])');
-                    tr.find( 'td.兵種').text( $(this).find( '[id^="now_unit_img_"]').prop('alt'));
-                    tr.find( 'td.兵数').text( $(this).find( '[id^="now_unit_cnt_"]').text());
-                  }
-                });
-                $( 'div.Loading').hide();
-                $( '#unitlistdialog').css( 'opacity', '1');
-                $( '#tb_unit').trigger( 'update');
-              }
-            );
-          } else {
-            $( 'div.Loading').hide();
-            $( '#unitlistdialog').css( 'opacity', '1');
-          }
-        }
-      );
+      location.reload();
     }
   }
 
@@ -456,33 +530,38 @@
   function unit_set($this) {
 
     //選択された部隊の番号とIDを取得
-    var select_assign_no = $this.children().first().attr( 'value'),
+    var select_assign_no = $this.children().eq(1).attr( 'value'),
       set_village_id = $this.find('#select_village').find('option:selected').val(),
-      set_assign_id = $this.find('button').val(),
+      set_assign_id = $this.find('button.set_unitlist').val(),
       set_squad_id = [],
       busho_list = [];
 
     //チェックされた武将のset_squad_idを取得
     $('#tb_unitlist input[name^="id"]:checked').each( function() {
-      var busho_chk = $(this).parent();
-      if ( busho_chk.find('.set_squad_id').val() === 'undefined') {
+      var busho_chk = $(this).parent(), ssid = busho_chk.find('.set_squad_id').val();
+      if ( ssid === 'false') {
         get_squad_id(select_assign_no, busho_chk.find('input[name=page]').val(), busho_chk.parent(), set_squad_id, busho_list);
-      } else {
-        set_squad_id.push( $( this).next().next().val());
-        busho_list.push( $( this).parent().parent());
+      } else if ( ssid) {
+        set_squad_id.push( ssid);
+        busho_list.push( busho_chk.parent());
       }
     });
 
     if (set_squad_id.length == 0) {
       alert('セット可能な武将がいません。');
-    } else if (confirm(set_squad_id.length+'人がセット可能です。リスト順に配置します。')) {
+      return;
+      //getButai( $html, select_assign_no);
+    }
+    $('#unitlistdialog').css({'opacity': '0.3'});
+    $('div.Loading').show();
+    if (confirm(set_squad_id.length+'人がセット可能です。リスト順に配置します。')) {
       //武将をセット
       set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, 0);
     }
 
     //カードを部隊にセットする関数
     function set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i) {
-
+      //console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
       //POSTデータ
       var data = {
         target_card: '',
@@ -504,86 +583,47 @@
         data: data,
         cache: false,
         success: function(html) {
-          var bushoname = busho_list[i].find('#kanji').text(),
-            regexpname = new RegExp(bushoname);
-          if ( $(html).find('#ig_deckboxInner').find('div.common_box1')[0] ) {
+          var bushoname = busho_list[i].find('#kanji').text(), regexpname = new RegExp(bushoname), $html = $( html);
+          if ( $html.find('#ig_deckboxInner').find('div.common_box1')[0] ) {
             alert( busho_list[ i].find( '#kanji').text() + 'をセットできませんでした。');
-            getButai( $( html), select_assign_no);
+            getButai( $html, select_assign_no);
             $( '#tb_unit').trigger( 'update');
+            $('#unitlistdialog').css({'opacity': '1.0'});
+            $('div.Loading').hide();
           } else {
-            busho_list[i].find('td.選択').css({'background-color':'#BA8BE5'}).find( ':checked').prop( 'checked', false);
-            $('#v_head > span.deckcost').text($(html).find('#ig_deckcost > span.ig_deckcostdata').text());
+            //busho_list[i].find('td.選択').toggleClass( '隊').find( ':checked').prop( 'checked', false);
+            $('#v_head > span.deckcost').text($html.find('#ig_deckcost > span.ig_deckcostdata').text());
             if (i < set_squad_id.length - 1) {
-              if ( (!set_assign_id && $(html).find('#ig_unitchoice > li.now').text().match(regexpname)) || (set_assign_id && !$(html).find('#ig_unitchoice > li.now').text().match(regexpname)) ) {
+              if ( (!set_assign_id && $html.find('#ig_unitchoice > li.now').text().match(regexpname)) || (set_assign_id && !$html.find('#ig_unitchoice > li.now').text().match(regexpname)) ) {
                 if ( !set_assign_id ) {
-                  set_assign_id = $(html).find('#set_assign_id').val();
+                  set_assign_id = $html.find('#set_assign_id').val();
                 }
-//                console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
+                //console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
                 setTimeout(set_card_to_deck, 100, select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i + 1);
               } else {
                 alert(busho_list[i+1].find('#kanji').text() + 'をセットできませんでした。');
-//                console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
-                getButai( $( html), select_assign_no);
+                //console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
+                getButai( $html, select_assign_no);
                 $( '#tb_unit').trigger( 'update');
+                $('#unitlistdialog').css({'opacity': '1.0'});
+                $('div.Loading').hide();
               }
             } else {
 //              alert('完了');
-              getButai( $( html), select_assign_no);
+              getButai( $html, select_assign_no);
               $( '#tb_unit').trigger( 'update');
+              $('#unitlistdialog').css({'opacity': '1.0'});
+              $('div.Loading').hide();
             }
           }
+          //コストを取得
+          $('#v_head span.deckcost').empty()
+            .append( $html.find( '#ig_deckcost > span.ig_deckcostdata').text()).css( { 'margin-right': '1em'});
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           //console.log(textStatus);
         }
       });
-    }
-
-    function getButai( $html, ano) {
-
-      //コストを取得
-      $('#v_head span.deckcost').empty()
-        .append( $html.find( '#ig_deckcost > span.ig_deckcostdata').text()).css( { 'margin-right': '1em'});
-
-      //部隊を取得
-      var unitLeader = '<span value="' + ano + '" class="ano' + ano + '">' +
-        $html.find('#ig_unitchoice > li:eq(' + ano + ')').text() + '</span><br/>';
-      $('#v_head div.ano:eq(' + ano + ')').empty().append( unitLeader);
-
-      //部隊のIDを取得、DOMオブジェクトを取得
-      var set_assign_id = $html.find('#set_assign_id').val();
-      var $ig_deck_unitdetailbox = $html.find('#ig_deck_unitdetailbox');
-      var $v_head_span_ano = $('#v_head div.ano:eq(' + ano + ')');
-      var base = $ig_deck_unitdetailbox.parent().find('div.ig_deck_unitdata_assign.deck_wide_select').html()
-           || $html.find('#select_village').parent().html();
-      if (set_assign_id) {
-        $v_head_span_ano.append(
-          '<span class="subleader"></span><br/><span class="subleader"></span><br/><span class="subleader"></span><br/>' +
-          '<span class=condition></span><br/>' +
-          '<span class=base style="margin-right: 1em;"></span>' +
-          '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="' + set_assign_id + '">配置</button></span>'
-        );
-        $( '#v_head div.ano' + ano).val( set_assign_id);
-
-        //部隊副長を取得
-        $ig_deck_unitdetailbox.find('span.ig_deck_unitdata_subleader').each( function( i) {
-          $v_head_span_ano.find('span.subleader:eq(' + i + ')').text('[' + $(this).text().match(/[\S]+/)[0] + ']');
-        });
-
-        //部隊の状態を取得
-        var unit_condition_text = $ig_deck_unitdetailbox.find( 'span.ig_deck_unitdata_condition').text().trim();
-        $v_head_span_ano.find('span.condition').text('(' + unit_condition_text + ')');
-      } else {
-        base = $( $.parseHTML( base)).removeAttr( 'onchange');
-        $v_head_span_ano.append(
-          '<span class=base style="margin-right: 1em;"></span>' +
-          '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="">配置</button></span>'
-        );
-      }
-
-      //部隊の拠点を取得
-      $v_head_span_ano.find('span.base').append('拠点：' ,base);
-      $('#v_head div.ano:eq('+ano+')').append($v_head_span_ano);
     }
 
     //set_squad_idを取得する関数
@@ -630,7 +670,6 @@
               var set_squad_id = $this.find('a[id^="btn_gounit_"]').attr('onClick').match(/'.*?'/g);
               if (set_squad_id) {
                 set_squad_id = set_squad_id[1].replace(/'/g, '');
-                ssID[id] = set_squad_id;
                 busho.parent().find('input.set_squad_id').val(set_squad_id);
               }
             }
@@ -641,7 +680,8 @@
           var busho_p = parseInt(busho.find('input[name=page]').val());
           if (card_sameID[0]) {
             //カードがあった場合
-            set_squad_id = card_sameID.find('a[id^="btn_gounit_"]').attr('onClick').match(/'.*?'/g);
+            var gounitOnClick = card_sameID.find('a[id^="btn_gounit_"]').attr('onClick');
+            set_squad_id = gounitOnClick? gounitOnClick.match(/'.*?'/g): false;
             if (set_squad_id) {
               set_squad_id = set_squad_id[1].replace(/'/g, '');
               set_squad_id_list.push(set_squad_id);
@@ -670,6 +710,110 @@
     }
   }
 
+  function getButai( $html, ano) {
+
+    var rank = {'SSS': 120,'SS': 115,'S': 110,'A': 105,'B': 100,'C': 95,'D': 90,'E': 85,'F': 80},
+      drank = {240: 'SSS',235: 'SS+',230: 'SS',225: 'S+',220: 'S',215: 'A+',210: 'A',205: 'B+',200: 'B',195: 'C+',190: 'C',185: 'D+',180: 'D',175: 'E+',170: 'E',165: 'F+',160: 'F'};
+
+//    //コストを取得
+//    $('#v_head span.deckcost').empty()
+//      .append( $html.find( '#ig_deckcost > span.ig_deckcostdata').text()).css( { 'margin-right': '1em'});
+
+    //部隊を取得
+    var unitLeader = '<button>解散</button><span value="' + ano + '" class="ano' + ano + '">' +
+      $html.find('#ig_unitchoice > li:eq(' + ano + ')').text() + '</span><br/>';
+    $('#v_head div.ano:eq(' + ano + ')').empty().append( unitLeader);
+
+    //部隊のIDを取得、DOMオブジェクトを取得
+    var set_assign_id = $html.find('#set_assign_id').val();
+    var $ig_deck_unitdetailbox = $html.find('#ig_deck_unitdetailbox');
+    var $v_head_div_ano = $('#v_head div.ano:eq(' + ano + ')');
+    var base = $ig_deck_unitdetailbox.parent().find('div.ig_deck_unitdata_assign.deck_wide_select').html()
+         || $html.find('#select_village').parent().html();
+    if (set_assign_id) {
+      $v_head_div_ano.append(
+        '<button>外す</button><span class="subleader"></span><br/>' +
+        '<button>外す</button><span class="subleader"></span><br/>' +
+        '<button>外す</button><span class="subleader"></span><br/>' +
+        '<span class=condition></span><br/>' +
+        '<span class=base style="margin-right: 1em;"></span>' +
+        '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="' + set_assign_id + '">配置</button></span>'
+      );
+      $v_head_div_ano.attr( { select_assign_no: ano, unit_assign_id: set_assign_id});
+
+      //部隊副長を取得
+      $ig_deck_unitdetailbox.find('span.ig_deck_unitdata_subleader').each( function( i) {
+        $v_head_div_ano.find('span.subleader:eq(' + i + ')').text('[' + $(this).text().match(/[\S]+/)[0] + ']');
+      });
+
+      //部隊の状態を取得
+      var unit_condition_text = $ig_deck_unitdetailbox.find( 'span.ig_deck_unitdata_condition').text().trim();
+      $v_head_div_ano.find('span.condition').text('(' + unit_condition_text + ')');
+      $( function () {
+        var unset_unit_squad_id = [],
+          sols = { commandsol_yari1: '足軽', commandsol_yari2: '長槍足軽', commandsol_yari3: '武士', commandsol_yari4: '国人衆', commandsol_yumi1: '弓足軽', commandsol_yumi2: '長弓兵', commandsol_yumi3: '弓騎馬', commandsol_yumi4: '海賊衆', commandsol_kiba1: '騎馬兵', commandsol_kiba2: '精鋭騎馬', commandsol_kiba3: '赤備え', commandsol_kiba4: '母衣衆', commandsol_heiki1: '破城鎚', commandsol_heiki2: '攻城櫓', commandsol_heiki3: '大筒兵', commandsol_heiki4: '鉄砲足軽', commandsol_heiki5: '騎馬鉄砲', commandsol_heiki6: '雑賀衆', commandsol_heiki7: '焙烙火矢'},
+          rarerity = [ 0, '序', '上', '極', '天'],
+          tai = [ '一番隊', '二番隊', '三番隊', '四番隊', '五番隊'];
+        unset_unit_squad_id.push( $html.find( '#ig_deckunitdetail div.deck_navi a:eq(0)').attr( 'onclick'));
+        unset_unit_squad_id.push( $html.find( '#id_deck_card2 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
+        unset_unit_squad_id.push( $html.find( '#id_deck_card3 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
+        unset_unit_squad_id.push( $html.find( '#id_deck_card4 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
+        unset_unit_squad_id.forEach( function ( elm, idx, arr) {
+          if ( !elm) return false;
+          var card = $html.find( '#id_deck_card' + (idx + 1));
+          //console.log( card);
+          //console.log( unset_unit_squad_id);
+          var id = card.find( 'span[id^="card_commandsol_"]').prop( 'id').match( /\d+/)[0],
+            p = '{ select_assign_no:' + ano + ', set_assign_id:' + set_assign_id + '}',
+            ssID,
+            no = card.find( 'span.ig_card_cardno').text(),
+            grps = tai[ano],
+            gp_1 = '',
+            gp_2 = '',
+            rr = rarerity[ card.find( 'span[class^="rarerity_"]').prop( 'class').replace( 'rarerity_', '')],
+            hi = card.find( 'span.ig_card_name').attr( 'title'),
+            nm = card.find( 'span.ig_card_name').text(),
+            ct = card.find( 'span.ig_card_cost_over').text(),
+            lv = [ card.find( 'span.level_star img').prop( 'width') / 20, card.find( 'span.ig_card_level').text()],
+            hp = card.find( 'span.ig_card_status_hp').text().replace( '/100', ''),
+            bg = card.find( 'span.ig_deck_battlepoint').text(),
+            uc = card.find( 'span.commandsol_no').text().split( '/'),
+            hs = sols[ card.find( 'span[class^=commandsol_]:eq(0)').prop( 'class')],
+            at = card.find( 'span.ig_card_status_att').text(),
+            df = card.find( 'span.ig_card_status_def').text(),
+            hy = card.find( 'span.ig_card_status_int').text(),
+            ya = card.find( 'span.yari').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+            um = card.find( 'span.kiba').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+            yu = card.find( 'span.yumi').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+            ki = card.find( 'span.heiki').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
+            sk = [ card.find( 'span.ig_skill_name:eq(0)').text(), card.find( 'span.ig_skill_name:eq(1)').text(), card.find( 'span.ig_skill_name:eq(2)').text(),],
+            select_assign_no = ano,
+            unit_assign_id = set_assign_id,
+            unset_unit_squad_id = elm.match( /\d+/g)[1];
+          if (options.unit_list_group && group_setting[id]) {
+            gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
+            gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
+              '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
+              group_setting[id] + '" hidden>';
+          }
+          //console.log( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
+          setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id, unset_unit_squad_id);
+          $v_head_div_ano.find( 'button:eq(' + idx + ')').val( unset_unit_squad_id);
+        });
+      });
+    } else {
+      base = $( $.parseHTML( base)).removeAttr( 'onchange');
+      $v_head_div_ano.append(
+        '<span class=base style="margin-right: 1em;"></span>' +
+        '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="">配置</button></span>'
+      );
+    }
+
+    //部隊の拠点を取得
+    $v_head_div_ano.find('span.base').append('拠点：' ,base);
+    $('#v_head div.ano:eq('+ano+')').append($v_head_div_ano);
+  }
+
   // 拠点IDを取得
   function get_villageId() {
     // 拠点名と拠点IDの対応表を作成
@@ -687,7 +831,7 @@
       }
     });
     localStorage.villageIds = JSON.stringify( villageIds);
-    console.log( villageIds);
+    //console.log( villageIds);
   }
 
   function cal_energy($power) {
@@ -813,8 +957,8 @@
       },
       format: function(s) {
         // format your data for normalization
-        return s.replace(/第1組/, 1).replace(/第2組/, 2).replace(/第3組/, 3).replace(/第4組/, 4)
-            .replace(/未設定/, 5);
+        return s.replace(/一番隊/, 1).replace(/二番隊/, 2).replace(/三番隊/, 3).replace(/四番隊/, 4).replace(/五番隊/, 5).replace(/第1組/, 10).replace(/第2組/, 20).replace(/第3組/, 30).replace(/第4組/, 40)
+            .replace(/未設定/, 50);
       },
       // set type, either numeric or text
       type: 'numeric'
