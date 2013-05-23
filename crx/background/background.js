@@ -23,6 +23,11 @@ chrome.runtime.onMessage.addListener( function( msg, sender, fnc) {
 
     case 'send tablesorter_pager_plugin':
     fnc( tablesorter_pager_plugin.toString());
+    break;
+
+    case 'send kuji10_main':
+    fnc( kuji10_main.toString());
+    break;
 
     default:
     break;

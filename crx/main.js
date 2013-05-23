@@ -15,7 +15,8 @@
           'CRXMOKODATA',
           'Moko_main',
           'tableSorter_',
-          'tablesorter_pager_plugin'
+          'tablesorter_pager_plugin',
+          'kuji10_main'
     ];
     objectArray.forEach( function (objName) {
       chrome.runtime.sendMessage( 'send ' + objName, function ( obj) {
@@ -104,6 +105,9 @@
   function queMoko_main () {
     if ( window.Moko_main && window.CRXMOKODATA) {
       Moko_main( j$);
+      if( location.pathname == '/senkuji/senkuji.php' && window.kuji10_main) {
+        kuji10_main( j$);
+      }
     } else {
       setTimeout( queMoko_main, 1);
     }

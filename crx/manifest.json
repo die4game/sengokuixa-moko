@@ -9,6 +9,7 @@
     "scripts": [
       "moko/sengokuixa-moko.js",
       "moko/data.js",
+      "moko/ixa_senkuji_10.user.js",
       "plugin/TableSorter.js",
       "background/background.js"
    ],
