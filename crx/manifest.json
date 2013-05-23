@@ -28,7 +28,8 @@
     {
       "js": [
         "/plugin/jquery-2.0.0.min.js",
-        "main.js"
+        "main.js",
+        "moko/ixa_tradesupport.user.js"
       ],
       "run_at": "document_start",
       "all_frames": true,
