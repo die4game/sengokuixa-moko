@@ -10124,13 +10124,13 @@ function Moko_main( $) {
       TargetArea = $('div.ig_deck_smallcardimage');
     }
     else if(location.pathname == "/facility/set_unit_list.php"){
-      TargetArea = $('#busho_info').find('tr.tr_gradient td:lt(3)');
+      TargetArea = $('#busho_info').find('tr.tr_gradient').find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
     }
     else if(location.pathname == "/card/trade_card.php"){
       TargetArea = $('div.ig_deck_subcardarea');
     }
     else if(location.pathname == "/card/trade.php" || location.pathname == "/card/exhibit_list.php"){
-      TargetArea = $('table.common_table1.center.mt10').find('tr.fs12 td:lt(4)');
+      TargetArea = $('table.common_table1.center.mt10').find('tr.fs12').find('td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(4)');
     }
     
     TargetArea.live('contextmenu', function(event) {
