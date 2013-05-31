@@ -9243,7 +9243,7 @@ function Moko_main( $) {
     if (options.unit_list_total) {
       var tmp = '';
       var total = 0;
-      for (i = 1; i <= 18; i++) {
+      for (i = 1; i <= 19; i++) {
         if (soldiers[type_list[i]]) {
           tmp += '<tr><th>' + type_list[i] + '</th><td style="text-align: right;">' + soldiers[type_list[i]] + '</td></tr>';
           total += soldiers[type_list[i]];
