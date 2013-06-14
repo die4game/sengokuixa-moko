@@ -21,7 +21,12 @@ function Moko_main( $) {
   //4章
   POTENTIAL_LIST_4 = CRXMOKODATA.POTENTIAL_LIST_4,
   //5章
-  POTENTIAL_LIST_6 = CRXMOKODATA.POTENTIAL_LIST_6,
+  POTENTIAL_LIST_6_1 = CRXMOKODATA.POTENTIAL_LIST_6_1,
+  POTENTIAL_LIST_6_2 = CRXMOKODATA.POTENTIAL_LIST_6_2,
+  POTENTIAL_LIST_6_3 = CRXMOKODATA.POTENTIAL_LIST_6_3,
+  POTENTIAL_LIST_6_4 = CRXMOKODATA.POTENTIAL_LIST_6_4,
+  POTENTIAL_LIST_6_5 = CRXMOKODATA.POTENTIAL_LIST_6_5,
+  POTENTIAL_LIST_6_6 = CRXMOKODATA.POTENTIAL_LIST_6_6,
   POTENTIAL_LIST_5_5 = CRXMOKODATA.POTENTIAL_LIST_5_5,
   POTENTIAL_LIST_5_4 = CRXMOKODATA.POTENTIAL_LIST_5_4,
   POTENTIAL_LIST_5_3 = CRXMOKODATA.POTENTIAL_LIST_5_3,
@@ -4118,10 +4123,40 @@ function Moko_main( $) {
             .appendTo( Required_val );
           }
         
+        } else if ( options.chapter_change === '11') {
+
+          if (tiles_text in POTENTIAL_LIST_6_6) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6_6[tiles_text] +'</div>')
+            .appendTo( Required_val );
+          }
+        } else if ( options.chapter_change === '10') {
+
+          if (tiles_text in POTENTIAL_LIST_6_5) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6_5[tiles_text] +'</div>')
+            .appendTo( Required_val );
+          }
+        } else if ( options.chapter_change === '9') {
+
+          if (tiles_text in POTENTIAL_LIST_6_4) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6_4[tiles_text] +'</div>')
+            .appendTo( Required_val );
+          }
+        } else if ( options.chapter_change === '8') {
+
+          if (tiles_text in POTENTIAL_LIST_6_3) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6_3[tiles_text] +'</div>')
+            .appendTo( Required_val );
+          }
+        } else if ( options.chapter_change === '7') {
+
+          if (tiles_text in POTENTIAL_LIST_6_2) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6_2[tiles_text] +'</div>')
+            .appendTo( Required_val );
+          }
         } else if ( options.chapter_change === '6') {
 
-          if (tiles_text in POTENTIAL_LIST_6) {
-            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6[tiles_text] +'</div>')
+          if (tiles_text in POTENTIAL_LIST_6_1) {
+            $('<div id="ixamoko_zoommap">'+ POTENTIAL_LIST_6_1[tiles_text] +'</div>')
             .appendTo( Required_val );
           }
         } else if ( options.chapter_change === '5') {
@@ -5519,9 +5554,29 @@ function Moko_main( $) {
       if (tiles_text in POTENTIAL_LIST_4) {
         $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_4[tiles_text] +'</div>');
       }
+    } else if ( options.chapter_change === '11') {
+      if (tiles_text in POTENTIAL_LIST_6_6) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6_6[tiles_text] +'</div>')
+      }
+    } else if ( options.chapter_change === '10') {
+      if (tiles_text in POTENTIAL_LIST_6_5) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6_5[tiles_text] +'</div>')
+      }
+    } else if ( options.chapter_change === '9') {
+      if (tiles_text in POTENTIAL_LIST_6_4) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6_4[tiles_text] +'</div>')
+      }
+    } else if ( options.chapter_change === '8') {
+      if (tiles_text in POTENTIAL_LIST_6_3) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6_3[tiles_text] +'</div>')
+      }
+    } else if ( options.chapter_change === '7') {
+      if (tiles_text in POTENTIAL_LIST_6_2) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6_2[tiles_text] +'</div>')
+      }
     } else if ( options.chapter_change === '6') {
-      if (tiles_text in POTENTIAL_LIST_6) {
-        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6[tiles_text] +'</div>');
+      if (tiles_text in POTENTIAL_LIST_6_1) {
+        $('#mokotool').append('<div class="normal"><h5>必要攻撃力</h5>'+ POTENTIAL_LIST_6_1[tiles_text] +'</div>')
       }
     } else if ( options.chapter_change === '5') {
       if (tiles_text in POTENTIAL_LIST_5_5) {
