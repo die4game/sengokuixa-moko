@@ -2,7 +2,7 @@
 // jQueryとdata.jsonを受け取る。
 function Moko_main( $) {
   'use strict';
-  var TOOL_NAME = "sengokuixa-moko.crx",
+  var TOOL_NAME = "moko crx版",
   i,
   options = {},
   OPTION_TAG = 'ixa_moko_options',
@@ -72,7 +72,13 @@ function Moko_main( $) {
     localStorage.setItem('crx_ixamoko_init_groups_img', ArraytoJSON(groups_img));
   }
   //nowLoading
-  var setting_dialog_str = '<div id="nowLoadingContent" style="position:absolute;width:220px;height:20px;display:none;z-index:9999;padding:20px;color:white;background-color:black;border:3px solid #77692F;-webkit-border-radius:5px;" class="window"><p style="text-align:center;">しばらくお待ちください。 <span></span></p><img src="' + IMAGES.rel_interstitial_loading + '"></div>';
+  var setting_dialog_str =
+    '<DIV id="nowLoadingContent" class="window">' +
+      '<DIV id="info_progress">しばらくお待ち下さい...</DIV>' +
+      '<DIV><IMG src="' + IMAGES.rel_interstitial_loading + '" /></DIV>' +
+      '<DIV id="info_rigth"></DIV>' +
+      '<DIV id="info_left"></DIV>' +
+    '</DIV>';
   setting_dialog_str += '<DIV style="position:absolute;z-index:9000;background-color:#000;display:none;" id="ixamoko_mask"></DIV><DIV style="position:absolute;z-index:9000;background-color:#000;display:none;" id="loading_mask"></DIV></DIV>';
   $('BODY').prepend(setting_dialog_str);
 
@@ -157,6 +163,7 @@ function Moko_main( $) {
   war_detail_navi();
   facility_tool();
   card_tool();
+  map_potential();
   panelAttack();
   now_select_point();
   zoomMap();
@@ -226,6 +233,7 @@ function Moko_main( $) {
   soldiers_blind();
   trade_auxiliary();
   alltroops_cancel();
+  base_underline();
 
 
 //////////////////////
@@ -348,7 +356,7 @@ function Moko_main( $) {
           '<a href="' + toride.eq(29).attr('href') + '">' + EastTm3 + ' [砦5]</a>' +
           '</li>';
           
-          if (options.toride_inbox && parseInt(options.toride_count) != 0){
+          if ( parseInt(options.toride_count) != 0){
             $('#toride_box').append('<div id="new_war"></div>');
             $('#new_war').append(tmp);
             $('#toride_list').find('a').hover(function() {
@@ -416,7 +424,7 @@ function Moko_main( $) {
         }
       }
 
-    if (options.toride_inbox && parseInt(options.toride_count) != 0) {
+    if ( parseInt(options.toride_count) != 0) {
       var subchildLI = $(submenu).find('li').clone();
       var gnavi03_btn = $('<div class="map_tool_button" name="toride_list">砦座標</div>');
       var map_tool_button_grp = $('div.map_tool_button_grp');
@@ -424,7 +432,8 @@ function Moko_main( $) {
       map_tool_listbox.append('<div id="toride_list" class="map"><div id="toride_box"></div></div>');
       $('#toride_box').append( subchildLI );
       map_tool_button_grp.append( gnavi03_btn );
-      $(submenu).remove();
+      if ( options.toride_inbox)
+        $(submenu).remove();
       
       subchildLI.find('a').hover(function() {
         $(this).css('background-color', '#725E1E');
@@ -565,7 +574,8 @@ function Moko_main( $) {
       
       $('div.sideBoxHead:has(h3>img[alt="報告"])').remove();
       var sideboxMoko = $('div.sideBox:has(#mokotool)'),
-        sideboxMony = $('div.sideBox:has(span.money_b)'),
+        sideboxMony = $('div.sideBox:has(#substatus_btn)'),
+        Mony = $('dl.substatus').css('padding', '0 5px 0'),
         sideboxStat = $('div.sideBox:has(table.stateTable)'),
         sideboxMake = $('div.sideBox:has(ul.side_make)'),
         sideboxBase = $('div.sideBox:has(div.sideBoxInner.basename)'),
@@ -588,6 +598,7 @@ function Moko_main( $) {
         .append(sideboxMoko)
         .append(sideboxStat)
         .append(sideboxRept.attr('class', 'sideBox'));
+      sideboxMoko.prepend(Mony);
       $('#sideboxMain')
         .append(sideboxBttm);
       $('#sideboxBottom')
@@ -769,7 +780,23 @@ function Moko_main( $) {
     if ( options.logout_correction ) {
       $('a[href="/logout.php"]').attr('href', 'http://sengokuixa.jp/');
     }
-    
+    //サイドメニューに探索中と待機の部隊数表示
+    if (location.pathname != '/map.php' && location.pathname != '/card/deck.php' ) {
+      $('#sideboxTop').find('h3.sidebox_cardbg:has(img[alt="状態"])').parent().after('<div id="troops_disp" style="text-align: center;" />');
+      $.post(
+        '/facility/unit_status.php?dmo=all',
+        function(html) {
+          var dungeon = $(html).find('table.table_fightlist').find('img[src$="icon_dungeon.png"]').length;
+          var taiki = $(html).find('table.table_fightlist').find('img[src$="wait.png"]').length;
+          if( dungeon ){
+            $('#troops_disp').prepend('<a href="/facility/unit_status.php?dmo=all" class="dungeon">探索 (<span class="unit_num">'+dungeon+'</span>)</a>');
+          }
+          if( taiki ){
+            $('#troops_disp').append('<a href="/facility/unit_status.php?dmo=all" class="taiki">待機 (<span class="unit_num">'+taiki+'</span>)</a>');
+          }
+        }
+      );
+    }
   } //全ページ用:end
 
   //タイムアウトのカウントダウン用
@@ -861,29 +888,7 @@ function Moko_main( $) {
         $(this).height('').children('div').slideUp(200);
         $(this).prev().height('');
     }).appendTo($('#status_left > ul'));
-    
-    var sideboxToolHead = $('#sideboxTop').find('div.sideBoxHead:eq(0)');
-    var ToolHeadh3 = sideboxToolHead.find('h3');
-    var sideboxCard = $('div.sideBox:has(ul.sidebar_btn_card)');
-    var sideboxCardInner = sideboxCard.find('div.sideBoxInner');
-    var sideboxCardUl = $('div.sideBox').find('ul.sidebar_btn_card');
-    
-    sideboxToolHead.after(sideboxCard);
-    sideboxCard.css({'overflow':'hidden','height':'0','padding': '0','background-image': 'none'});
-    $('div.sideBoxHead:has(h3>img[alt="カード"])').hide();
-    ToolHeadh3.replaceWith('<h3 id="moko_title"><a href="javascript:void(0);">戦国IXA用ツール</a></h3>');
-    
-    ToolHeadh3.find('a').click(function() {
-        return false;
-    });
-    
-    sideboxToolHead
-      .toggle(function() {
-        sideboxCard.animate({'overflow':'visible','height':'120px'});
-      },
-        function() {
-        sideboxCard.animate({'overflow':'hidden','height':'0'});
-      });
+    $('div.sideBox:has(ul.sidebar_btn_card)').remove();
    }
 
   //サイドボックスの資源生産量の合計を表示
@@ -950,7 +955,6 @@ function Moko_main( $) {
   //サイドボックスの所領ソート
   function sort_village() {
     if (!options.sort_village) {
-      map_potential();
       return;
     }
     var pathname = location.pathname;
@@ -1045,8 +1049,8 @@ function Moko_main( $) {
           $('div.sideBoxInner.basename:eq(0)').replaceWith(tmp);
           $('div.sideBoxInner.basename:eq(1)').replaceWith(tmp2);
         }
-        map_potential();
         bases_blind();
+        base_underline();
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
       //console.log(textStatus);
@@ -1241,7 +1245,6 @@ function Moko_main( $) {
     if (location.pathname != "/card/deck.php" && location.pathname != "/facility/set_unit_list.php" && location.pathname != "/union/levelup.php" && location.pathname != "/union/additional.php" && location.pathname != "/union/remove.php" && location.pathname != "/card/deck_card_delete.php")
       return;
     if (location.pathname == "/facility/set_unit_list.php") {
-      $('#moko_container').css({'height':'32px', 'width':'715px'});
       $('<div id="favoritearea" style="width: 465px; float: left;">' +
         '<div id="favoritebox"></div>' +
         '</div>'
@@ -1261,7 +1264,6 @@ function Moko_main( $) {
         ).insertAfter('#ig_deck_cardlistmenu.clearfix');
       }
       else {
-        $('#moko_container').height('30px').width('754px');
         $('<div id="favoritearea" style="width: 465px; float: left; padding-left: 15px;">' +
           '<div id="favoritebox"></div>' +
           '</div>'
@@ -1819,7 +1821,7 @@ function Moko_main( $) {
     });
   });
 
-  //☆リスト表示、座標記録、ミニマップ
+  //空き地リスト表示、座標記録、ミニマップ
   function map_check() {
     if (location.pathname != "/map.php")
       return;
@@ -3201,7 +3203,8 @@ function Moko_main( $) {
       //それぞれの同盟員ページから拠点を取得
       get_mnbrData(0);
       function get_mnbrData(i) {
-        $('#nowLoadingContent > p > span').text((i + 1) + '/' + a.length + '人目');
+        $('#info_progress').html( '同盟員の拠点を取得中...' );
+        $('#info_rigth').html( '<p>' + (i + 1) + '/' + a.length + '人目</p>' );
         $.ajax({
           url: a[i].href,
           cache: true,
@@ -3283,7 +3286,8 @@ function Moko_main( $) {
       }, 100);
 
       function fallCheck(i, mn, bc, bn, ad) {
-        $('#nowLoadingContent > p > span').text((i + 1) + '/' + baseNumber + '箇所');
+        $('#info_progress').html( '同盟員の陥落拠点を取得中...' );
+        $('#info_rigth').html( '<p>' + (i + 1) + '/' + baseNumber + '箇所</p>' );
         $.ajax({
           url: ad[i],
           cache: false,
@@ -3487,7 +3491,7 @@ function Moko_main( $) {
 
   //地図のパネル類の整形
   function MapPanels_move() {
-    if (!options.map_butai_status && !(options.map_starx > 0) && !options.map_reg && !(options.toride_inbox && parseInt(options.toride_count) != 0))
+    if (!options.map_butai_status && !(options.map_starx > 0) && !options.map_reg && !(parseInt(options.toride_count) != 0))
       return;
       $('#act_battle_data').remove();
   }
@@ -3544,6 +3548,9 @@ function Moko_main( $) {
         $.post(
           '/card/deck.php',
           function(html) {
+            nowLoading();
+            //progress
+            $('#info_progress').html( '全部隊解散中...' );
             var p = $(html).find('#p').attr('value');
             deck_dissolution( 0, '', '', p );
           }
@@ -3555,6 +3562,9 @@ function Moko_main( $) {
       var ano = $(this).attr('id'),
           unitname = $(this).closest('tr').find('div.fighter').text().replace('[', '').replace(']', '');
       if (confirm('【' + unitname +'部隊】を解散させてよろしいですか？')) {
+        nowLoading();
+        //progress
+        $('#info_progress').html( '全部隊解散中...' );
         $.post(
           '/card/deck.php?ano=' + ano,
           function(html) {
@@ -3562,7 +3572,11 @@ function Moko_main( $) {
                 unit_assign_id = Unregist[0].replace(/'/g, ''),
                 unset_unit_squad_id = Unregist[1].replace(/'/g, ''),
                 p = $(html).find('input[id="p"]').val(),
-                select_card_group = $(html).find('input[id="select_card_group"]').val();
+                select_card_group = $(html).find('input[id="select_card_group"]').val(),
+                troops = $(html).find('#ig_unitchoice').find('li.now').text(),
+                count = troops + ' を解散中...';
+            //progress
+            $('#info_left').append( '<p>' + count + '</p>' );
             var data = {
                 select_assign_no: ano,
                 unit_assign_id: unit_assign_id,
@@ -3574,6 +3588,7 @@ function Moko_main( $) {
             $.post(
               '/card/deck.php', data,
               function(data) {
+                $('#info_progress').html( '完了' );
                 location.href = location.pathname;
               }
             );
@@ -4570,7 +4585,7 @@ function Moko_main( $) {
       soldiertype['騎馬鉄砲'] = [67, 90, 72, 75];
     }
     if (options.def_kind_soldier[12]) {
-      soldiertype['焙烙火矢'] = [77, 77, 77, 77];	//仮)焙烙火矢不明
+      soldiertype['焙烙火矢'] = [90, 72, 67, 75];  //仮)焙烙火矢不明
     }
     if (options.def_kind_soldier[13]) {
       soldiertype['破城鎚'] = [14, 7, 11, 9];
@@ -6270,6 +6285,51 @@ function Moko_main( $) {
     })
   }
 
+  //デッキへ｜兵編成を追加
+  $(function(){
+    if(location.pathname != "/facility/send_troop.php" && location.pathname != "/facility/dungeon.php")
+      return;
+    
+    $('table.table_waigintunit').each(function(){
+      $(this).find('th.waitingunittitle').append('<span class="d_link"><a href="javascript:void(0);" class="organization">兵士編成</a>｜<a href="javascript:void(0);" class="move_deck">デッキへ</a></span>');
+    });
+    
+    $('a.move_deck').click(function(){
+      var cname = $(this).closest('tbody').find('tr:eq(1)').find('td:eq(1) > a').text();
+      var cid = $(this).closest('tbody').find('input').val();
+      $.post( '/card/deck.php',
+        function(html){
+          var anchor = $(html).find('#ig_unitchoice').find('li:contains('+cname+')').find('a'),
+            len = anchor.length;
+          if( len == 1 ) {
+            var ano = anchor.attr('onClick').match(/\d+/)[0];
+          }
+          else {
+            var ano = 0;
+          }
+          location.href = '/card/deck.php?ano=' + ano;
+        });
+      return false;
+    });
+    $('a.organization').click(function(){
+      var cname = $(this).closest('tbody').find('tr:eq(1)').find('td:eq(1) > a').text();
+      var cid = $(this).closest('tbody').find('input').val();
+      $.post( '/card/deck.php',
+        function(html){
+          var anchor = $(html).find('#ig_unitchoice').find('li:contains('+cname+')').find('a'),
+            len = anchor.length;
+          if( len == 1 ) {
+            var ano = anchor.attr('onClick').match(/\d+/)[0];
+          }
+          else {
+            var ano = 0;
+          }
+          location.href = '/facility/set_unit_list.php?unit_assign_id=' + cid + '&ano=' + ano + '&p=1';
+        });
+      return false;
+    });
+  });
+
   //出陣：部隊の自動選択
   function ptop_check() {
     if ((location.pathname != "/facility/send_troop.php") && (location.pathname != "/facility/confluence_confirm.php"))
@@ -6836,8 +6896,8 @@ function Moko_main( $) {
     if(location.pathname != "/facility/dungeon.php")
       return;
     $.post('/facility/unit_status.php?dmo=all', function(html) {
-      var waitTroops =  $(html).find('.table_fightlist:has(img[src$="mode_wait.png"])');
-      var waitBase = waitTroops.eq(0).find('.td_bggray:eq(0) a').text();
+      var waitTroops =  $(html).find('table.table_fightlist:has(img[src$="mode_wait.png"])');
+      var waitBase = waitTroops.eq(0).find('td.td_bggray:eq(0) a').text();
       
       $('#sideboxBottom').find('div.basename:eq(0)').find('li > a').each(function() {
         var BaseName = $(this).text();
@@ -6992,7 +7052,7 @@ function Moko_main( $) {
 //部隊: 待機武将一覧：
 //////////////////////
   //選択中のデッキの配置拠点にアンダーライン
-  $(function () {
+  function base_underline() {
     if (location.pathname != "/card/deck.php")
       return;
       var deckSelect = $('div.ig_deck_unitdata_assign.deck_wide_select').text().trim() ||
@@ -7004,7 +7064,7 @@ function Moko_main( $) {
           $(this).css({'text-decoration':'none', 'border-bottom':'2px solid coral'});
         }
       });
-  });
+  }
   
   //待機武将一覧のレイアウト
   function card_deck_layout() {
@@ -7330,7 +7390,7 @@ function Moko_main( $) {
             p: p,
             select_card_group: select_card_group
           };
-          $.post( '/card/deck.php', data, function(data){ location.href = '/card/deck.php?ano=' + select_assign_no; });
+          $.post( '/card/deck.php', data, function(data){ location.href = '/card/deck.php?ano=' + select_assign_no + '&select_card_group=' + select_card_group; });
         });
       }).prependTo('#add_this').hide();
       
@@ -7370,6 +7430,8 @@ function Moko_main( $) {
       if (!confirm("全部隊を解散しますか？\n(武将はHPが減った状態で待機状態に戻ります)"))
         return;
       nowLoading();
+      //progress
+      $('#info_progress').html( '全部隊解散中...' );
       var p = $('#p').attr('value');
       deck_dissolution( 0, '', '', p );
     });
@@ -7396,7 +7458,11 @@ function Moko_main( $) {
       function(html) {
         var Dissolution = $(html).find('div.deck_navi').find('img:eq(0)');
         var panel = $(html).find('#howto_butai_hensei').size();
+        var troops = $(html).find('#ig_unitchoice').find('li.now').text();
+        var count = troops + 'を解散中...';
         if ( panel == 1  ) {
+          //progress
+          $('#info_progress').html( '完了' );
           location.href = location.pathname;
         }
         else if ( Dissolution.attr('alt') === undefined && panel == 0  ) {
@@ -7406,6 +7472,9 @@ function Moko_main( $) {
         }
         else {
           work_id = Dissolution.closest('a').attr('onClick').match(/'.*?'/g);
+          //progress
+          $('#info_left').append( '<p>' + count + '</p>' );
+          $('#info_rigth').html( $('#info_left > p').length + '部隊' );
         }
         if ( work_id[0]) {
           unit_assign_id = work_id[0].replace(/'/g, '');
@@ -7481,7 +7550,11 @@ function Moko_main( $) {
   }
 
   function deck_all(html, no, index_page) {
+    var deck_cost = $(html).find('#ig_deckcost > span.ig_deckcostdata').text().match(/(\d+\.?\d?)\/(\d+)/);
+    var free_cost = parseFloat(deck_cost[2]) - parseFloat(deck_cost[1]);
     if (no > 4) {
+    //progress
+    $('#info_progress').html( '完了' );
       if(options.all_setting_mod == '1'){
         location.href = '/facility/dungeon.php';
         return;
@@ -7541,30 +7614,37 @@ function Moko_main( $) {
     $.post(
       href,
       {
+        target_card: '',
         select_assign_no: s_assign_no,
         mode: 'assign_insert',
+        btn_change_flg: '',
         set_village_id: w_select_village,
+        set_assign_id: set_assign_id,
+        set_squad_id: set_squad_id,
+        set_card_id:set_card_id,
         deck_mode: 'nomal',
         p: index_page,
+        myselect_2: '',
         select_card_group: select_card_group
       },
       function(html) {
-        $(html).find('#ig_deck_smallcardarea_out').find('div.ig_deck_smallcardarea')
+        var deck_cost = $(html).find('#ig_deckcost > span.ig_deckcostdata').text().match(/(\d+\.?\d?)\/(\d+)/);
+        var free_cost = parseFloat(deck_cost[2]) - parseFloat(deck_cost[1]);
+        var troops = $(html).find('#ig_unitchoice').find('li.now').text();
+        if( troops == '[---新規部隊を作成---]' ){
+          troops = '部隊長'
+        }
+        $(html).find('div.ig_deck_smallcardarea:has(img[alt="選択中の部隊へ"])')
         .each(function() {
-          if( $(this).find('img[alt="兵士編成"]').length == 0 )  //出品中
-            return true;
-          if( $(this).find('img[alt="選択中の部隊へ"]').length == 0 )   //配置出来ない状態( HP0 || 名称重複)
-            return true;
-          var work_id = ( $(this).find('a[id^="btn_gounit_"]').attr('onClick') || '' );
-              work_id = work_id.replace('confirmRegist2(', '').replace(');','').split(',');
-          if ( work_id == null ) 
-            return true;
-          var id = work_id[4].trim();
-          if( $(this).find('#deck_unit_cnt_' + id ).text() === '0' ) //指揮兵数0
-            return true;
-          set_squad_id = work_id[1].replace(/\'/g, '').trim();
-          set_assign_id = work_id[0];
-          set_card_id = work_id[4].replace(/\'/g, '').trim();
+          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onClick'),
+            work_id = work_id.replace('confirmRegist2(', '').replace(');','').split(',');
+            set_squad_id = work_id[1].replace(/\'/g, '').trim();
+            set_assign_id = work_id[0];
+            set_card_id = work_id[4].trim().replace(/\'/g, '');
+          var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
+            //progress
+            $('#info_progress').html( '全部隊配置中...' );
+            $('#info_left').html('<p>' + cname + ' を</p><p>' + troops + 'に登録中...</p>' );
             return false;
         });
         
@@ -7574,23 +7654,30 @@ function Moko_main( $) {
           $.post(
             href,
             {
+              target_card: '',
               select_assign_no: s_assign_no,
               mode: 'assign_insert',
+              btn_change_flg: '',
               set_village_id: w_select_village,
               set_assign_id: set_assign_id,
-              set_card_id:set_card_id,
               set_squad_id: set_squad_id,
-              select_card_group: select_card_group,
+              set_card_id:set_card_id,
               deck_mode: 'nomal',
-              p: index_page
+              p: index_page,
+              myselect_2: '',
+              select_card_group: select_card_group
             },
-            function(html) {
+            function( html, cname) {
               var start_leader_no = $(html).find('#ig_deck_unitdetailbox').find('img').length - 4;
               if(start_leader_no > 0 && start_leader_no != start) {
                 start = start_leader_no;
               }
               var deck_cost = $(html).find('#ig_deckcost > span.ig_deckcostdata').text().match(/(\d+\.?\d?)\/(\d+)/);
               var free_cost = parseFloat(deck_cost[2]) - parseFloat(deck_cost[1]);
+              var unit_num = $(html).find('#ig_unitchoice').find('li:contains("[---新規部隊を作成---]")').length,
+                unit_num = 5 - unit_num; 
+              //progress
+              $('#info_rigth').html( '<p>' + deck_cost[0] + '　' + unit_num + '部隊</p>' );
               if(free_cost < 1) {
                 start = 4;
               }
@@ -7615,14 +7702,18 @@ function Moko_main( $) {
     var id = '#nowLoadingContent';
     var maskHeight = $(document).height();
     var maskWidth = $(window).width();
-    if( $('#TB_overlay').size() == 0 ) {
-      $('#loading_mask').css({'width': maskWidth,'height': maskHeight}).fadeTo(0, 0.75).show();
+    if( $('#TB_overlay').size() > 0 ){
+      $('#loading_mask').css({ 'width': maskWidth, 'height': maskHeight, 'opacity': '0.2'}).show();
+    }
+    else {
+      $('#loading_mask').css({ 'width': maskWidth, 'height': maskHeight, 'opacity': '0.75'}).show();
     }
     var winH = $(window).height();
     var winW = $(window).width();
-    $(id).css('top', winH / 2 - $(id).height() / 2).css('left', winW / 2 - $(id).width() / 2).show();
+    $(id).css('top', winH / 2 - (($(id).height() / 2) + 100) ).css('left', winW / 2 - $(id).width() / 2).show();
     return false;
     if( $('#TB_overlay').size() > 0 ){ $('#loading_mask').hide(); }
+    return false;
   }
 
   function asort(hash, key) {
@@ -7957,25 +8048,22 @@ function Moko_main( $) {
       }
       else {
           // ランクアップによる修正廃止
-          rank = 0;
-          lv = 20;
-
           //※特を基準に大凡の増減を加える。 天 = +25% 極 = +8.5% 上 = -8.5% 序 = -15%
           //基本レートにランク1毎に +43 加算
           if( rea == '天' ) {
-            rate = Math.round( (( rank * 43 ) + HPres_normal[lv]) * 1.25 );
+            rate = Math.round( 43 * 1.25 );
           }
           else if( rea == '極' ) {
-            rate = Math.round( (( rank * 43 ) + HPres_normal[lv]) * 1.085 );
+            rate = Math.round( 43 * 1.085 );
           }
           else if( rea == '特' ) {
-            rate = Math.round( (( rank * 43 ) + HPres_normal[lv]) );
+            rate = Math.round( 43 );
           }
           else if( rea == '上' ) {
-            rate = Math.round( (( rank * 43 ) + HPres_normal[lv]) * 0.915 );
+            rate = Math.round( 43 * 0.915 );
           }
           else if( rea == '序' ) {
-            rate = Math.round( (( rank * 43 ) + HPres_normal[lv]) * 0.85 );
+            rate = Math.round( 43 * 0.85 );
           }
         //console.log( 'No.' + cardNo + '/' + rea + '/' + '★' + rank + '/Lv.' + lv + '/normal rate = ' + rate );
       }
@@ -8066,36 +8154,51 @@ function Moko_main( $) {
       return;
     if (!options.soldiers_blind)
       return;
-    $('#moko_container').height('30px').width('754px')
-    .append('<ul id="soldiers_blind_list">'
-        + '<li><a id="all">全</a></li>'
-        + '<li><a id="yari">槍</a>'
-        + '<div>'
-          + '<a id="yari_yumi">槍弓</a>'
-          + '<a id="yari_kiba">槍馬</a>'
-        + '</div>'
-        + '<li><a id="yumi">弓</a>'
-        + '<div>'
-          + '<a id="yumi_kiba">弓馬</a>'
-        + '</div>'
-        + '</li>'
-        + '<li><a id="kiba">馬</a></li>'
-        + '<li><a id="defense">砲</a>'
-        + '<div>'
-          + '<a id="yari_defense">砲槍</a>'
-          + '<a id="yumi_defense">砲弓</a>'
-          + '<a id="kiba_defense">砲馬</a>'
-        + '</div>'
-        + '</li>'
-        + '<li><a id="hakai">兵器</a>'
-        + '<div>'
-          + '<a id="ki_attack">攻砲</a>'
-          + '<a id="ki_hakai">器</a>'
-        + '</div>'
-        + '</li>'
-      + '</ul>'
+    $('#moko_container')
+      .append(
+        '<ul id="soldiers_blind_list">' +
+          '<li><a id="all" class="main">全</a></li>' +
+          '<li><a id="yari_top" class="main">槍</a>' +
+            '<div>' +
+              '<a id="yari">槍</a>' +
+              '<a id="yari_yumi">槍弓</a>' +
+              '<a id="yari_kiba">槍馬</a>' +
+            '</div>' +
+          '</li>' +
+          '<li><a id="yumi_top" class="main">弓</a>' +
+            '<div>' +
+              '<a id="yumi">弓</a>' +
+              '<a id="yumi_yari">弓槍</a>' +
+              '<a id="yumi_kiba">弓馬</a>' +
+            '</div>' +
+          '</li>' +
+          '<li><a id="kiba_top" class="main">馬</a>' +
+            '<div>' +
+              '<a id="kiba">馬</a>' +
+              '<a id="kiba_yari">馬槍</a>' +
+              '<a id="kiba_yumi">馬弓</a>' +
+            '</div>' +
+          '</li>' +
+          '<li><a id="defense_top" class="main">鉄足</a>' +
+            '<div>' +
+              '<a id="defense">鉄足</a>' +
+              '<a id="yari_defense">鉄足/槍</a>' +
+              '<a id="yumi_defense">鉄足/弓</a>' +
+              '<a id="kiba_defense">鉄足/馬</a>' +
+            '</div>' +
+          '</li>' +
+          '<li><a id="heiki_top" class="main">攻砲器</a>' +
+            '<div>' +
+              '<a id="heiki">攻砲器</a>' +
+              '<a id="kibatetsu">騎鉄</a>' +
+              '<a id="saika">雑賀</a>' +
+              '<a id="houroku">焙烙</a>' +
+              '<a id="ki_hakai">器</a>' +
+            '</div>' +
+          '</li>' +
+        '</ul>'
       );
-    
+
     $('#soldiers_blind_list > li')
     .hover(function() {
         $(this).children('div').show();
@@ -8103,84 +8206,120 @@ function Moko_main( $) {
       function() {
         $(this).children('div').hide();
     });
-    
-    $('#ig_deck_smallcardarea_out').each(function() {
-      var yari_g = $('div.ig_deck_smallcardarea:contains("足軽"), .ig_deck_smallcardarea:contains("長槍足軽"), .ig_deck_smallcardarea:contains("武士"), .ig_deck_smallcardarea:contains("国人衆")');
-      var yumi_g = $('div.ig_deck_smallcardarea:contains("弓足軽"), .ig_deck_smallcardarea:contains("長弓兵"), .ig_deck_smallcardarea:contains("弓騎馬"), .ig_deck_smallcardarea:contains("海賊衆")');
-      var kiba_g = $('div.ig_deck_smallcardarea:contains("騎馬兵"), .ig_deck_smallcardarea:contains("精鋭騎馬"), .ig_deck_smallcardarea:contains("赤備え"), .ig_deck_smallcardarea:contains("母衣衆")');
-      var defense_hou = $('div.ig_deck_smallcardarea:contains("鉄砲足軽")');
-      var defense_yari = $('div.ig_deck_smallcardarea:contains("鉄砲足軽"), .ig_deck_smallcardarea:contains("足軽"), .ig_deck_smallcardarea:contains("長槍足軽"), .ig_deck_smallcardarea:contains("武士")');
-      var defense_yumi = $('div.ig_deck_smallcardarea:contains("鉄砲足軽"), .ig_deck_smallcardarea:contains("弓足軽"), .ig_deck_smallcardarea:contains("長弓兵"), .ig_deck_smallcardarea:contains("弓騎馬")');
-      var defense_kiba = $('div.ig_deck_smallcardarea:contains("鉄砲足軽"), .ig_deck_smallcardarea:contains("騎馬兵"), .ig_deck_smallcardarea:contains("精鋭騎馬"), .ig_deck_smallcardarea:contains("赤備え")');
-      var attack_hou = $('div.ig_deck_smallcardarea:contains("騎馬鉄砲"), .ig_deck_smallcardarea:contains("雑賀衆")');
-      var hakai_g = $('div.ig_deck_smallcardarea:contains("破城鎚"), .ig_deck_smallcardarea:contains("攻城櫓"), .ig_deck_smallcardarea:contains("大筒兵"), .ig_deck_smallcardarea:contains("焙烙火矢")');
       
-      $('#all').click(function() {
-        $('div.ig_deck_smallcardarea').show();
-      });
-      $('#yari').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        yari_g.show();
-        $('div.ig_deck_smallcardarea:contains("弓足軽")').hide();
-        $('div.ig_deck_smallcardarea:contains("鉄砲足軽")').hide();
-      });
-      $('#yari_kiba').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        yari_g.show();
-        kiba_g.show();
-        $('div.ig_deck_smallcardarea:contains("弓足軽")').hide();
-        $('div.ig_deck_smallcardarea:contains("鉄砲足軽")').hide();
-      });
-      $('#yumi').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        yumi_g.show();
-      });
-      $('#yari_yumi').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        yumi_g.show();
-        yari_g.show();
-        $('div.ig_deck_smallcardarea:contains("弓足軽")').hide();
-        $('div.ig_deck_smallcardarea:contains("鉄砲足軽")').hide();
-      });
-      $('#yumi_kiba').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        yumi_g.show();
-        kiba_g.show();
-      });
-      $('#kiba').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        kiba_g.show();
-      });
-      $('#defense').click(function() {
-        $('div.ig_deck_smallcardarea').hide();
-        defense_hou.show();
-      });
-        $('#yari_defense').click(function() {
-          $('div.ig_deck_smallcardarea').hide();
-          defense_yari.show();
-        });
-        $('#yumi_defense').click(function() {
-          $('div.ig_deck_smallcardarea').hide();
-          defense_yumi.show();
-        });
-        $('#kiba_defense').click(function() {
-          $('div.ig_deck_smallcardarea').hide();
-          defense_kiba.show();
-        });
+    var yari_g = $('div.ig_deck_smallcardarea:has( span:contains("足軽"), span:contains("長槍足軽"), span:contains("武士"), span:contains("国人衆") )');
+    var yumi_g = $('div.ig_deck_smallcardarea:has( span:contains("弓足軽"), span:contains("長弓兵"), span:contains("弓騎馬"), span:contains("海賊衆") )');
+    var kiba_g = $('div.ig_deck_smallcardarea:has( span:contains("騎馬兵"), span:contains("精鋭騎馬"), span:contains("赤備え"), span:contains("母衣衆") )');
+    var defense_hou = $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽") )');
+    var defense_yari = $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽"), span:contains("足軽"), span:contains("長槍足軽"), span:contains("武士") )');
+    var defense_yumi = $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽"), span:contains("弓足軽"), span:contains("長弓兵"), span:contains("弓騎馬") )');
+    var defense_kiba = $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽"), span:contains("騎馬兵"), span:contains("精鋭騎馬"), span:contains("赤備え") )');
+    var heiki_g = $('div.ig_deck_smallcardarea:has( span:contains("騎馬鉄砲"), span:contains("雑賀衆"), span:contains("焙烙火矢"), span:contains("破城鎚"), span:contains("攻城櫓"), span:contains("大筒兵") )');
+    var kibatetsu = $('div.ig_deck_smallcardarea:has( span:contains("騎馬鉄砲") )');
+    var saika = $('div.ig_deck_smallcardarea:has( span:contains("雑賀衆") )');
+    var houroku = $('div.ig_deck_smallcardarea:has( span:contains("焙烙火矢") )');
+    var hakai_g = $('div.ig_deck_smallcardarea:has( span:contains("破城鎚"), span:contains("攻城櫓"), span:contains("大筒兵") )');
 
-      $('#hakai').click(function() {
+    $('#soldiers_blind_list > li > a').click(function() {
+      var selecttext = $(this).text(),
+        closestLI = $(this).closest('li');
+      $('a.main').show();
+      closestLI.find('a.main').hide();
+      $('#soldiers_blind_list > li').find('a.now_branch').remove();
+      $('#soldiers_blind_list > li > a').removeClass('select_now');
+      $(this).addClass('select_now');
+      closestLI.prepend('<a class="now_branch">' + selecttext + '</a>');
+    });
+    $('#soldiers_blind_list > li').find('div > a').click(function() {
+      var selecttext = $(this).text(),
+        closestLI = $(this).closest('li');
+      $('#soldiers_blind_list > li > a').removeClass('select_now');
+      $('#soldiers_blind_list').find('a.now_branch').remove();
+      $('#soldiers_blind_list').find('a.main').show();
+      closestLI.find('a.main').hide();
+      closestLI.find('a.now_branch').remove();
+      closestLI.prepend('<a class="now_branch">' + selecttext + '</a>');
+      $(this).parent().slideUp(150);
+    }).hover(function() {
+      $(this).closest('li').find('a:first').addClass('select_now');
+    },function() {
+      $(this).closest('li').find('a:first').removeClass('select_now');
+    });
+
+    $('#all').click(function() {
+      $('div.ig_deck_smallcardarea').show();
+    });
+
+    $('#yari, #yari_top').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      yari_g.show();
+      $('div.ig_deck_smallcardarea:has( span:contains("弓足軽") )').hide();
+      $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽") )').hide();
+    });
+    $('#yari_yumi, #yumi_yari').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      yari_g.show();
+      yumi_g.show();
+      $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽") )').hide();
+    });
+    $('#yari_kiba, #kiba_yari').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      yari_g.show();
+      kiba_g.show();
+      $('div.ig_deck_smallcardarea:has( span:contains("弓足軽") )').hide();
+      $('div.ig_deck_smallcardarea:has( span:contains("鉄砲足軽") )').hide();
+    });
+
+    $('#yumi, #yumi_top').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      yumi_g.show();
+    });
+      $('#yumi_kiba, #kiba_yumi').click(function() {
         $('div.ig_deck_smallcardarea').hide();
-        attack_hou.show();
-        hakai_g.show();
+        yumi_g.show();
+        kiba_g.show();
       });
-        $('#ki_attack').click(function() {
-          $('div.ig_deck_smallcardarea').hide();
-          attack_hou.show();
-        });
-        $('#ki_hakai').click(function() {
-          $('div.ig_deck_smallcardarea').hide();
-          hakai_g.show();
-        });
+    $('#kiba, #kiba_top').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      kiba_g.show();
+    });
+    $('#defense, #defense_top').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      defense_hou.show();
+    });
+    $('#yari_defense').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      defense_yari.show();
+      $('div.ig_deck_smallcardarea:has( span:contains("弓足軽") )').hide();
+    });
+    $('#yumi_defense').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      defense_yumi.show();
+    });
+    $('#kiba_defense').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      defense_kiba.show();
+    });
+
+    $('#heiki, #heiki_top').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      heiki_g.show();
+    });
+    $('#kibatetsu').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      kibatetsu.show();
+    });
+    $('#saika').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      saika.show();
+    });
+    $('#houroku').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      houroku.show();
+    });
+    $('#ki_hakai').click(function() {
+      $('div.ig_deck_smallcardarea').hide();
+      hakai_g.show();
     });
   }
 
@@ -8209,7 +8348,7 @@ function Moko_main( $) {
       "足軽"    :{typeno:321, off:11,def:11,mov:15,des: 2,tp1:"t1",tp2:"t1", cmd1:"yari" ,cmd2:"yari" , drill:true , order: 1},
       "長槍足軽":{typeno:322, off:16,def:16,mov:16,des: 2,tp1:"t1",tp2:"t1", cmd1:"yari" ,cmd2:"yari" , drill:true , order: 2},
       "武士"    :{typeno:323, off:18,def:18,mov:18,des: 2,tp1:"t1",tp2:"t3", cmd1:"yari" ,cmd2:"yumi" , drill:true , order: 3},
-      "国人衆"  :{typeno:324, off:17,def:13,mov:17,des: 3,tp1:"t1",tp2:"t1", cmd1:"yari" ,cmd2:"yari" , drill:false, order:15},
+      "国人衆"  :{typeno:324, off:17,def:(options.chapter_change<6?13:17),mov:17,des: 3,tp1:"t1",tp2:"t1", cmd1:"yari" ,cmd2:"yari" , drill:false, order:15},
       "弓足軽"  :{typeno:325, off:10,def:12,mov:16,des: 1,tp1:"t3",tp2:"t3", cmd1:"yumi" ,cmd2:"yumi" , drill:true , order: 7},
       "長弓兵"  :{typeno:326, off:15,def:17,mov:18,des: 1,tp1:"t3",tp2:"t3", cmd1:"yumi" ,cmd2:"yumi" , drill:true , order: 8},
       "弓騎馬"  :{typeno:327, off:17,def:19,mov:23,des: 1,tp1:"t2",tp2:"t3", cmd1:"kiba" ,cmd2:"yumi" , drill:true , order: 9},
@@ -8224,7 +8363,7 @@ function Moko_main( $) {
       "鉄砲足軽":{typeno:336, off:18,def:26,mov:15,des: 1,tp1:"t1",tp2:"t4", cmd1:"yari" ,cmd2:"heiki", drill:true , order:10},
       "騎馬鉄砲":{typeno:337, off:26,def:18,mov:21,des: 1,tp1:"t2",tp2:"t4", cmd1:"kiba" ,cmd2:"heiki", drill:true , order:11},
       "雑賀衆"  :{typeno:338, off:23,def:27,mov:18,des: 5,tp1:"t1",tp2:"t4", cmd1:"yari" ,cmd2:"heiki", drill:false, order:18},
-      "焙烙火矢"  :{typeno:345, off:23,def:23,mov:19,des: 2,tp1:"t3",tp2:"t4", cmd1:"yumi" ,cmd2:"heiki", drill:false, order:19}
+      "焙烙火矢":{typeno:345, off:23,def:23,mov:19,des: 2,tp1:"t3",tp2:"t4", cmd1:"yumi" ,cmd2:"heiki", drill:false, order:19}
     };
     
     var attack_power = 0, defense_power = 0, destruct_power = 0 ;
@@ -8305,9 +8444,10 @@ function Moko_main( $) {
   function delList_check() {
     if (location.pathname != "/card/deck_card_delete.php")
       return;
-    if ($('div.ig_decksection_innermid').find('input[name="delete_card_arr[]"]:eq(0)').attr('type') == 'checkbox') {
-      
-      $('div.ig_decksection_innermid').find('tr').each(function() {
+    var commonTable = $('table.common_table1');
+    commonTable.find('tr').addClass('defa');
+    if ( commonTable.find('input[name="delete_card_arr[]"]:eq(0)').attr('type') == 'checkbox' ) {
+      commonTable.find('tr').each(function() {
         var a = $(this).find('img').attr('alt');
         if ( options.rank_lock !== 0 &&
           options.rank_lock <= 1 && a == "UC" ||  //上
@@ -8315,13 +8455,12 @@ function Moko_main( $) {
           options.rank_lock <= 3 && a == "SR" ||  //極
           options.rank_lock <= 4 && a == ""   ||  //雅
           options.rank_lock <= 4 && a == "UR"  //天
-        )
-        { $(this).find('input[name="delete_card_arr[]"]').attr('disabled', true); }
+        ) {
+          $(this).find('input[name="delete_card_arr[]"]').attr('disabled', true);
+          $(this).removeClass('defa');
+        }
       });
-      
-      $('div.ig_decksection_innermid').find('table.common_table1.center.mt10')
-      .before('<div class="left" style="width:680px; margin: 0 auto;"><input type="button" value="全選択" id="sel_check" style="margin-right: 10px;" /><input type="button" value="全解除" id="unsel_check"/></div>');
-      
+      commonTable.before('<div class="left" style="width:680px; margin: 0 auto;"><input type="button" value="全選択" id="sel_check" style="margin-right: 10px;" /><input type="button" value="全解除" id="unsel_check"/></div>');
       $('#sel_check').click(function() {
         $('div.ig_decksection_innermid').find('input[name="delete_card_arr[]"]').each(function() {
           if ($(this).attr('disabled') == false) {
@@ -8336,6 +8475,20 @@ function Moko_main( $) {
         });
       });
     }
+    commonTable.find('tr.defa').toggle(
+      function(){
+        $(this).find('input[name^="delete_card_arr"]').attr('checked', true);
+      },
+      function(){
+        $(this).find('input[name^="delete_card_arr"]').attr('checked', false);
+      });
+    commonTable.find('tr.defa').hover(
+      function(){
+        $(this).css('background-color', '#F9DEA1');
+      },
+      function(){
+        $(this).css('background-color', '');
+    });
   }
 
   //合成：1個目のスキルを自動チェック
@@ -8408,21 +8561,13 @@ function Moko_main( $) {
     if (location.pathname != "/card/deck.php")
       return;
 
-    var category = $('#btn_category').find('li:first').attr('class');
-    
-    if( category != 'btn_category_00_on' )
-      return;
-
     if ($('#ig_deck_unititle_s5.clearfix').find('p:eq(0)').text() == '[------]部隊') {
       var butai_list = {};
       if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
         butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
-      } else {
-        return;
       }
       $('#ig_deck_unititle_s5.clearfix').css({height:'86px',whiteSpace:'nowrap'});
-      
-      $('.deck_navi').css('height', '1px');
+
       var s_0 = '<p style="float: left; padding: 2px 5px;font-size: 12px;font-weight: normal;">攻撃部隊:<select id="s_0" style="width: 10em;"><option>-----選択-----</option>';
       var s_1 = '<p style="float: left; padding: 2px 5px;font-size: 12px;font-weight: normal;">防衛部隊:<select id="s_1" style="width: 10em;"><option>-----選択-----</option>';
       var s_2 = '<p style="padding: 2px 5px;font-size: 12px;font-weight: normal;">両用部隊:<select id="s_2" style="width: 10em;"><option>-----選択-----</option>';
@@ -8446,6 +8591,14 @@ function Moko_main( $) {
         .find('p:eq(0)').replaceWith(s_0 + s_1 + s_2 + s_3);
       $('#ig_deck_unititle_s5.clearfix')
         .prepend('<p style="border-bottom: 1px solid #B1912C;margin-bottom: 8px;">お気に入り部隊</p>');
+
+      //全武将からで無くては使えない
+      var category = $('#btn_category').find('li:first').attr('class');
+      if( category != 'btn_category_00_on' ) {
+        $('#ig_deck_unititle_s5').find('select, input').attr('disabled', true );
+        $('#ig_deck_unititle_s5').find('p:eq(0)').append('<span style="font-size: 12px; font-weight: normal;">「全武将」以外では配置できません。</span>');
+      }
+
       $('#set_0').live("click", function() {
         var s_val = $('#s_0').children(':selected').val();
         if (s_val == '-----選択-----')
@@ -8553,7 +8706,8 @@ function Moko_main( $) {
           '<th class="imk_th_view imk_border_right"></th>' +
         '</tr>' +
         '</thead>' +
-        '<tbody>';
+        '<tbody>' +
+        '<tr id="defa"><td colspan="8" class="imk_td_view_center imk_border_right">お気に入り部隊は登録されていません</td></tr>';
     var butai_list = {};
     var c = 0, i, j;
     if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
@@ -8585,13 +8739,12 @@ function Moko_main( $) {
         tmp += '<td class="imk_td_view_center imk_border_right"><input class="del_butai" type="button" value="消去" id="' + i + '" /></td></tr>';
         c++;
       }
-      tmp += '<tr><td colspan="8" class="imk_td_view_center imk_border_right">お気に入り部隊は登録されていません</td></tr>';
     }
     
     tmp += '</tbody></table></span>';
     $('#butaiTable').replaceWith(tmp);
     
-    if($('input.del_butai').length > 0){ $('tr:contains("お気に入り部隊は登録されていません")').remove(); }
+    if($('input.del_butai').length > 0){ $('#defa').remove();}
     
     tmp = $('#howto_butai_hensei').find('table').clone();
       tmp.css('margin-bottom', '5px');
@@ -8622,7 +8775,23 @@ function Moko_main( $) {
       }
       localStorage.setItem('crx_ixakaizou_butai_list_id', toJSON(butai_list_new));
       tmp = '<span id="butaiTable"><p id="b_head"></p><table style="width:100%;">';
-      tmp += '<thead><tr><th class="imk_th_view">選択</th><th class="imk_th_view">タイプ</th><th class="imk_th_view">部隊名</th><th class="imk_th_view">部隊長</th><th class="imk_th_view">小隊長</th><th class="imk_th_view">小隊長</th><th class="imk_th_view">小隊長</th><th class="imk_th_view imk_border_right"></th></tr></thead><tbody>';
+      tmp +=
+        '<thead>' +
+          '<tr>' +
+            '<th class="imk_th_view">選択</th>' +
+            '<th class="imk_th_view">タイプ</th>' +
+            '<th class="imk_th_view">部隊名</th>' +
+            '<th class="imk_th_view">部隊長</th>' +
+            '<th class="imk_th_view">小隊長</th>' +
+            '<th class="imk_th_view">小隊長</th>' +
+            '<th class="imk_th_view">小隊長</th>' +
+            '<th class="imk_th_view imk_border_right"></th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+          '<tr id="defa">' +
+            '<td colspan="8" class="imk_td_view_center imk_border_right">お気に入り部隊は登録されていません</td>' +
+          '</tr>';
       butai_list = {};
       var c = 0, i, j;
       if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
@@ -8661,7 +8830,7 @@ function Moko_main( $) {
       tmp += '</tbody></table></span>';
       $('#butaiTable').replaceWith( tmp );
       
-      if($('input.del_butai').length > 0){ $('tr:contains("お気に入り部隊は登録されていません")').remove(); }
+      if($('input.del_butai').length > 0){ $('#defa').remove(); }
       
       tmp = $('#howto_butai_hensei').find('table').clone();
         tmp.css('margin-bottom', '5px');
@@ -8679,6 +8848,12 @@ function Moko_main( $) {
       }
     
     });
+
+    var category = $('#btn_category').find('li:first').attr('class');
+    if( category != 'btn_category_00_on' ) {
+      $('#b_head').find('select, input').attr('disabled', true );
+    }
+
   }
 
   function deck_all_setting() {
@@ -8760,6 +8935,8 @@ function Moko_main( $) {
       j++;
     }
     if (card_key === '') {
+      //progress
+      $('#info_progress').html( '完了' );
       location.href = '/card/deck.php';
       return;
     }
@@ -8821,6 +8998,8 @@ function Moko_main( $) {
     var select_card_group = $('#select_card_group').val();
     
     if (((a > 4) || (list[a] === '') || (b > c)) && (!flg)) {
+      //progress
+      $('#info_progress').html( '完了' );
       var data2 = {
         select_assign_no: s_assign_no,
         select_card_group: select_card_group,
@@ -8864,17 +9043,28 @@ function Moko_main( $) {
     };
 
     $.post('/card/deck.php', data, function(html) {
+      var troops = $(html).find('#ig_unitchoice').find('li.now').text() + 'へ';
+      if( troops == '[---新規部隊を作成---]へ' ){
+        troops = '新規部隊へ';
+      }
       $(html).find('#ig_deck_smallcardarea_out').find('div.ig_deck_smallcardarea')
       .each(function() {
-        
         var id = $(this).find('div[id^="unit_group_type_"]').attr('id').split('_')[3];
         var setSrc = $(this).find('img[title^="選択中の部隊へ"]').attr('src');
-        
+        var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
         if ( (id == list[a]) && ( setSrc !== undefined) ) {
           var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onClick').match(/'.*?'/g);
           set_squad_id = work_id[1].replace(/'/g, '');
           set_assign_id = work_id[0].replace(/'/g, '');
+          var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
+          //progress
+          $('#info_progress').html( troops );
+          $('#info_left').append( '<p>' + cname + 'を登録中...</p>' );
           return false;
+        }
+        else if ( ( id == list[a] ) && ( setSrc == undefined) ) {
+          $('#info_progress').html( '[' + cname + ']は現在登録できません' );
+          //location.reload();
         }
         else {
           set_squad_id = '';
@@ -8898,6 +9088,10 @@ function Moko_main( $) {
           a++;
           b = 1;
           set_deck(list, a, b, c, s_assign_no, w_select_village, flg);
+          var unit_num = $(html).find('#ig_unitchoice').find('li:contains("[---新規部隊を作成---]")').length,
+            unit_num = 5 - unit_num; 
+          //progress
+          $('#info_rigth').html( '<p>' + unit_num + '部隊目</p>' );
         });
       } else {
         b++;
@@ -9038,10 +9232,7 @@ function Moko_main( $) {
     else if( groups == 3 ){ TopLeft = '0 -60px' }
     else if( groups == 4 ){ TopLeft = '0 -80px' }
     else if( groups == 5 ){ TopLeft = '0 -100px' }
-    //デッキ配置部隊の編成時に現在選択中の組を把握できるようにimgで表示
-    if( flag == 2 ) {
-      $('#frame_00_top').append('<div style="position: absolute; top: 13px; right: 20px; width: 118px; height: 20px; background: url(../img/unit_list/btn_category.png) no-repeat ' + TopLeft + ';"></div>');
-    }
+
     //各デッキへの移動ボタンを追加
     $('<ul id="deck_navi">'
       + '<li class="dummy dfirst">'
@@ -9090,11 +9281,9 @@ function Moko_main( $) {
     }
 
     $('li[class^="btn_category_"]').live('contextmenu', function() {
+    }).hover(function() {
       $('li[class^="btn_category_"]').find('div.menu_list').hide();
       $(this).find('div.menu_list').slideDown(150);
-      return false;
-    }).hover(function() {
-      
     },function() {
       $(this).find('div.menu_list').slideUp(150);
     });
@@ -9346,8 +9535,6 @@ function Moko_main( $) {
       }).mouseover(function() {
         $(this).removeAttr('value').val('グループ順記録');
       }).prependTo('#button_box');
-      $('#moko_container').css({'height':'32px', 'width':'715px'});
-      
       $('span[id^="now_unit_cnt_"]').each(function() {
         var id_num = $(this).attr('id').substring(13);
         var card_id = $('#card_id_arr_' + id_num).val();
@@ -9581,7 +9768,6 @@ function Moko_main( $) {
       default_unit = secureEvalJSON(localStorage.getItem("crx_ixamoko_default_unit"));
     }
     $('#button_box').append('&nbsp;<input type="button" value="基本兵種記録" id="default_unit_set" style="width:9em;" />');
-    $('#moko_container').css({'height':'32px', 'width':'715px'});
     $('#busho_info').find('tr.tr_gradient:eq(0)').find('th:eq(8)').replaceWith('<th>基本兵種/兵種(待機数)</th>');
     
     $('#busho_info').find('tr.tr_gradient').slice(1).each(function() {

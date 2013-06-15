@@ -122,19 +122,36 @@ var CRXMOKODATA = {
 
 ( function () {
   var typesOfSoldiers = {
-    '農民': [ '他', 5],
-    '抜け忍': [ '弓', 12],
-    '野盗': [ '馬', 12],
-    '浪人': [ '槍', 12],
-    '雑賀衆': [ '他', 17],
-    '海賊衆': [ '弓', 17],
-    '母衣衆': [ '馬', 16],
-    '国人衆': [ '槍', 13],
-    '赤備え': [ '馬', 20],
-    '武士': [ '槍', 18],
-    '弓騎馬': [ '弓', 19],
-    '鬼': [ '他', 88],
-    '天狗': [ '他', 112]
+    5: {
+      '農民': [ '他', 5],
+      '抜け忍': [ '弓', 12],
+      '野盗': [ '馬', 12],
+      '浪人': [ '槍', 12],
+      '雑賀衆': [ '他', 17],
+      '海賊衆': [ '弓', 17],
+      '母衣衆': [ '馬', 16],
+      '国人衆': [ '槍', 13],
+      '赤備え': [ '馬', 20],
+      '武士': [ '槍', 18],
+      '弓騎馬': [ '弓', 19],
+      '鬼': [ '他', 88],
+      '天狗': [ '他', 112]
+    },
+    6: {
+      '農民': [ '他', 5],
+      '抜け忍': [ '弓', 12],
+      '野盗': [ '馬', 12],
+      '浪人': [ '槍', 12],
+      '雑賀衆': [ '他', 17],
+      '海賊衆': [ '弓', 17],
+      '母衣衆': [ '馬', 16],
+      '国人衆': [ '槍', 17],
+      '赤備え': [ '馬', 20],
+      '武士': [ '槍', 18],
+      '弓騎馬': [ '弓', 19],
+      '鬼': [ '他', 88],
+      '天狗': [ '他', 112]
+    }
   },
   npcData = {
     5: [ // npcData[章][土地種][兵][分類、兵種、数]
@@ -536,10 +553,10 @@ var CRXMOKODATA = {
     var sumDef = [ 0, 0, 0, 0];
     npcData[ chapter][ npcDataIdx].forEach( function ( elm, idx, arr) {
       var npcNum = Math.floor( elm[2] * periodCorrection[ period - 1][ npcDataIdx] * 0.2) * 5;
-      sumDef[0] += typesOfSoldiers[ elm[1]][1] * npcNum * matchBonus( [ elm[0], '槍']);
-      sumDef[1] += typesOfSoldiers[ elm[1]][1] * npcNum * matchBonus( [ elm[0], '弓']);
-      sumDef[2] += typesOfSoldiers[ elm[1]][1] * npcNum * matchBonus( [ elm[0], '馬']);
-      sumDef[3] += typesOfSoldiers[ elm[1]][1] * npcNum * matchBonus( [ elm[0], '器']);
+      sumDef[0] += typesOfSoldiers[ chapter][ elm[1]][1] * npcNum * matchBonus( [ elm[0], '槍']);
+      sumDef[1] += typesOfSoldiers[ chapter][ elm[1]][1] * npcNum * matchBonus( [ elm[0], '弓']);
+      sumDef[2] += typesOfSoldiers[ chapter][ elm[1]][1] * npcNum * matchBonus( [ elm[0], '馬']);
+      sumDef[3] += typesOfSoldiers[ chapter][ elm[1]][1] * npcNum * matchBonus( [ elm[0], '器']);
     });
     sumDef.forEach( function ( elm, idx, arr) {
       arr[idx] = Math.ceil( arr[idx]);

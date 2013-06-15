@@ -51,6 +51,12 @@ fieldset { display: inline-block; padding: 5px; margin-left: 15px; border-radius
 .scbar_normal::-webkit-scrollbar { width: 12px; height:12px; background: white; }
 .scbar_normal::-webkit-scrollbar-thumb { background: #aaa; border: 2px solid white; border-radius: 6px; }
 .scbar_normal::-webkit-scrollbar-thumb:hover{ background: #525252; }
+/*nowLoading*/
+#nowLoadingContent { position:absolute; width:220px; display:none; z-index:9999; padding: 15px; color:white; background-color:black; border:3px solid #77692F; } +
+#nowLoadingContent p { line-height: 1.4; } +
+#info_progress { padding: 5px 8px; } +
+#info_left { padding: 0 8px; } +
+#info_rigth { min-height: 17px; padding: 0 8px; text-align: right; } +
 /*サイドボックス*/
 span.money_b, span.money_c { font-family: MS PMincho; }
 #moko-ixatime { height: 12px; padding: 3px; margin-bottom: 2px; font-weight:bold; text-align:center; font-family:verdana; font-size:12px; background: rgba(0, 0, 0, 0.5); color: white; border-radius: 4px; }
@@ -149,7 +155,7 @@ td.invalid_single { cursor: default; width: 2em; opacity: 0.2;  white-space: now
 td.all_diss { cursor: pointer; opacity: 1; }
 td.single_diss { cursor: pointer; opacity: 1; }
 /*砦*/
-#toride_box { width: 353px; margin: 0 auto; }
+#toride_box { width: 100%; margin: 0 auto; }
 #toride_box li { float:left; width:88px !important; height: auto !important; background-color: transparent; border-top: 1px solid dimgray; }
 #toride_box li:first-child { border-left: 1px solid dimGray; margin-bottom: 20px;}
 #toride_box li a { float:left; width: 81px !important; height: auto !important; margin:0 !important; padding:5px 3px; text-align: center; text-decoration: none; background-color: transparent; color:white; border-color: dimGray; border-style: solid; border-width: 0 1px 1px 0; }
@@ -311,6 +317,7 @@ p.wait_set { white-space: nowrap; }
 .moko-th { font-family: MS PMincho; font-weight: normal; text-shadow: black 1px 1px 2px, black -1px -1px 2px; }
 .family_nowrank { width: 106px; }
 #mokotool > .common_table1 th, #mokotool > .common_table1 td { line-height: 1.1 }
+span.d_link { float: right; margin: 2px 20px 0 0; font-size: 13px; }
 /*市：最大取引*/
 #maxsol_total th, #maxsol_total td { border-top: 1px solid #76601d; }
 #maxsol_total th { padding: 8px; }
@@ -335,9 +342,10 @@ ul.secondmenu.clearfix { width: 680px !important; padding: 5px 5px 2px !importan
 .cardarea_select_first { box-shadow: 0px 0px 0px 2px gold inset}
 .cardarea_select { box-shadow: 0px 0px 0px 2px darkgray inset}
 /*待機武将一覧：簡易兵種フィルター*/
-#soldiers_blind_list { float: right; padding: 4px; background-color: #272521; border: 1px solid dimgrey; border-radius: 5px; }
+#moko_container { overflow: auto;}
+#soldiers_blind_list { float: left; margin: 1ex 1em;padding: 4px; background-color: #272521; border: 1px solid dimgrey; border-radius: 5px; }
 #soldiers_blind_list > li { float: left; }
-#soldiers_blind_list > li > a { cursor: pointer; display: block; width: 34px; text-align: center; padding: 6px 0; margin: 0 2px; background-color: black; color: white; border:1px solid #685826; }
+#soldiers_blind_list > li > a { cursor: pointer; display: block; width: 4em; text-align: center; padding: 6px 0; margin: 0 2px; background-color: black; color: white; border:1px solid #685826; }
 #soldiers_blind_list > li > a:hover { background-color: #725E1E; }
 #soldiers_blind_list li > div { display: none; position: absolute; z-index: 100; margin: -1px 0 0 2px; background-color: black; color: white; border:1px solid #685826; }
 #soldiers_blind_list li > div > a { cursor: pointer; display: block; padding: 8px 0; width: 65px; text-align: center; }
