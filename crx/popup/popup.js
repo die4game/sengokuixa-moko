@@ -187,7 +187,7 @@ $( function () {
 
   // groupとSOUNDのdefualt settingを取得
   chrome.runtime.sendMessage( "send CRXMOKODATA", function( obj) {
-    var CRXMOKODATA = JSON.parse(obj), i;
+    var CRXMOKODATA = JSON.parse(obj);
     groups_img_def = CRXMOKODATA.group[0];
     SOUND = CRXMOKODATA.sound;
   });
@@ -247,10 +247,11 @@ $( function () {
 
   // group設定
   $( '#ixamoko_grp_list').on( 'click', 'INPUT.ixamoko_set_grp_set', function(e) {
+    var $parent, color, icon;
     if (confirm('本当に変更して良いですか。')) {
-      var $parent = $(this).parent();
-      var color = $parent.find('INPUT.ixamoko_color').val();
-      var icon = $parent.find('INPUT.ixamoko_icon').val();
+      $parent = $(this).parent();
+      color = $parent.find('INPUT.ixamoko_color').val();
+      icon = $parent.find('INPUT.ixamoko_icon').val();
       groups[parseInt($parent.attr('grpid'), 10)] = color.replace('"', '%22');
       groups_img[parseInt($parent.attr('grpid'), 10)] = icon.replace('"', '%22');
       $parent.find('IMG').attr('src', icon);
@@ -258,13 +259,14 @@ $( function () {
     }
   });
   $( '#ixamoko_grp_list').on( 'click', 'INPUT.ixamoko_set_grp_del', function(e) {
+    var $parent, id, cardid;
     if (confirm('本当に削除して良いですか。')) {
-      var $parent = $(this).parent();
-      var id = parseInt($parent.attr('grpid'), 10);
+      $parent = $(this).parent();
+      id = parseInt($parent.attr('grpid'), 10);
       $parent.remove();
       groups.splice(id, 1);
       groups_img.splice(id, 1);
-      for (var cardid in group_setting) {
+      for ( cardid in group_setting) {
         if (group_setting[cardid] == id) {
           group_setting[cardid] = 0;
         } else if (group_setting[cardid] > id) {
@@ -290,9 +292,9 @@ $( function () {
     }
   });
   $('INPUT.ixamoko_set_grp_add').click(function(e) {
-    var $list = $('#ixamoko_grp_list');
-    var i = $list.find('DIV').get().length;
-    var html = '<DIV grpid="' + i + '"><IMG src="' + groups_img[0] + '" /> <INPUT class="ixamoko_icon" type="text" value="' + groups_img[0] + '" /> <INPUT class="ixamoko_color" type="text" value="" />&nbsp;<INPUT type="button" value="設定" class="ixamoko_set_grp_set" />&nbsp;<INPUT type="button" value="削除" class="ixamoko_set_grp_del" /></DIV>';
+    var $list = $('#ixamoko_grp_list'),
+        i = $list.find('DIV').get().length,
+        html = '<DIV grpid="' + i + '"><IMG src="' + groups_img[0] + '" /> <INPUT class="ixamoko_icon" type="text" value="' + groups_img[0] + '" /> <INPUT class="ixamoko_color" type="text" value="" />&nbsp;<INPUT type="button" value="設定" class="ixamoko_set_grp_set" />&nbsp;<INPUT type="button" value="削除" class="ixamoko_set_grp_del" /></DIV>';
     $list.append(html);
     groups[i] = '';
     groups_img[i] = groups_img[0];
@@ -337,32 +339,36 @@ $( function () {
 
   // 座標記録クリア
   $('#clear_map_reg').click(function(e) {
+    var map_list;
     if (confirm('記録した座標をすべて消去してよろしいですか？')) {
-      var map_list = {};
+      map_list = {};
       setStorage( { "crx_map_list": map_list}, true);
     }
   });
 
   // グループ順記録をクリア
   $('#clear_grp_reg').click(function(e) {
+    var tmp_list;
     if (confirm('記録したグループをすべて消去してよろしいですか？')) {
-      var tmp_list = {};
+      tmp_list = {};
       setStorage( { "crx_ixamoko_group_set": tmp_list}, true);
     }
   });
 
   // お気に入り施設クリア
   $('#clear_facility_reg').click(function(e) {
+    var facility_list;
     if (confirm('記録した施設をすべて消去してよろしいですか？')) {
-      var facility_list = {};
+      facility_list = {};
       setStorage( { "crx_facility_list": facility_list}, true);
     }
   });
 
   // 一部設定クリア
   $('#clear_localStorage').click(function(e) {
+    var key, obj = {};
     if (confirm('・グループ設定\n・お気に入り部隊\n・お気に入りソート選択\n・基本兵種設定\n　\n上記以外の設定は破棄されます。')) {
-      for (var key in localStorage) {
+      for ( key in localStorage) {
         if ( key === 'crx_ixakaizou_butai_list_id' ||
           key === 'crx_ixakaizou_favorite_list' ||
           key === 'crx_ixamoko_default_unit' ||
@@ -373,7 +379,8 @@ $( function () {
         ) {
           continue;
         } else {
-          setStorage( { key: 'remove'}, true);
+          obj[key] = 'remove';
+          setStorage( obj, true);
         }
       }
     }
@@ -427,7 +434,8 @@ $( function () {
 
   // storage.local.set
   function setStorage (  obj, toggle, world) {
-    var world = world? world: $('#worldSelect').val(), key;
+    var key;
+    world = world? world: $('#worldSelect').val();
     chrome.storage.local.get( world, function ( store) {
       allSettings = store[world]? JSON.parse(store[world]): {};
       for ( key in obj) {

@@ -73,7 +73,7 @@ span.money_b, span.money_c { font-family: MS PMincho; }
 /*チャット*/
 #chatComment_h table tr { height:16px; }
 #commentBox table tr { height:14px; }
-#commentListChat .commentbtn { width: 47px !important;}
+.commentbtn { width: 47px !important;}
 /*メニューバー*/
 #status { font-family: MS PMincho, serif; }
 #max_store { cursor: default; padding: 2px 3px 1px 3px; margin-right: 5px; border: 1px solid #777; border-radius: 2px; background-color: #555; }

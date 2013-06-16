@@ -1,17 +1,19 @@
 (function() {
 
+  var time, objectArray, fileURL, world;
+
   // ワールド選択
   if (location.pathname === '/world/select_world.php') {
 
     // ログイン時間のクッキー登録
-    var time = new Date() / 1000;
+    time = new Date() / 1000;
     document.cookie = 'im_st=' + time + '; domain=.sengokuixa.jp; path=/;';
 
   // セッションタイムアウト画面以外
   } else if (location.pathname !== '/false/login_sessionout.php') {
 
     // backgroundページからオブジェクトをロード
-    var objectArray = [
+    objectArray = [
           'CRXMOKODATA',
           'Moko_main',
           'tableSorter_',
@@ -25,14 +27,27 @@
     });
 
     // cssをロード。Moko_mainの実行をheadに挿入
-    var fileURL = chrome.extension.getURL( 'moko/mokoStyle.css'),
+    fileURL = chrome.extension.getURL( 'moko/mokoStyle.css'),
         xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
       if ( xhr.readyState == 4 && xhr.status == 200) {
 //        window.addEventListener( 'DOMContentLoaded', function () {
         $( function () {
           createTagAndInsertHead( 'style', xhr.responseText);
-          createTagAndInsertHead( 'script', 'j$( function () { queMoko_main();});\n' + queMoko_main.toString());
+          createTagAndInsertHead( 'script',
+            'j$( function () { queMoko_main();});\n' +
+            // ロード完了を確認してからMoko_mainを実行する再帰ループ。
+            'function queMoko_main () {' +
+              'if ( window.Moko_main && window.CRXMOKODATA) {' +
+                'Moko_main( j$);' +
+                'if( location.pathname == "/senkuji/senkuji.php" && window.kuji10_main) {' +
+                  'kuji10_main( j$);' +
+                '}' +
+              '} else {' +
+                'setTimeout( queMoko_main, 1);' +
+              '}' +
+            '}'
+          );
         });
       }
     };
@@ -44,7 +59,7 @@
   }
 
   // worldをゲット
-  var world = location.host.match(/^\w+/)[0];
+  world = location.host.match(/^\w+/)[0];
   //console.log( world);
 
   // pageAction起動
@@ -99,18 +114,6 @@
     var s = document.createElement( tagName);
     s.textContent = textContent;
     document.head.appendChild( s);
-  }
-
-  // ロード完了を確認してからMoko_mainを実行する再帰ループ。
-  function queMoko_main () {
-    if ( window.Moko_main && window.CRXMOKODATA) {
-      Moko_main( j$);
-      if( location.pathname == '/senkuji/senkuji.php' && window.kuji10_main) {
-        kuji10_main( j$);
-      }
-    } else {
-      setTimeout( queMoko_main, 1);
-    }
   }
 
   // tool listにリンクを追加
