@@ -73,6 +73,7 @@ span.money_b, span.money_c { font-family: MS PMincho; }
 /*チャット*/
 #chatComment_h table tr { height:16px; }
 #commentBox table tr { height:14px; }
+#commentListChat .commentbtn { width: 47px !important;}
 /*メニューバー*/
 #status { font-family: MS PMincho, serif; }
 #max_store { cursor: default; padding: 2px 3px 1px 3px; margin-right: 5px; border: 1px solid #777; border-radius: 2px; background-color: #555; }
@@ -272,7 +273,7 @@ li[class^="ｍovedeck_"] > div > a { display: block; padding: 5px; min-height: 1
 li[class^="ｍovedeck_"] > div > a:hover { background-position: 0 -30px; color: #E2E2E2; }
 .table_sol { z-index: 10;background: #F3F2DE;font-size: 11px; }
 /*兵士編成:フィルター*/
-#branch_ul { clear: both; width: 720px; height: 20px; margin-bottom: 10px; }
+#branch_ul { clear: both; width: 600px; height: 20px; margin: 10px 58px; }
 #branch_ul li { float: left; width: 98px; margin-right: 2px; text-align: center; border-top: 1px solid #8e7425; }
 #branch_ul a { cursor: pointer; display: block; padding: 1px 10px; min-height: 16px; font-size: 12px; border-bottom: 1px solid #8e7425; border-left: 1px solid #8e7425; border-right: 1px solid #8e7425; color: #505050; background: url(../img/glovalnavi/s5_bg_globalnavi_ul.png) repeat-y #000; text-decoration: none; line-height: 1.5em; }
 #branch_ul a:hover { background-position: 0 -30px; color: #E2E2E2; }
