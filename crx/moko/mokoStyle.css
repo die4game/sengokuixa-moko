@@ -194,6 +194,8 @@ p.areaDir { position: absolute;top: 235px; left: 445px; }
 #deck_skill_display { height: 255px; background-size: 100% 100%; }
 #deck_skill_display { top: 196px; }
 #deck_skill_display_navi ul { height: 43px; }
+#ig_deck_unititle_s5 { height: 86px; width: 500px;}
+#ig_deck_unititle_s5 p.fav { float: left; padding: 2px 5px; font-size: 12px; font-weight: normal;}
 /*組分けボタンのプルダウンメニュー*/
 li[class^="btn_category_"] > div.menu_list { display: none; position: absolute; width: 118px; z-index: 100; }
 li[class^="btn_category_"] > div.menu_list > a, #branch_ul div > a, #change_menu > a { display: block; padding: 5px; min-height: 16px; font-size: 12px; border-bottom: 1px solid #8e7425; border-left: 1px solid #8e7425; border-right: 1px solid #8e7425; color: white; background: url(../img/glovalnavi/s5_bg_globalnavi_ul.png) repeat-y #000; text-decoration: none; line-height: 1.5em; }

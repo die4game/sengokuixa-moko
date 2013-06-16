@@ -8566,12 +8566,11 @@ function Moko_main( $) {
       if (localStorage.getItem("crx_ixakaizou_butai_list_id")) {
         butai_list = secureEvalJSON(localStorage.getItem("crx_ixakaizou_butai_list_id"));
       }
-      $('#ig_deck_unititle_s5.clearfix').css({height:'86px',whiteSpace:'nowrap'});
 
-      var s_0 = '<p style="float: left; padding: 2px 5px;font-size: 12px;font-weight: normal;">攻撃部隊:<select id="s_0" style="width: 10em;"><option>-----選択-----</option>';
-      var s_1 = '<p style="float: left; padding: 2px 5px;font-size: 12px;font-weight: normal;">防衛部隊:<select id="s_1" style="width: 10em;"><option>-----選択-----</option>';
-      var s_2 = '<p style="padding: 2px 5px;font-size: 12px;font-weight: normal;">両用部隊:<select id="s_2" style="width: 10em;"><option>-----選択-----</option>';
-      var s_3 = '<p style="padding: 2px 5px;font-size: 12px;font-weight: normal;">秘境部隊:<select id="s_3" style="width: 10em;"><option>-----選択-----</option>';
+      var s_0 = '<p class="fav">攻撃部隊:<select id="s_0" style="width: 10em;"><option>-----選択-----</option>';
+      var s_1 = '<p class="fav">防衛部隊:<select id="s_1" style="width: 10em;"><option>-----選択-----</option>';
+      var s_2 = '<p class="fav">両用部隊:<select id="s_2" style="width: 10em;"><option>-----選択-----</option>';
+      var s_3 = '<p class="fav">秘境部隊:<select id="s_3" style="width: 10em;"><option>-----選択-----</option>';
       for (var i in butai_list) {
         if (parseInt( butai_list[i][0] ) === 0) {
           s_0 += '<option value="' + i + '">' + i + '</option>';
