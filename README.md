@@ -12,16 +12,17 @@ crx化によって誰でも開発し易くなった！あとはよろしく！
 
 ## ZIPでくれ！
 1. Codeタブをクリック  
-    まず上部のタブバーの左にあるCodeタブをクリックします。
+    まず右のサイドバーのトップにあるCodeタブをクリックします。
     ボタンの位置がわからない場合、Codeでページ内検索。
-2. バージョン(ブランチ)を選択  
-    Codeタブの下方にある「branch: master」などと書いてあるボタンからバージョンの選択ができます。
-    ボタンの位置がわからない場合、branchでページ内検索。Branchesのmasterが2chのixaツールスレで配布されているバージョンです。
-    crxSpikeがこのcrx版です。oreSpikeは更新停止。変更の履歴はbranchボタン右のCommitsから確認できます。
+2. バージョンを選択  
+    「branch: master」などと書いてあるボタンからバージョンの選択ができます。
+    ボタンの位置がわからない場合、branchでページ内検索。Branchesのmasterがスレで配布されているバージョンです。
+    oreSpikeは独自の変更が加えられたものです。変更の履歴はbranchボタン右のCommitsから確認できます。
     Tagsにはアーカイヴが登録されています。古いバージョン等はここにあるかも知れません。
 3. ZIPボタンをクリック  
-    バージョンを選択したらZIPと書いてあるボタンをクリックするとダウンロードできます.
+    バージョンを選択したら右サイドバー最下部にあるZIPと書いてあるボタンをクリックするとダウンロードできます.
     ボタンの位置が(ry。
+
 
 ## 開発の手引き
 　Chrome Extensionの基本に関しては「[Getting Started: Building a Chrome Extension](http://developer.chrome.com/extensions/getstarted.html)」を参照。sengokuixa-moko-****.user.jsをデータ、css、js、htmlなどに分解することによって保守更新しやすくなっているはず。user.js版と部分的な差分を取ることも可能。以下内容物をざっくり。
