@@ -1551,7 +1551,7 @@ function Moko_main( $) {
     
     $('input.exhibit').click(function(){
       var $this = $(this),
-        cid_source = $this.closest('p').find('a:eq(1)').attr('onclick').match(/'.*?'/g),
+        cid_source = $this.closest('p').find('a:eq(1)').attr('onClick').match(/'.*?'/g),
         exhibit_cid = cid_source.toString().replace(/'/g, ''),
         exhibit_price = $this.parent().find('input.price').val();
       if( exhibit_price == '') { alert('最低落札額が入力されていません。'); return false; }
@@ -1740,7 +1740,7 @@ function Moko_main( $) {
     Area_list.each(function( idx ) {
       var source = ( $(this).attr('onMouseOver') || '' ).split('; overOperation')[0],
         array = source.match(/'.*?'/g),
-        search = ( $(this).attr('onclick') || '' ).match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/) || [],
+        search = ( $(this).attr('href') || '' ).match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/) || [],
         img_data = img_list[ idx ],
         data = { idx: idx };
         
@@ -1944,8 +1944,7 @@ function Moko_main( $) {
     var map_list = {};
     if (localStorage.getItem("crx_map_list")) {
       map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
-    }
-    
+    }console.log(map_list);
     var CountryCode = $('#ig_map_movepanel').find('li:eq(0) > a').attr('href').split('=')[4],
       dist = 0,
       tmp;
@@ -1954,6 +1953,10 @@ function Moko_main( $) {
       if (!tmp) {
         tmp = key.match(/(-?\d+),(-?\d+)/);
       }
+      if (!tmp) {
+        tmp = key.split(', ');
+        tmp.unshift('');
+      }
       dist = Math.sqrt(Math.pow(parseInt(tmp[1], 10) - base_x, 2) + Math.pow(parseInt(tmp[2], 10) - base_y, 2));
       dist = Math.round(dist * 100) / 100;
 
@@ -1961,7 +1964,7 @@ function Moko_main( $) {
         dist = "-";
       }
       
-      var x = tmp[1], y = tmp[2], c = tmp[3];
+      var x = tmp[1], y = tmp[2], c = parseInt(tmp[3], 10);console.log(c,tmp);
       //4章
       if ( options.chapter_change === '0' ) {
         var world = { 1:'織田家', 2:'足利家', 3: '武田家', 4: '上杉家', 5: '徳川家', 6: '毛利家', 7: '浅井家', 8: '北条家', 9: '長宗我部家', 10: '島津家', 11: '大友家', 12: '最上家', 20:'東西戦場1', 21:'東西戦場2' };
@@ -1995,7 +1998,7 @@ function Moko_main( $) {
 
     function mouseover() {
       $(this).css('background-color', '#725E1E');
-      $('area[href*="' + $(this).attr('coord') + '"]').trigger('mouseover');
+      $('area[onclick*="' + $(this).attr('coord') + '"]').trigger('mouseover');
       //console.log($('area[href*="' + $(this).attr('coord') + '"]'));
       if (options.map_minimap) {
         var ctx = $('#ixamoko_maplist3 > canvas')[0].getContext('2d');
@@ -2014,6 +2017,7 @@ function Moko_main( $) {
     function mouseout() {
       $(this).css('background-color', '');
       $('#ixamoko_zoommap').remove();
+      $('area[onclick*="' + $(this).attr('coord') + '"]').trigger('mouseout');
       if (options.map_minimap) {
         var ctx = $('#ixamoko_maplist3 > canvas')[0].getContext('2d');
         var coord = $(this).attr('coord').match(/(\-?\d+).+?(\-?\d+)/);
@@ -2030,7 +2034,7 @@ function Moko_main( $) {
       var ev = options.map_leftclick? 'click': (options.map_rightclick? 'contextmenu': false);
       if (!ev) return;
       event.preventDefault();
-      $('area[href*="' + $(this).attr('coord') + '"]').trigger(ev);
+      $('area[onclick*="' + $(this).attr('coord') + '"]').trigger(ev);
     }
   }
 
@@ -2073,7 +2077,7 @@ function Moko_main( $) {
     function area_mouseover() {
       var source = $(this).attr('onMouseOver').match(/'.*?'/g),
         alt = $(this).attr('balloon'),
-        url = $(this).attr('onclick').match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0],
+        url = $(this).attr('href').match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0],
         country = url.split('=')[3],
         flag = alt.match(/^([^(]+) (-?\d+),(-?\d+)$/);
         
@@ -2107,8 +2111,8 @@ function Moko_main( $) {
       $('#mapOverlayMap > area').live('contextmenu', function(e) {
         if (map_rightclick.ajflag) { return false; }
         map_rightclick.ajflag = true;
-        var urlmap = $(this).attr('onclick').match(/map\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0],
-          ajaxurl = urlmap;
+        var urlmap = $(this).attr('href').match(/\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0],
+          ajaxurl = 'map'+urlmap;
         map_Ajax_Move(ajaxurl);
         return false;
       });
@@ -3568,7 +3572,7 @@ function Moko_main( $) {
         $.post(
           '/card/deck.php?ano=' + ano,
           function(html) {
-            var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onclick') || '').match(/'.*?'/g),
+            var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onClick') || '').match(/'.*?'/g),
                 unit_assign_id = Unregist[0].replace(/'/g, ''),
                 unset_unit_squad_id = Unregist[1].replace(/'/g, ''),
                 p = $(html).find('input[id="p"]').val(),
@@ -3723,27 +3727,27 @@ function Moko_main( $) {
               
               if (options.panelAttack) { // 攻撃目標マークONの時
                 if (fs[i].match(/待機/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_mode_wait);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_mode_wait);
                 } else if (fs[i].match(/加待/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_backup_wait);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_backup_wait);
                 } else if (fs[i].match(/帰還/)) {
                   if (options.return_mode == '1') {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.icon_return);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.icon_return);
                   } else {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_return);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_return);
                   }
                 } else if (fs[i].match(/合流/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_meeting);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_meeting);
                 } else if (fs[i].match(/加勢/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_backup);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_backup);
                 } else if (fs[i].match(/開拓/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_development);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_development);
                 } else if (fs[i].match(/国移/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_mode_move);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_mode_move);
                 } else if (fs[i].match(/攻撃/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_attack);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_attack);
                 } else if (fs[i].match(/陣張/)) {
-                  new_overOperation(ahref.replace('../', '/'), IMAGES.panel_jinbari);
+                  new_overOperation(ahref.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_jinbari);
                 }
               }
             }
@@ -3880,7 +3884,7 @@ function Moko_main( $) {
     if (location.pathname == "/user/") {
       $('table.common_table1.center').find('tr').find('a:eq(1)').each(function() {
         var mname = $(this).closest('tr').find('a:eq(0)').text().trim();
-        var coord = $(this).attr('href').replace('/land.php?', '');
+        var coord = $(this).attr('href').replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
         if (typeof (map_list[coord]) == 'undefined') {
           $(this).attr('href', $(this).attr('href').replace('land', 'map') );
           $(this).after('&nbsp;<INPUT mname="' + mname + '" coord="' + coord + '" class="reg_map" type="button" value="座標記録" />');
@@ -3894,7 +3898,7 @@ function Moko_main( $) {
     }
     else if (location.pathname == "/land.php") {
       var mname = $('h3:eq(0)').text().trim();
-      var coord = location.search.replace('?', '');
+      var coord = location.search.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
       if (typeof (map_list[coord]) == 'undefined') {
         $('div.ig_mappanel_maindataarea').find('h3').append('&nbsp;<INPUT mname="' + mname + '" coord="' + coord + '" class="reg_map" type="button" value="座標記録" />');
       }
@@ -3915,7 +3919,7 @@ function Moko_main( $) {
             source = $(this).find('td:eq(3) > a').text().split('　(')[1].replace(')', ''),
             source1 = source.split(',')[0],
             source2 = source.split(',')[1];
-            coord = 'x=' + source1 + '&y=' + source2 + '&c=' + ground;
+            coord = source1 + ', ' + source2 + ', ' + ground;
             if ( typeof(map_list[coord]) == 'undefined' ) {
               $(this).find('td:eq(3)').after('<td><INPUT mname="' + mname + '" coord="' + coord + '" class="reg_map" type="button" value="座標記録" /></td>');
             }
@@ -3923,7 +3927,7 @@ function Moko_main( $) {
               $(this).find('td:eq(3)').after('<td><INPUT mname="' + mname + '" coord="' + coord + '" class="remove_map" type="button" value="座標削除" style="color: fireBrick;" /</td>');
             }
             cnt++;
-          $(this).find('td:eq(3) > a').attr ('href', '/map.php?' + coord);
+          $(this).find('td:eq(3) > a').attr ('href', '/map.php?' + 'x=' + source1 + '&y=' + source2 + '&c=' + ground);
         });
     }
     
@@ -4001,7 +4005,7 @@ function Moko_main( $) {
       var str = $(this).attr('onMouseOver');
       if( str.indexOf(searchstr) >= 0 ) {
         if( $(this).attr('balloon') != undefined ) {
-          var url1 = $(this).attr('onclick').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0];
+          var url1 = $(this).attr('href').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0];
           $.post( url1, 
             function (html){
               var url2 = $(html).find('div.ig_mappanel_dataarea').find('a:eq(0)').attr('href');
@@ -4043,7 +4047,7 @@ function Moko_main( $) {
     
     $('#mapOverlayMap > area').each(function(){
       var tmp2 = $(this).attr('onMouseOver').match(/'.*?'/g);
-      var href = $(this).attr('href').replace('land', 'map');
+      var href = $(this).attr('href');
       if ( tmp2[13].match(/\/img\/panel\/capital_r_/) || tmp2[13].match(/\/img\/panel\/castle_1_r/) || tmp2[13].match(/\/img\/panel\/castle_2_r/) || tmp2[13].match(/\/img\/panel\/castle_3_r/) || tmp2[13].match(/\/img\/panel\/castle_4_r/) ) {
         overlayOperationL( tmp2, href );
       }
@@ -4056,7 +4060,7 @@ function Moko_main( $) {
       var str = $(this).attr('onMouseOver');
       if( str.indexOf(searchstr) >= 0 ) {
         if( $(this).attr('balloon') != undefined ) {
-          var url1 = $(this).attr('onclick').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0];
+          var url1 = $(this).attr('href').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0];
           $.post( url1, function (html){
             var url2 = $(html).find('div.ig_mappanel_dataarea').find('a:eq(0)').attr('href');
             $.post( url2, function (html){
@@ -4278,27 +4282,27 @@ function Moko_main( $) {
       var ahref = $('#map_butai_data > tbody').find('div.time_loc').find('a');
       for (var i = 0; i < fs.length; i++) {
          if (fs[i].innerText.match(/待機/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_mode_wait);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_mode_wait);
         } else if (fs[i].innerText.match(/加待/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_backup_wait);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_backup_wait);
         } else if (fs[i].innerText.match(/帰還/)) {
           if (options.state_change) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.icon_return);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.icon_return);
           } else {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_return);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_return);
           }
         } else if (fs[i].innerText.match(/合流/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_meeting);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_meeting);
         } else if (fs[i].innerText.match(/加勢/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_backup);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_backup);
         } else if (fs[i].innerText.match(/開拓/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_development);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_development);
         } else if (fs[i].innerText.match(/国移/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_mode_move);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_mode_move);
         } else if (fs[i].innerText.match(/攻撃/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_attack);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_attack);
         } else if (fs[i].innerText.match(/陣張/)) {
-          new_overOperation(ahref[i].href.replace(/^.+?\/map/, '/map'), IMAGES.panel_jinbari);
+          new_overOperation(ahref[i].href.replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3'), IMAGES.panel_jinbari);
         }
       }
     } 
@@ -4312,45 +4316,45 @@ function Moko_main( $) {
             $(this).find('img').each(function() {
               var href;
               if ($(this).attr('src').indexOf('mode_attack.png') > 0) {
-                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                href = href.replace('../map', '');
+                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                  .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                 new_overOperation(href, IMAGES.panel_attack);
                 return false;
               }
               if ($(this).attr('src').indexOf('mode_meeting.png') > 0) {
-                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                href = href.replace('..', '');
+                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                  .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                 new_overOperation(href, IMAGES.panel_meeting);
                 return false;
               }
               if ($(this).attr('src').indexOf('icon_backup.png') > 0) {
-                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                href = href.replace('..', '');
+                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                  .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                 new_overOperation(href, IMAGES.panel_backup);
                 return false;
               }
               if ($(this).attr('src').indexOf('mode_develop.png') > 0) {
-                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                href = href.replace('..', '');
+                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                  .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                 new_overOperation(href, IMAGES.panel_development);
                 return false;
               }
               if ($(this).attr('src').indexOf('mode_move.png') > 0) {
-                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                href = href.replace('..', '');
+                href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                  .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                 new_overOperation(href, IMAGES.panel_mode_move);
                 return false;
               }
               if ($(this).attr('src').indexOf('icon_back.png') > 0) {
                 if (options.state_change) {
-                  href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                  href = href.replace('..', '');
+                  href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                    .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                   new_overOperation(href, IMAGES.icon_return);
                   return false;
                 }
                 else {
-                  href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href');
-                  href = href.replace('..', '');
+                  href = $(this).closest('tbody').find('td.td_bggray:eq(1)').find('a:eq(0)').attr('href')
+                    .replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
                   new_overOperation(href, IMAGES.panel_return);
                   return false;
                 }
@@ -4378,12 +4382,12 @@ function Moko_main( $) {
       
       Statusarea.each(function() {
         $(this).find('td.td_bggray:eq(0)').each(function() {
-          var href = $(this).find('a:eq(0)').attr('href').replace('../land', '/map');
+          var href = $(this).find('a:eq(0)').attr('href').replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
           new_overOperation(href, IMAGES.panel_enemy);// 出陣拠点
           return false;
         });
         $(this).find('td.td_bggray:eq(1)').each(function() {
-          var href2 = $(this).find('a:eq(0)').attr('href').replace('../land', '/map');
+          var href2 = $(this).find('a:eq(0)').attr('href').replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
           new_overOperation(href2, IMAGES.mode_enemy);// 着弾拠点
           return false;
         });
@@ -4404,21 +4408,20 @@ function Moko_main( $) {
       function(html) {
         var pointname = $('#sideboxBottom').find('div.basename').find('li.on').text();
         var searchTR = $(html).find('div.common_box3bottom').find('table.common_table1.center').find('tr:contains("' + pointname + '")');
-        var pointhref = searchTR.find('a:eq(1)').attr('href').replace('land', 'map');
-        new_overOperation(pointhref, IMAGES.panel_select);
+        var point = searchTR.find('a:eq(1)').attr('href').replace(/.+x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
+        new_overOperation(point, IMAGES.panel_select);
         return false;
       }
     );
   }
 
-  function new_overOperation( url, img ) {
-    var marktile = $('area[onclick*="' + url + '"]');
+  function new_overOperation( point, img ) {
+    var marktile = $('area[onclick*="' + point + '"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
-        i_index = marktile.attr('onclick').match(/'.*?'/g),
+        i_index = marktile.attr('onClick').match(/'.*?'/g),
         i_index = i_index[0].replace(/'/g, ''),
         mapsAllimg = $('#ig_mapsAll').find('img[class="' + i_index + '"]');
-        
       if( imglen == 400 ) {
         var Marktop = parseInt( mapsAllimg.css('top') ) -2;
       }
@@ -4439,10 +4442,10 @@ function Moko_main( $) {
   }
 
   function new_overOperation2( alt_name, url, img ) {
-    var marktile = $('area[onclick*="' + url + '"]');
+    var marktile = $('area[href*="' + url + '"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
-        i_index = marktile.attr('onclick').match(/'.*?'/g),
+        i_index = marktile.attr('onClick').match(/'.*?'/g),
         i_index = i_index[0].replace(/'/g, ''),
         mapsAllimg = $('#ig_mapsAll').find('img[class="' + i_index + '"]');
       
@@ -4465,10 +4468,10 @@ function Moko_main( $) {
   }
 
   function flat_overOperation( url, img ) {
-    var marktile = $('area[onclick*="' + url + '"]');
+    var marktile = $('area[href*="' + url + '"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
-        i_index = marktile.attr('onclick').match(/'.*?'/g),
+        i_index = marktile.attr('onClick').match(/'.*?'/g),
         i_index = i_index[0].replace(/'/g, ''),
         mapsAllimg = $('#ig_mapsAll').find('img[class="' + i_index + '"]');
         
@@ -4713,7 +4716,7 @@ function Moko_main( $) {
                     $('form[name="createUnitForm"]').each(function() {
                       var ObjectSpan = $(this).find('span:eq(1)');
                       if(ObjectSpan.length){
-                        var ObjectValue = ObjectSpan.attr('onclick'),
+                        var ObjectValue = ObjectSpan.attr('onClick'),
                             ObjectValue = ObjectValue.match(/'.*?'/g)[1].replace(/'/g, '');
                       }
                       var maxsol = $(this).find('span.ixamoko_maxsol').attr('value');
@@ -6302,7 +6305,7 @@ function Moko_main( $) {
           var anchor = $(html).find('#ig_unitchoice').find('li:contains('+cname+')').find('a'),
             len = anchor.length;
           if( len == 1 ) {
-            var ano = anchor.attr('onclick').match(/\d+/)[0];
+            var ano = anchor.attr('onClick').match(/\d+/)[0];
           }
           else {
             var ano = 0;
@@ -6319,7 +6322,7 @@ function Moko_main( $) {
           var anchor = $(html).find('#ig_unitchoice').find('li:contains('+cname+')').find('a'),
             len = anchor.length;
           if( len == 1 ) {
-            var ano = anchor.attr('onclick').match(/\d+/)[0];
+            var ano = anchor.attr('onClick').match(/\d+/)[0];
           }
           else {
             var ano = 0;
@@ -7372,7 +7375,7 @@ function Moko_main( $) {
       if (!confirm("小隊長をすべて部隊から外します。よろしいですか？\n（武将はHPが減った状態で待機状態に戻ります）"))
         return;
         $('img[alt="外す"]').each(function(){
-          var source = $(this).parent().attr('onclick').match(/'.*?'/g),
+          var source = $(this).parent().attr('onClick').match(/'.*?'/g),
             unit_assign_id= source[0].replace(/'/g, ''),
             unset_unit_squad_id= source[1].replace(/'/g, ''),
             select_assign_no = $('#select_assign_no').val(),
@@ -7471,7 +7474,7 @@ function Moko_main( $) {
           return;
         }
         else {
-          work_id = Dissolution.closest('a').attr('onclick').match(/'.*?'/g);
+          work_id = Dissolution.closest('a').attr('onClick').match(/'.*?'/g);
           //progress
           $('#info_left').append( '<p>' + count + '</p>' );
           $('#info_rigth').html( $('#info_left > p').length + '部隊' );
@@ -7581,7 +7584,7 @@ function Moko_main( $) {
     else {
       $('ul.pager.cardstock:eq(0)').find('li:last').each(function() {
         if ( $(this).attr('class') == 'last' ) {
-          var script = $(this).find('a:eq(1)').attr('onclick');
+          var script = $(this).find('a:eq(1)').attr('onClick');
             script = script.substring(script.indexOf('"p"'), script.length);
             script = script.match(/".*?"/g);
             script = script[1].replace(/"/g, '');
@@ -7636,7 +7639,7 @@ function Moko_main( $) {
         }
         $(html).find('div.ig_deck_smallcardarea:has(img[alt="選択中の部隊へ"])')
         .each(function() {
-          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onclick'),
+          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onClick'),
             work_id = work_id.replace('confirmRegist2(', '').replace(');','').split(',');
             set_squad_id = work_id[1].replace(/\'/g, '').trim();
             set_assign_id = work_id[0];
@@ -7808,7 +7811,7 @@ function Moko_main( $) {
         $(this).replaceWith( npage );
       }
       else if ($(this).attr('title') == 'last page') {
-        var script = $(this).attr('onclick');
+        var script = $(this).attr('onClick');
           script = script.substring(script.indexOf('"p"'), script.length);
           script = script.split('=');
           script = script[1].split(';');
@@ -8910,7 +8913,7 @@ function Moko_main( $) {
     else {
       $('ul.pager.cardstock:eq(0)').find('li:last').each(function() {
         if ( $(this).attr('class') == 'last' ) {
-          var script = $(this).find('a:eq(1)').attr('onclick');
+          var script = $(this).find('a:eq(1)').attr('onClick');
           script = script.substring(script.indexOf('"p"'), script.length);
           script = script.match(/".*?"/g);
           script = script[1].replace(/"/g, '');
@@ -8966,7 +8969,7 @@ function Moko_main( $) {
     else {
       $('ul.pager.cardstock:eq(0)').find('li:last').each(function() {
         if ( $(this).attr('class') == 'last' ) {
-          var script = $(this).find('a:eq(1)').attr('onclick');
+          var script = $(this).find('a:eq(1)').attr('onClick');
             script = script.substring(script.indexOf('"p"'), script.length);
             script = script.match(/".*?"/g);
             script = script[1].replace(/"/g, '');
@@ -9052,7 +9055,7 @@ function Moko_main( $) {
         var setSrc = $(this).find('img[title^="選択中の部隊へ"]').attr('src');
         var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
         if ( (id == list[a]) && ( setSrc !== undefined) ) {
-          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onclick').match(/'.*?'/g);
+          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onClick').match(/'.*?'/g);
           set_squad_id = work_id[1].replace(/'/g, '');
           set_assign_id = work_id[0].replace(/'/g, '');
           var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
@@ -9117,12 +9120,12 @@ function Moko_main( $) {
         
         Line_td.eq(3).find('input[type="button"]').val('全て')
           .each(function() {
-            var source = $(this).attr('onclick');
+            var source = $(this).attr('onClick');
             if (!source) {
               return;
             }
             source = source.slice(0, -2) + remain + ')';
-            $(this).attr('onclick', source);
+            $(this).attr('onClick', source);
         });
         
         Line_td.eq(5).each(function(){
@@ -9260,7 +9263,7 @@ function Moko_main( $) {
           $.post(
             href,
             function(html) {
-              var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onclick') || '').match(/'.*?'/g),
+              var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onClick') || '').match(/'.*?'/g),
                   unit_assign_id = Unregist[0].replace(/'/g, ''),
                   unset_unit_squad_id = Unregist[1].replace(/'/g, ''),
                   p = $(html).find('input[id="p"]').val(),
@@ -10282,7 +10285,7 @@ function Moko_main( $) {
     }
     
     if ( $('ul.pager').size() > 0 ) {
-      var href = $('ul.pager > li.last > a:first').attr('onclick').match(/".*?"/g)[2];
+      var href = $('ul.pager > li.last > a:first').attr('onClick').match(/".*?"/g)[2];
           href = href.replace(/"/g, '');
       var href2 = href + '&p=2';
     }
@@ -10727,88 +10730,47 @@ function Moko_main( $) {
       $('#tooltip_layer').show();
     });
 
-    var tmp = $(target).attr('onclick').match(/'.*?'/g);
-    var tmp2 = $(target).attr('onMouseOver').match(/'.*?'/g);
+    var tmp = $(target).attr('onClick').split(', '),
+      tmp2 = $(target).attr('onMouseOver').match(/'.*?'/g),
+      href = $(target).attr('href');
     var castellanLV = tmp2[1].match(/\(Lv.+?\)/),
-        castellan = tmp2[1].replace( castellanLV, '').replace(/'/g, '');//城主名
+      castellan = tmp2[1].replace(/'|\(.+?\)/g, '');//城主名
+    var alliance = tmp2[4].replace(/'/g,'');//同盟名
     var areaName = $(target).attr('balloon');
     var territory = $(target).attr('onmouseover').toString().match(/\/img\/panel\/territory/); //領地
-    var coordinate = tmp[2].replace(/'/g, ''),
-        coordinate = coordinate.split('?')[1];
-    var searchURL = tmp[10].replace(/'/g, '');
+    var coordinate = 'x=' + tmp[5] + '&y=' + tmp[6] + '&c=' + tmp[7];
     var villageName = $('#sideboxBottom').find('div.basename').find('li.on').text();
     var center_href = $('#ig_map_movepanel').find('li:eq(0) > a').attr('href').match(/map\.php\?x=(-?\d+)&y=(-?\d+)&type=(\d+)&c=(\d+)/);
       center_href = '/map.php?x=' + center_href[1] + '&y=' + center_href[2] + '&c=' + center_href[4];
-      
-    addToolMap( tmp, tmp2, areaName, castellan, territory, coordinate, villageName, center_href );
+    addToolMap( tmp, tmp2, areaName, castellan, alliance, territory, coordinate, villageName, center_href, href);
   }
 
   //地図用ツールチップ(アイテム)
-  function addToolMap( tmp, tmp2, areaName, castellan, territory, coordinate, villageName, center_href ) {
+  function addToolMap( tmp, tmp2, areaName, castellan, alliance, territory, coordinate, villageName, center_href, href) {;
     var MapUnit = $('#mapUnit');
     MapUnit.text('').append('<div id="selection_tile">' + areaName + '</div>');
 
-    $('<li id="mapMove">ここを中心に表示</li>')
-    .click(function() {
-      if (tmp === null) {
-        map_rightclick.ajflag = false;
-        return true;
-      }
-      var ajaxurl = tmp[2].replace(/'/g, '');
-      map_Ajax_Move(ajaxurl);
-      $("#tooltip_layer").hide();
-      return false;
-    }).appendTo( MapUnit );
-
-    //ここへ部隊出陣
-    if( villageName != tmp2[0].replace(/'/g, '') && tmp[1] != "''" ){
-      $('<li id="mapAttack">ここへ部隊出陣</li>')
-      .click(function(){
-        $("#tooltip_layer").hide();
-        location.href = tmp[1].replace(/'/g, '');
-      }).appendTo( MapUnit );
-    }
-    //最寄拠点から出陣
-    if (options.nearby_tool) {
-      if(tmp[1] != "''") {
-      
-      $('<li id="nearby">最寄拠点から部隊出陣</li>').appendTo( MapUnit );
-      $.post('/user/',function(html) {
-        var tmp2 = coordinate.split('&');
-        var base = coordinate.match(/(-?\d+)/g);
-        var m_nm;
-        var m_url;
-        var m_dist = 9999;
-        var foword = coordinate;
-        $(html).find('table.common_table1.center').find('tr:not(:contains("陥落中"))').find('a')
-        .each(function() {
-          if ($(this).attr('href').indexOf(tmp2[2], '0') > 0) {
-            if ($(this).closest('tr').find('td').eq(0).text() == '領地')
-              return;
-            var tmp3 = $(this).text().match(/(-?\d+),(-?\d+)/);
-            var dist = Math.sqrt(Math.pow( parseInt(tmp3[1] ) - base[0], 2) + Math.pow( parseInt(tmp3[2] ) - base[1], 2));
-            dist = Math.floor(dist * 10) / 10;
-            if (m_dist > dist && dist > 0) {
-              m_dist = dist;
-              m_nm = $(this).closest('tr').find('a:eq(0)').text().replace(/(^\s+)|(\s+$)/g, "");
-              m_url = $(this).closest('tr').find('a:eq(0)').attr('href');
-              $('#nearby').attr('title', m_nm );
-            }
-          }
-        });
-        $('#nearby').click(function(){
-          $.post( m_url, function(html) {
-            $("#tooltip_layer").hide();
-            location.href = tmp[1].replace(/'/g, '');
-          });
-        });
+    //ツールチップに左クリックのメニューを追加
+    if (options.leftclick_menu) {
+      $('#mapSubmenu li').each( function (i) {
+        var $this = $(this);
+        if ( $this.css('display') === 'none')
+          return true;
+        $('<li></li>').click( function () {
+          $("#tooltip_layer").hide();
+          if (i === 1)
+            map_Ajax_Move($this.children('a').attr('href'));
+          else
+            location.href = $this.children('a').attr('href');
+        }).text( $this.text()).appendTo(MapUnit);
       });
-      
-      }
     }
+
+    //セパ
+    $('<hr class="separator" />').appendTo( MapUnit );
 
     // ここへ部隊を配置
-    if ( tmp[6] != "''" || tmp[7] != "''" || tmp[9] != "''" ) {
+    if ( tmp[4] === "'user'" ) {
     //セパ
     $('<hr class="separator" />').appendTo( MapUnit );
     
@@ -10922,7 +10884,7 @@ function Moko_main( $) {
     }
     
     // ここを選択する
-    if ( areaName != villageName && (tmp[6] != "''" || tmp[7] != "''" || tmp[9] != "''" )) {
+    if (tmp[4] === "'user'") {
     
       $('<li id="coord_select">ここを選択する</li>')
       .click(function(){
@@ -10940,6 +10902,36 @@ function Moko_main( $) {
     
     }
 
+    //最寄拠点を選択
+    if (options.move_nearby) {
+      $('<li id="nearby_select">ここの最寄拠点を選択</li>')
+      .click(function(){
+        $.post('/user/', function(html) {
+          var tmp2 = coordinate.split('&');
+          var base = coordinate.match(/(-?\d+)/g);
+          var m_url;
+          var m_dist = 9999;
+          var foword = coordinate;
+          $(html).find('table.common_table1.center').find('tr:not(:contains("陥落中"))').find('a')
+          .each(function() {
+            if ($(this).attr('href').indexOf(tmp2[2], '0') > 0) {
+              if ($(this).closest('tr').find('td').eq(0).text() == '領地')
+                return;
+              var tmp3 = $(this).text().match(/(-?\d+),(-?\d+)/);
+              var dist = Math.sqrt(Math.pow(parseInt(tmp3[1]) - base[0], 2) + Math.pow(parseInt(tmp3[2]) - base[1], 2));
+              dist = Math.floor(dist * 10) / 10;
+              if (m_dist > dist && dist > 0) {
+                m_dist = dist;
+                m_url = $(this).closest('tr').find('a:eq(0)').attr('href');
+              }
+            }
+          });
+          $("#tooltip_layer").hide();
+          location.href = m_url + '&from=menu&page=%2Fmap.php';
+        });
+      }).appendTo( MapUnit );
+    }
+
     //セパ
     $('<hr class="separator" />').appendTo( MapUnit );
 
@@ -10954,7 +10946,7 @@ function Moko_main( $) {
     if (options.map_reg){
       var map_list = {},
       mname = areaName,
-      coord = coordinate;
+      coord = coordinate.replace(/.*x=(\d+)&y=(\d+)&c=(\d*)/, '$1, $2, $3');
       if (localStorage.getItem("crx_map_list")) {
         var map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
       }
@@ -10990,145 +10982,14 @@ function Moko_main( $) {
     $( '<li id="chat_set">チャットに入力</li>').appendTo( MapUnit );
 
     $('#chat_set').click(function() {
+      var comTxt = $('#comment_str').val();
       $("#tooltip_layer").hide();
-      var newWar = $('div.ig_mappanel_maindataarea').find('img[src$="map_otono_name_war.png"]');
-      if( newWar.length == 1 ) {
-        var coord = tmp2[2].replace(/'/g, '');
-      }
-      else {
-        var coord = tmp2[3].replace(/'/g, '')
-      }
       $('img[alt="投稿"]').trigger('click');
-      $('#comment_str').val( coord );
+      $('#comment_str').val( comTxt + tmp[5] + ',' + tmp[6] );
     });
 
-    //最寄拠点を選択
-    if (options.move_nearby) {
-      $('<li id="nearby_select">ここの最寄拠点を選択</li>')
-      .click(function(){
-        $.post('/user/', function(html) {
-          var tmp2 = coordinate.split('&');
-          var base = coordinate.match(/(-?\d+)/g);
-          var m_url;
-          var m_dist = 9999;
-          var foword = coordinate;
-          $(html).find('table.common_table1.center').find('tr:not(:contains("陥落中"))').find('a')
-          .each(function() {
-            if ($(this).attr('href').indexOf(tmp2[2], '0') > 0) {
-              if ($(this).closest('tr').find('td').eq(0).text() == '領地')
-                return;
-              var tmp3 = $(this).text().match(/(-?\d+),(-?\d+)/);
-              var dist = Math.sqrt(Math.pow(parseInt(tmp3[1]) - base[0], 2) + Math.pow(parseInt(tmp3[2]) - base[1], 2));
-              dist = Math.floor(dist * 10) / 10;
-              if (m_dist > dist && dist > 0) {
-                m_dist = dist;
-                m_url = $(this).closest('tr').find('a:eq(0)').attr('href');
-              }
-            }
-          });
-          $("#tooltip_layer").hide();
-          location.href = m_url + '&from=menu&page=%2Fmap.php';
-        });
-      }).appendTo( MapUnit );
-    }
-
-    //ツールチップに左クリックのメニューを追加
-    if (options.leftclick_menu) {
-      //セパ
-      $('<hr class="separator" />').appendTo( MapUnit );
-      //陣のレベルアップ・破棄
-      if( tmp[6] != "''" ) {
-        var url = tmp[6].replace(/'/g, ''),
-          url2 = tmp[10].replace(/'/g, ''),
-          proc_type = '陣',
-          proc_list = $('<li id="camp_proc">陣のレベルアップ</li>')
-                .click(function(){
-                  $("#tooltip_layer").hide();
-                  map_levelup( url, url2, proc_type, center_href );
-                }).appendTo( MapUnit );
-                
-          map_stateinfo( url, proc_list );
-                
-        var remove_list = $('<li id="remove_territory">陣を破棄する</li>')
-                .click(function(){
-                  $("#tooltip_layer").hide();
-                  map_remove( url2, proc_type, center_href );
-                }).appendTo( MapUnit );
-                
-        map_remove_cancel( url2, proc_type, proc_list, remove_list )
-      }
-      //出城のレベルアップ
-      if( tmp[7] != "''" ) {
-        var url = tmp[7].replace(/'/g, ''),
-          url2 = tmp[10].replace(/'/g, ''),
-          proc_type = '出城',
-          proc_list = $('<li id="deshiro_proc">出城のレベルアップ</li>').click(function(){
-                $("#tooltip_layer").hide();
-                map_levelup( url, url2, proc_type, center_href );
-              }).appendTo( MapUnit );
-        map_stateinfo( url, proc_list );
-      }
-      //領地を陣にする・破棄
-      if( tmp[8] != "''" ) {
-        var url = tmp[8].replace(/'/g, ''),
-          url2 = tmp[10].replace(/'/g, ''),
-          proc_type = '領地',
-          proc_list = $('<li id="to_camp">領地を陣にする</li>')
-                .click(function(){
-                  $.post( url, function(html){
-                      var btnarea =  $(html).find('div.ig_tilesection_btnarea > a').attr('href');
-                      $.post( btnarea, function(html){ map_Ajax_Move( center_href ); } );
-                  });
-                  $("#tooltip_layer").hide();
-                }).appendTo( MapUnit );
-                
-        var remove_list = $('<li id="remove_territory">領地を破棄する</li>')
-                .click(function(){
-                  $("#tooltip_layer").hide();
-                  map_remove( url2, proc_type, center_href );
-                }).appendTo( MapUnit );
-                
-        map_remove_cancel( url2, proc_type, proc_list, remove_list );
-      }
-      
-      if( tmp[9] != "''" ) {
-        $('<li id="to_admi">ここの内政を行う</li>')
-        .click(function(){
-          location.href = tmp[9].replace(/'/g, '');
-          $("#tooltip_layer").hide();
-        }).appendTo( MapUnit );
-      }
-      
-      if( tmp[9] != "''" && villageName != areaName ) {
-        $('<li id="may_look_detail">ここの詳細を見る</li>')
-        .click(function(){
-          location.href = tmp[2].replace(/'/g, '').replace('map', 'land');
-          $("#tooltip_layer").hide();
-        }).appendTo( MapUnit );
-      }
-      
-      if( tmp[10] != "''" ) {
-        $('<li id="look_detail">ここの詳細を見る</li>')
-        .click(function(){
-          location.href = tmp[10].replace(/'/g, '');
-          $("#tooltip_layer").hide();
-        }).appendTo( MapUnit );
-      }
-      
-    }
-    //合戦報告書(城主)
-    if ( tmp[4] != "''" ) {
-      //セパ
-      $('<hr class="separator" />').appendTo( MapUnit );
-      
-      $('<li id="mapWarlistlord">合戦報告書：城主</li>')
-      .click(function(){
-        location.href = tmp[4].replace(/'/g, '');
-        $("#tooltip_layer").hide();
-      }).appendTo( MapUnit );
-    }
     //格付情報：城主
-    if ( tmp[4] != "''" ) {
+    if ( castellan.match(/\S/)) {
       var tgTable = $('#quick_layer').find('tbody'),
           Country = center_href.split('=')[3],
           cc = {'織田家': 1,'足利家': 2,'黒田家': 2,'武田家': 3,'上杉家': 4,'徳川家': 5,'毛利家': 6,'伊達家': 7,'浅井家': 7,'北条家': 8,'今川家': 8,'長宗我部家': 9,'島津家': 10,'豊臣家': 11,'大友家': 11,'最上家': 12,'石田家': 12};
@@ -11140,20 +11001,20 @@ function Moko_main( $) {
       $('<li id="quick_information">格付情報：城主</li>')
       .click(function(){
       $('#quick_layer').slideUp(200);
-      $.post('/user/ranking.php?m=war_point&find_rank=&find_name=' + castellan + '&c=0',
+      $.post('/user/ranking.php?m=war_point&find_rank=&find_name=' + encodeURIComponent(castellan) + '&c=0',
         function(html) {
           var tgTR = $(html).find('tr.fs12.now');
           var Rank = tgTR.find('td:eq(1)').text(),
               Palms = tgTR.find('td:eq(4)').text(),
               Attack = tgTR.find('td:eq(5)').text(),
               Defense = tgTR.find('td:eq(6)').text()
-          $.post('/user/ranking.php?m=attack_score&find_rank=&find_name=' + castellan + '&c=0',
+          $.post('/user/ranking.php?m=attack_score&find_rank=&find_name=' + encodeURIComponent(castellan) + '&c=0',
             function(html) {
               var blow_tgTR = $(html).find('tr.fs12.now'),
                   blow_Attack = blow_tgTR.find('td:eq(4)').text(),
                   blow_Defense = blow_tgTR.find('td:eq(5)').text(),
                   cood = blow_tgTR.find('td:eq(0)').text();
-              $.post('/war/war_ranking.php?m=&c=' + cc[cood] + '&find_rank=&find_name=' + castellan,
+              $.post('/war/war_ranking.php?m=&c=' + cc[cood] + '&find_rank=&find_name=' + encodeURIComponent(castellan),
                 function(html) {
                   var war_tgTR = $(html).find('tr.ig_rank_you'),
                       war_Rank = war_tgTR.find('td:eq(0)').text(),
@@ -11171,84 +11032,54 @@ function Moko_main( $) {
         }
       );
       $('#mapOverlayMap').find('img[alt="rating_view"]').remove();
-      var href = tmp[10].replace('land', 'map').replace(/'/g, ''),
-        alt_name = 'rating_view';
+      var alt_name = 'rating_view';console.log(href);
       new_overOperation2( alt_name, href, IMAGES.panel_rating);
         $("#tooltip_layer").hide();
       }).appendTo( MapUnit );
     }
-    if ( tmp[5] != "''" ) {
+    if ( castellan.match(/\S/) ) {
       $('<li id="mapAlliance_base">拠点をマーク</li>')
       .click(function(){
         $("#tooltip_layer").hide();
         $('#mapOverlayMap').find('img[alt="view"]').remove();
-        var alliance_name = tmp2[4];
-        
         $('#mapOverlayMap > area').each(function(){
           var view_source = $(this).attr('onMouseOver').match(/'.*?'/g);
-          var href = $(this).attr('href').replace('land', 'map');
+          var href = $(this).attr('href');
           var view_castellanLV = view_source[1].match(/\(Lv.+?\)/),
-              view_castellan = view_source[1].replace( view_castellanLV, '').replace(/'/g, '');
+              view_castellan = view_source[1].replace(/'|\(.+\)/g, ''),
+              view_alliance = view_source[4].replace(/'/g,'');
           var alt_name = 'view';
-          if( view_source[13].match(/\/img\/panel\/capital/) || //城
-            view_source[13].match(/\/img\/panel\/fort/) || //砦
-            view_source[13].match(/\/img\/panel\/village/) || //村
-            view_source[13].match(/\/img\/panel\/camp/) || //陣
-            view_source[13].match(/\/img\/panel\/stronghold/) || //出城
-            view_source[13].match(/\/img\/panel\/castle/) || //城(6章)
-            view_source[13].match(/\/img\/panel\/branch/) //支城
-          ) {
-            //この城主の拠点
-            if( castellan == view_castellan ){
-              new_overOperation2( alt_name, href, IMAGES.panel_my_base );
-              return true;
-            }
-            //この城主の同盟
-            if( tmp2[4] == view_source[4] ){
-              new_overOperation2( alt_name, href, IMAGES.panel_alliance_base );
-              return true;
-            }
+          //この城主の拠点
+          if( castellan === view_castellan ){
+            new_overOperation2( alt_name, href, IMAGES.panel_my_base );
+            return true;
           }
-          
+          //この城主の同盟
+          if( alliance === view_alliance ){
+            new_overOperation2( alt_name, href, IMAGES.panel_alliance_base );
+            return true;
+          }
         });
         
       }).appendTo( MapUnit );
     }
-    if ( tmp[3] != "''" ) {
-      $('<li id="mapProfile">プロフィール</li>')
-      .click(function(){
-        location.href = tmp[3].replace(/'/g, '');
-        $("#tooltip_layer").hide();
-      }).appendTo( MapUnit );
-    }
-    if ( tmp[5] != "''" ) {
-      $('<li id="mapAlliance">同盟情報</li>')
-      .click(function(){
-        location.href = tmp[5].replace(/'/g, '');
-        $("#tooltip_layer").hide();
-      }).appendTo( MapUnit );
-    }
-    if ( tmp[5] != "''" ) {
+    if ( alliance.match(/\S/)) {
       $('<li id="report_Alliance">合戦報告書：同盟</li>')
       .click(function(){
-        var alliance_name= tmp2[4].replace(/'/g, '');
-          if(alliance_name == '') {
-            alliance_name= tmp2[3].replace(/'/g, '');
-          }
-        location.href = '/war/fight_history.php?type=1&find_name='+ alliance_name +'&find_x=&find_y=&find_length=&btn_search=true';
+        location.href = '/war/fight_history.php?type=1&find_name='+ encodeURIComponent(alliance) +'&find_x=&find_y=&find_length=&btn_search=true';
         $("#tooltip_layer").hide();
       }).appendTo( MapUnit );
     }
-    if( tmp[10] == "''" || (tmp[6] != "''" || tmp[7] != "''" || tmp[8] != "''") ) {
+    if (tmp[4] === "'user'") {
       $('<li id="mapRename">名称変更</li>')
       .click(function(){
-        renameArea( tmp[2].replace(/'/g, '').replace('/map', '') );
+        renameArea( coordinate);
         $("#tooltip_layer").hide();
       }).appendTo( MapUnit );
     }
   }
   //名称変更
-  function renameArea(url) {
+  function renameArea(coordinate) {
     var req_data = {};
     $.post('/user/change/change.php', function(html) {
       var new_name = null;
@@ -11256,7 +11087,7 @@ function Moko_main( $) {
       req_data.comment = $(html).find('.profile_edit').val();
       
       $(html).find('div.common_box3bottom').find('a').each(function() {
-        if ($(this).attr('href') == '/land' + url) {
+        if ($(this).attr('href') == '/land.php?' + coordinate) {
           var old_name = $(this).closest('tr').find('input:eq(0)').val();
           new_name = prompt(old_name, old_name);
           keys = $(this).closest('tr').find('input:eq(0)').attr('name');
@@ -11283,89 +11114,6 @@ function Moko_main( $) {
           location.reload();
         });
       });
-    });
-  }
-  //建築状況とレベルの取得
-  function map_stateinfo( url, proc_list ){
-    $.post(
-      url,
-        function(html){
-          var level = $(html).find('div.ig_decksection_top').text().split(' ')[1],
-              btnarea_txt =  $(html).find('div.ig_tilesection_btnarea').text().trim(),
-              href =  $(html).find('div.ig_tilesection_btnarea').find('a'),
-              construction =  $(html).find('p.ig_top_alartbox'),
-              state = '';
-          if(href.length == 1){
-            state = 'レベルアップ可能';
-          }
-          else if(construction.length == 1 && btnarea_txt == '資源が不足しています'){
-            state = '現在レベルアップ中です';
-          }
-          else if(construction.length == 0 && btnarea_txt == '資源が不足しています'){
-            state = btnarea_txt;
-          }
-          proc_list.attr('title', '【' + level + '】' + state );
-        }
-    );
-  }
-  //地図画面からのレベルアップ
-  function map_levelup( url, url2, proc_type, center_href ){
-    $.post(
-      url,
-      function(html){
-        var btnarea =  $(html).find('div.ig_tilesection_btnarea > a').attr('href'),
-          btnarea_txt =  $(html).find('div.ig_tilesection_btnarea').text().trim(),
-          level = $(html).find('div.ig_decksection_top').text().split(' ')[1],
-          construction =  $(html).find('p.ig_top_alartbox');
-        if( $(html).find('div.ig_tilesection_btnarea > a').length == 0 ) {
-          if(btnarea_txt != '最大レベルです'){
-            $.post( url2, function(html){
-              var BuildTime = $(html).find('span.buildTime').text();
-              if( construction.length == 1 && btnarea_txt == '資源が不足しています' ){
-                btnarea_txt = '現在レベルアップ中です';
-                alert( btnarea_txt + '\n' + BuildTime + 'に完了します。' );
-              }
-              else if(construction.length == 0 && btnarea_txt == '資源が不足しています'){ alert( btnarea_txt); }
-              else { alert( btnarea_txt + '\n' + BuildTime + 'に完了します。' ); }
-            });
-          }
-          else { alert( btnarea_txt ); }
-        }
-        else { $.post( btnarea, function(html){ map_Ajax_Move( center_href ); alert( proc_type +'のレベルアップを実行しました'); });
-        }
-      }
-    );
-  }
-  //地図画面からの破棄
-  function map_remove( url2, proc_type, center_href ) {
-    $.post( url2, function(html){
-        var build = $(html).find('span.buildTime'),
-          txt = build.text(),
-          remove_href = $(html).find('img[alt="' + proc_type + 'を破棄する"]').parent().attr('href'),
-          cancel_href = $(html).find('img[alt="破棄を中止する"]').parent().attr('href');
-          
-        if( cancel_href != undefined ){
-          if ( confirm( proc_type + 'の破棄が' + txt + 'に完了します\n破棄をキャンセルしますか？') ){
-            $.post( cancel_href, function(html){ map_Ajax_Move( center_href ); } );
-          }
-        }
-        else if( remove_href != undefined ) {
-          if ( confirm('この' + proc_type + 'を破棄し、空き地に戻しますか？') ) {
-            $.post( remove_href, function(html){ map_Ajax_Move( center_href ); } );
-          }
-        }
-      }
-    );
-  }
-  //地図画面から破棄のキャンセル
-  function map_remove_cancel( url2, proc_type, proc_list, remove_list ) {
-    $.post( url2, function(html){
-      var build_status = $(html).find('span.buildStatus').text();
-      if( build_status == '建設中　陣' ){ $('#remove_territory').remove(); }
-      if( build_status == proc_type + 'の破棄' ){
-        proc_list.remove();
-        remove_list.html( proc_type + 'の破棄を中止する');
-      }
     });
   }
 
