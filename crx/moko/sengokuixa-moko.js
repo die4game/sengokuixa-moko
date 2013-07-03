@@ -1944,7 +1944,7 @@ function Moko_main( $) {
     var map_list = {};
     if (localStorage.getItem("crx_map_list")) {
       map_list = secureEvalJSON(localStorage.getItem("crx_map_list"));
-    }console.log(map_list);
+    }
     var CountryCode = $('#ig_map_movepanel').find('li:eq(0) > a').attr('href').split('=')[4],
       dist = 0,
       tmp;
@@ -1964,7 +1964,7 @@ function Moko_main( $) {
         dist = "-";
       }
       
-      var x = tmp[1], y = tmp[2], c = parseInt(tmp[3], 10);console.log(c,tmp);
+      var x = tmp[1], y = tmp[2], c = parseInt(tmp[3], 10);
       //4章
       if ( options.chapter_change === '0' ) {
         var world = { 1:'織田家', 2:'足利家', 3: '武田家', 4: '上杉家', 5: '徳川家', 6: '毛利家', 7: '浅井家', 8: '北条家', 9: '長宗我部家', 10: '島津家', 11: '大友家', 12: '最上家', 20:'東西戦場1', 21:'東西戦場2' };
@@ -2111,8 +2111,8 @@ function Moko_main( $) {
       $('#mapOverlayMap > area').live('contextmenu', function(e) {
         if (map_rightclick.ajflag) { return false; }
         map_rightclick.ajflag = true;
-        var urlmap = $(this).attr('href').match(/\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0],
-          ajaxurl = 'map'+urlmap;
+        var urlmap = $(this).attr('onClick').split(', '),
+          ajaxurl = 'map.php?x='+urlmap[5]+'&y='+urlmap[6]+'&c='+urlmap[7];
         map_Ajax_Move(ajaxurl);
         return false;
       });
@@ -10771,9 +10771,6 @@ function Moko_main( $) {
 
     // ここへ部隊を配置
     if ( tmp[4] === "'user'" ) {
-    //セパ
-    $('<hr class="separator" />').appendTo( MapUnit );
-    
       $( '<div id="placement_container">' +
          '<li id="placed_here">ここへ部隊配置</li>' +
          '<li id="groups_1">【第一組】から配置</li>' +
@@ -10988,6 +10985,9 @@ function Moko_main( $) {
       $('#comment_str').val( comTxt + tmp[5] + ',' + tmp[6] );
     });
 
+    //セパ
+    $('<hr class="separator" />').appendTo( MapUnit );
+
     //格付情報：城主
     if ( castellan.match(/\S/)) {
       var tgTable = $('#quick_layer').find('tbody'),
@@ -11032,7 +11032,7 @@ function Moko_main( $) {
         }
       );
       $('#mapOverlayMap').find('img[alt="rating_view"]').remove();
-      var alt_name = 'rating_view';console.log(href);
+      var alt_name = 'rating_view';
       new_overOperation2( alt_name, href, IMAGES.panel_rating);
         $("#tooltip_layer").hide();
       }).appendTo( MapUnit );
