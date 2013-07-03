@@ -77,6 +77,8 @@
       localStorage.crx_ixamoko_init_groups_img? JSON.parse( localStorage.crx_ixamoko_init_groups_img): {};
     storeWorld.crx_ssID =
       localStorage.crx_ssID? JSON.parse( localStorage.crx_ssID): {};
+    storeWorld.crx_map_list =
+      localStorage.crx_map_list? JSON.parse( localStorage.crx_map_list): {};
     store[world] = JSON.stringify( storeWorld);
     chrome.storage.local.set( store);
     //console.log( store);

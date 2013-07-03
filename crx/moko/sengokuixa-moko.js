@@ -43,7 +43,6 @@ function Moko_main( $) {
   BASE_AREA_5 = [ [0, 0],[ 12, 28], [ 28, 12], [ 12, 52], [ 36, 36], [ 52, 12], [ 12, 76], [ 36, 60], [ 60, 36], [ 76, 12], [ 12,100],[ 36, 84], [ 60, 60], [ 84, 36], [100, 12], [ 12,124], [ 36,108], [ 60, 84], [ 84, 60], [108, 36], [124, 12],[ 36,132], [ 60,108], [ 84, 84], [108, 60], [132, 36], [ 60,132], [ 84,108], [108, 84], [132, 60], [ 84,132],[108,108], [132, 84], [108,132], [132,108], [132,132] ],
 
   group_setting = null,
-  //cardname_setting = null,
   groups = groups_def,
   groupsx = groupsx_def,
   groups_img = groups_img_def,
@@ -53,7 +52,6 @@ function Moko_main( $) {
     options = secureEvalJSON(localStorage.getItem("crx_ixa_moko_options"));
   }
   group_setting = {};
-  //cardname_setting = {};
   group_index = [];
   if (localStorage.getItem("crx_ixamoko_group_set")) {
     group_setting = secureEvalJSON(localStorage.getItem("crx_ixamoko_group_set"));
@@ -110,9 +108,7 @@ function Moko_main( $) {
     document.cookie = 'im_st=0; expires=Fri, 31-Dec-1999 23:59:59 GMT; domain=.sengokuixa.jp; path=/;';
   }
 
-//  alert($().jquery);
   AjaxLoader();
-//  battle_mode_check();
   menu_reversal(); //tabArea
   mod_status_left(); //tabArea
   allpage_check();
@@ -549,13 +545,12 @@ function Moko_main( $) {
   function AjaxLoader() {
     $('<div id="loader"><img src="' + IMAGES.ajax_loading + '" /></div>')
     .appendTo('body');
-    $("#loader").hide();
-    
-    $("#loader").ajaxStart(function() {
-       $(this).show();
-    }).ajaxStop(function() {
-       $(this).hide();
-    });
+    $("#loader").hide()
+      .ajaxStart(function() {
+         $(this).show();
+      }).ajaxStop(function() {
+         $(this).hide();
+      });
    }
 
   //全ページ用:
@@ -4416,7 +4411,7 @@ function Moko_main( $) {
   }
 
   function new_overOperation( point, img ) {
-    var marktile = $('area[onclick*="' + point + '"]');
+    var marktile = $('area[onclick*="' + point + ',"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
         i_index = marktile.attr('onClick').match(/'.*?'/g),
@@ -10911,11 +10906,11 @@ function Moko_main( $) {
           var foword = coordinate;
           $(html).find('table.common_table1.center').find('tr:not(:contains("陥落中"))').find('a')
           .each(function() {
-            if ($(this).attr('href').indexOf(tmp2[2], '0') > 0) {
+            if ($(this).attr('href').split( 'c=')[1] === tmp[7]) {
               if ($(this).closest('tr').find('td').eq(0).text() == '領地')
                 return;
               var tmp3 = $(this).text().match(/(-?\d+),(-?\d+)/);
-              var dist = Math.sqrt(Math.pow(parseInt(tmp3[1]) - base[0], 2) + Math.pow(parseInt(tmp3[2]) - base[1], 2));
+              var dist = Math.sqrt(Math.pow(tmp3[1] - base[0], 2) + Math.pow(tmp3[2] - base[1], 2));
               dist = Math.floor(dist * 10) / 10;
               if (m_dist > dist && dist > 0) {
                 m_dist = dist;
@@ -10924,7 +10919,8 @@ function Moko_main( $) {
             }
           });
           $("#tooltip_layer").hide();
-          location.href = m_url + '&from=menu&page=%2Fmap.php';
+          if (m_url)
+            location.href = m_url + '&from=menu&page=%2Fmap.php';
         });
       }).appendTo( MapUnit );
     }
