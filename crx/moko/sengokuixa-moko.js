@@ -1551,7 +1551,7 @@ function Moko_main( $) {
     
     $('input.exhibit').click(function(){
       var $this = $(this),
-        cid_source = $this.closest('p').find('a:eq(1)').attr('onClick').match(/'.*?'/g),
+        cid_source = $this.closest('p').find('a:eq(1)').attr('onclick').match(/'.*?'/g),
         exhibit_cid = cid_source.toString().replace(/'/g, ''),
         exhibit_price = $this.parent().find('input.price').val();
       if( exhibit_price == '') { alert('最低落札額が入力されていません。'); return false; }
@@ -1740,7 +1740,7 @@ function Moko_main( $) {
     Area_list.each(function( idx ) {
       var source = ( $(this).attr('onMouseOver') || '' ).split('; overOperation')[0],
         array = source.match(/'.*?'/g),
-        search = ( $(this).attr('onClick') || '' ).match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/) || [],
+        search = ( $(this).attr('onclick') || '' ).match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/) || [],
         img_data = img_list[ idx ],
         data = { idx: idx };
         
@@ -2073,7 +2073,7 @@ function Moko_main( $) {
     function area_mouseover() {
       var source = $(this).attr('onMouseOver').match(/'.*?'/g),
         alt = $(this).attr('balloon'),
-        url = $(this).attr('onClick').match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0],
+        url = $(this).attr('onclick').match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0],
         country = url.split('=')[3],
         flag = alt.match(/^([^(]+) (-?\d+),(-?\d+)$/);
         
@@ -2107,7 +2107,7 @@ function Moko_main( $) {
       $('#mapOverlayMap > area').live('contextmenu', function(e) {
         if (map_rightclick.ajflag) { return false; }
         map_rightclick.ajflag = true;
-        var urlmap = $(this).attr('onClick').match(/map\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0],
+        var urlmap = $(this).attr('onclick').match(/map\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0],
           ajaxurl = urlmap;
         map_Ajax_Move(ajaxurl);
         return false;
@@ -3568,7 +3568,7 @@ function Moko_main( $) {
         $.post(
           '/card/deck.php?ano=' + ano,
           function(html) {
-            var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onClick') || '').match(/'.*?'/g),
+            var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onclick') || '').match(/'.*?'/g),
                 unit_assign_id = Unregist[0].replace(/'/g, ''),
                 unset_unit_squad_id = Unregist[1].replace(/'/g, ''),
                 p = $(html).find('input[id="p"]').val(),
@@ -4001,7 +4001,7 @@ function Moko_main( $) {
       var str = $(this).attr('onMouseOver');
       if( str.indexOf(searchstr) >= 0 ) {
         if( $(this).attr('balloon') != undefined ) {
-          var url1 = $(this).attr('onClick').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0];
+          var url1 = $(this).attr('onclick').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0];
           $.post( url1, 
             function (html){
               var url2 = $(html).find('div.ig_mappanel_dataarea').find('a:eq(0)').attr('href');
@@ -4056,7 +4056,7 @@ function Moko_main( $) {
       var str = $(this).attr('onMouseOver');
       if( str.indexOf(searchstr) >= 0 ) {
         if( $(this).attr('balloon') != undefined ) {
-          var url1 = $(this).attr('onClick').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0];
+          var url1 = $(this).attr('onclick').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/)[0];
           $.post( url1, function (html){
             var url2 = $(html).find('div.ig_mappanel_dataarea').find('a:eq(0)').attr('href');
             $.post( url2, function (html){
@@ -4415,7 +4415,7 @@ function Moko_main( $) {
     var marktile = $('area[onclick*="' + url + '"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
-        i_index = marktile.attr('onClick').match(/'.*?'/g),
+        i_index = marktile.attr('onclick').match(/'.*?'/g),
         i_index = i_index[0].replace(/'/g, ''),
         mapsAllimg = $('#ig_mapsAll').find('img[class="' + i_index + '"]');
         
@@ -4442,7 +4442,7 @@ function Moko_main( $) {
     var marktile = $('area[onclick*="' + url + '"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
-        i_index = marktile.attr('onClick').match(/'.*?'/g),
+        i_index = marktile.attr('onclick').match(/'.*?'/g),
         i_index = i_index[0].replace(/'/g, ''),
         mapsAllimg = $('#ig_mapsAll').find('img[class="' + i_index + '"]');
       
@@ -4468,7 +4468,7 @@ function Moko_main( $) {
     var marktile = $('area[onclick*="' + url + '"]');
     if ( marktile.attr('balloon') !== undefined ) {
       var imglen = $('#mapOverlayMap').find('area').length,
-        i_index = marktile.attr('onClick').match(/'.*?'/g),
+        i_index = marktile.attr('onclick').match(/'.*?'/g),
         i_index = i_index[0].replace(/'/g, ''),
         mapsAllimg = $('#ig_mapsAll').find('img[class="' + i_index + '"]');
         
@@ -4713,7 +4713,7 @@ function Moko_main( $) {
                     $('form[name="createUnitForm"]').each(function() {
                       var ObjectSpan = $(this).find('span:eq(1)');
                       if(ObjectSpan.length){
-                        var ObjectValue = ObjectSpan.attr('onClick'),
+                        var ObjectValue = ObjectSpan.attr('onclick'),
                             ObjectValue = ObjectValue.match(/'.*?'/g)[1].replace(/'/g, '');
                       }
                       var maxsol = $(this).find('span.ixamoko_maxsol').attr('value');
@@ -6302,7 +6302,7 @@ function Moko_main( $) {
           var anchor = $(html).find('#ig_unitchoice').find('li:contains('+cname+')').find('a'),
             len = anchor.length;
           if( len == 1 ) {
-            var ano = anchor.attr('onClick').match(/\d+/)[0];
+            var ano = anchor.attr('onclick').match(/\d+/)[0];
           }
           else {
             var ano = 0;
@@ -6319,7 +6319,7 @@ function Moko_main( $) {
           var anchor = $(html).find('#ig_unitchoice').find('li:contains('+cname+')').find('a'),
             len = anchor.length;
           if( len == 1 ) {
-            var ano = anchor.attr('onClick').match(/\d+/)[0];
+            var ano = anchor.attr('onclick').match(/\d+/)[0];
           }
           else {
             var ano = 0;
@@ -7372,7 +7372,7 @@ function Moko_main( $) {
       if (!confirm("小隊長をすべて部隊から外します。よろしいですか？\n（武将はHPが減った状態で待機状態に戻ります）"))
         return;
         $('img[alt="外す"]').each(function(){
-          var source = $(this).parent().attr('onClick').match(/'.*?'/g),
+          var source = $(this).parent().attr('onclick').match(/'.*?'/g),
             unit_assign_id= source[0].replace(/'/g, ''),
             unset_unit_squad_id= source[1].replace(/'/g, ''),
             select_assign_no = $('#select_assign_no').val(),
@@ -7471,7 +7471,7 @@ function Moko_main( $) {
           return;
         }
         else {
-          work_id = Dissolution.closest('a').attr('onClick').match(/'.*?'/g);
+          work_id = Dissolution.closest('a').attr('onclick').match(/'.*?'/g);
           //progress
           $('#info_left').append( '<p>' + count + '</p>' );
           $('#info_rigth').html( $('#info_left > p').length + '部隊' );
@@ -7581,7 +7581,7 @@ function Moko_main( $) {
     else {
       $('ul.pager.cardstock:eq(0)').find('li:last').each(function() {
         if ( $(this).attr('class') == 'last' ) {
-          var script = $(this).find('a:eq(1)').attr('onClick');
+          var script = $(this).find('a:eq(1)').attr('onclick');
             script = script.substring(script.indexOf('"p"'), script.length);
             script = script.match(/".*?"/g);
             script = script[1].replace(/"/g, '');
@@ -7636,7 +7636,7 @@ function Moko_main( $) {
         }
         $(html).find('div.ig_deck_smallcardarea:has(img[alt="選択中の部隊へ"])')
         .each(function() {
-          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onClick'),
+          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onclick'),
             work_id = work_id.replace('confirmRegist2(', '').replace(');','').split(',');
             set_squad_id = work_id[1].replace(/\'/g, '').trim();
             set_assign_id = work_id[0];
@@ -7808,7 +7808,7 @@ function Moko_main( $) {
         $(this).replaceWith( npage );
       }
       else if ($(this).attr('title') == 'last page') {
-        var script = $(this).attr('onClick');
+        var script = $(this).attr('onclick');
           script = script.substring(script.indexOf('"p"'), script.length);
           script = script.split('=');
           script = script[1].split(';');
@@ -8910,7 +8910,7 @@ function Moko_main( $) {
     else {
       $('ul.pager.cardstock:eq(0)').find('li:last').each(function() {
         if ( $(this).attr('class') == 'last' ) {
-          var script = $(this).find('a:eq(1)').attr('onClick');
+          var script = $(this).find('a:eq(1)').attr('onclick');
           script = script.substring(script.indexOf('"p"'), script.length);
           script = script.match(/".*?"/g);
           script = script[1].replace(/"/g, '');
@@ -8966,7 +8966,7 @@ function Moko_main( $) {
     else {
       $('ul.pager.cardstock:eq(0)').find('li:last').each(function() {
         if ( $(this).attr('class') == 'last' ) {
-          var script = $(this).find('a:eq(1)').attr('onClick');
+          var script = $(this).find('a:eq(1)').attr('onclick');
             script = script.substring(script.indexOf('"p"'), script.length);
             script = script.match(/".*?"/g);
             script = script[1].replace(/"/g, '');
@@ -9052,7 +9052,7 @@ function Moko_main( $) {
         var setSrc = $(this).find('img[title^="選択中の部隊へ"]').attr('src');
         var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
         if ( (id == list[a]) && ( setSrc !== undefined) ) {
-          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onClick').match(/'.*?'/g);
+          var work_id = $(this).find('a[id^="btn_gounit_"]').attr('onclick').match(/'.*?'/g);
           set_squad_id = work_id[1].replace(/'/g, '');
           set_assign_id = work_id[0].replace(/'/g, '');
           var cname = $(this).find('span.ig_deck_smallcard_cardname').text();
@@ -9117,12 +9117,12 @@ function Moko_main( $) {
         
         Line_td.eq(3).find('input[type="button"]').val('全て')
           .each(function() {
-            var source = $(this).attr('onClick');
+            var source = $(this).attr('onclick');
             if (!source) {
               return;
             }
             source = source.slice(0, -2) + remain + ')';
-            $(this).attr('onClick', source);
+            $(this).attr('onclick', source);
         });
         
         Line_td.eq(5).each(function(){
@@ -9260,7 +9260,7 @@ function Moko_main( $) {
           $.post(
             href,
             function(html) {
-              var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onClick') || '').match(/'.*?'/g),
+              var Unregist = ( $(html).find('img[alt="解散"]').parent().attr('onclick') || '').match(/'.*?'/g),
                   unit_assign_id = Unregist[0].replace(/'/g, ''),
                   unset_unit_squad_id = Unregist[1].replace(/'/g, ''),
                   p = $(html).find('input[id="p"]').val(),
@@ -10282,7 +10282,7 @@ function Moko_main( $) {
     }
     
     if ( $('ul.pager').size() > 0 ) {
-      var href = $('ul.pager > li.last > a:first').attr('onClick').match(/".*?"/g)[2];
+      var href = $('ul.pager > li.last > a:first').attr('onclick').match(/".*?"/g)[2];
           href = href.replace(/"/g, '');
       var href2 = href + '&p=2';
     }
@@ -10727,7 +10727,7 @@ function Moko_main( $) {
       $('#tooltip_layer').show();
     });
 
-    var tmp = $(target).attr('onClick').match(/'.*?'/g);
+    var tmp = $(target).attr('onclick').match(/'.*?'/g);
     var tmp2 = $(target).attr('onMouseOver').match(/'.*?'/g);
     var castellanLV = tmp2[1].match(/\(Lv.+?\)/),
         castellan = tmp2[1].replace( castellanLV, '').replace(/'/g, '');//城主名
