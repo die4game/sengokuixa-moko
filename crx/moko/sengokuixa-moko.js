@@ -1987,8 +1987,12 @@ function Moko_main( $) {
     }
 
     $( '#reg_box>tr').live( 'contextmenu', function (e) {
+      var coordNums = $(this).attr('coord').split(', ');
       e.preventDefault();
-      location.href = '/land.php?' + $(this).attr('coord');
+      if ( coordNums[2] === CountryCode)
+        map_Ajax_Move('map.php?x=' + coordNums[0] + '&y=' + coordNums[1] + '&c=' + coordNums[2]);
+      else
+        location.href = '/map.php?x=' + coordNums[0] + '&y=' + coordNums[1] + '&c=' + coordNums[2];
     });
 
     function mouseover() {
