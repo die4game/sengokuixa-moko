@@ -1625,60 +1625,22 @@ function Moko_main( $) {
     var Otono = $('img.otono_name')
           .css({'cursor':'pointer', 'margin-top':'-6px', 'margin-left':'-5px'})
           .wrap('<span id="country_change"></span>');
-    //4章
-    if ( options.chapter_change === '0' ) {
-      $('<div id="change_menu">' +
-        '<a href="' + center_code + '12">最上家</a>' +
-        '<a href="' + center_code + '7">浅井家</a>' +
-        '<a href="' + center_code + '4">上杉家</a>' +
-        '<a href="' + center_code + '8">北条家</a>' +
-        '<a href="' + center_code + '3">武田家</a>' +
-        '<a href="' + center_code + '5">徳川家</a>' +
-        '<a href="' + center_code + '1">織田家</a>' +
-        '<a href="' + center_code + '2">足利家</a>' +
-        '<a href="' + center_code + '11">大友家</a>' +
-        '<a href="' + center_code + '6">毛利家</a>' +
-        '<a href="' + center_code + '9">長宗我部家</a>' +
-        '<a href="' + center_code + '10">島津家</a>' +
-        '</div>'
-      ).appendTo('#country_change');
-    }
-    //6章
-    else if ( options.chapter_change === '6' ) {
-      $('<div id="change_menu">' +
-        '<a href="' + center_code + '12">石田家</a>' +
-        '<a href="' + center_code + '7">伊達家</a>' +
-        '<a href="' + center_code + '4">上杉家</a>' +
-        '<a href="' + center_code + '8">今川家</a>' +
-        '<a href="' + center_code + '3">武田家</a>' +
-        '<a href="' + center_code + '5">徳川家</a>' +
-        '<a href="' + center_code + '1">織田家</a>' +
-        '<a href="' + center_code + '2">黒田家</a>' +
-        '<a href="' + center_code + '11">豊臣家</a>' +
-        '<a href="' + center_code + '6">毛利家</a>' +
-        '<a href="' + center_code + '9">長宗我部家</a>' +
-        '<a href="' + center_code + '10">島津家</a>' +
-        '</div>'
-      ).appendTo('#country_change');
-    }
-    //5章
-    else {
+
     $('<div id="change_menu">' +
-        '<a href="' + center_code + '12">最上家</a>' +
-        '<a href="' + center_code + '7">伊達家</a>' +
-        '<a href="' + center_code + '4">上杉家</a>' +
-        '<a href="' + center_code + '8">北条家</a>' +
-        '<a href="' + center_code + '3">武田家</a>' +
-        '<a href="' + center_code + '5">徳川家</a>' +
-        '<a href="' + center_code + '1">織田家</a>' +
-        '<a href="' + center_code + '2">足利家</a>' +
-        '<a href="' + center_code + '11">豊臣家</a>' +
-        '<a href="' + center_code + '6">毛利家</a>' +
-        '<a href="' + center_code + '9">長宗我部家</a>' +
-        '<a href="' + center_code + '10">島津家</a>' +
-       '</div>'
-      ).appendTo('#country_change');
-    }
+      '<a href="' + center_code + '1">織田家</a>' +
+      '<a href="' + center_code + '2">足利家/黒田</a>' +
+      '<a href="' + center_code + '3">武田家</a>' +
+      '<a href="' + center_code + '4">上杉家</a>' +
+      '<a href="' + center_code + '5">徳川家</a>' +
+      '<a href="' + center_code + '6">毛利家</a>' +
+      '<a href="' + center_code + '7">浅井家/伊達家</a>' +
+      '<a href="' + center_code + '8">北条家/今川家</a>' +
+      '<a href="' + center_code + '9">長宗我部家</a>' +
+      '<a href="' + center_code + '10">島津家</a>' +
+      '<a href="' + center_code + '11">大友家/豊臣家</a>' +
+      '<a href="' + center_code + '12">最上家/石田家</a>' +
+      '</div>'
+    ).appendTo('#country_change');
 
     if(newBattle == '新合戦中'){
       $('<a href="' + center_code + '20">東西戦場 1</a><a href="' + center_code + '21">東西戦場 2</a>')
@@ -1699,12 +1661,12 @@ function Moko_main( $) {
   // 陣取り禁止区域
   function prohibiJin() {
     var newWar = $('div.ig_mappanel_maindataarea').find('img[src$="map_otono_name_war.png"]');
-    if( !newWar.length == 0 ) return;
-    
-    var Imge_list = $('#ig_mapsAll').children('img');
+    if( !newWar.length == 0 || location.pathname != "/map.php")
+      return;
+    var Img_list = $('#ig_mapsAll').children('img');
     var Area_list = $('#mapOverlayMap').children('area');
     var img_list;
-    img_list = prohibiJinImg( Imge_list );
+    img_list = prohibiJinImg( Img_list );
     prohibiJinArea( Area_list, img_list );
     
   }
@@ -1734,7 +1696,7 @@ function Moko_main( $) {
     Area_list.each(function( idx ) {
       var source = ( $(this).attr('onMouseOver') || '' ).split('; overOperation')[0],
         array = source.match(/'.*?'/g),
-        search = ( $(this).attr('href') || '' ).match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d+)/) || [],
+        search = ( $(this).attr('href') || '' ).match(/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/) || [],
         img_data = img_list[ idx ],
         data = { idx: idx };
         
@@ -3954,15 +3916,15 @@ function Moko_main( $) {
   
   }
 
-  // 本領陥落中の所領にマーク表示のチェックボタンの表示
+  // 所領・出城にマーク及びデータ表示のチェックボタン
   function fall_Judgment(){
     if(location.pathname != "/map.php")
       return;
     if(!options['MapOverlay_FallMain'])
       return;
     
-    $('<input id="fall_check" type="image" src="/img/panel/fall_capital_r_l.png" title="本領陥落チェック" />')
-    .css({'position': 'absolute', 'top': '115px', 'left': '550px', 'opacity':'0.9', 'display':'none'})
+    $('<input id="fall_check" type="image" src="/img/lot/img_ixadog04.png" title="密偵" />')
+    .css({'position': 'absolute', 'top': '110px', 'left': '500px', 'width': '80px', 'opacity':'0.9', 'display':'none'})
     .hover(function() {
       $(this).css('opacity', '1');
     }, function() {
@@ -3970,11 +3932,12 @@ function Moko_main( $) {
     })
     .appendTo('#box');
     
-    var fort_red = $('#ig_mapsAll').find('img[src*="/img/panel/fort_r"]').size();
-    var village_red = $('#ig_mapsAll').find('img[src*="/img/panel/village_r"]').size();
-    var branch_red = $('#ig_mapsAll').find('img[src*="/img/panel/branch_r"]').size();
+    var fort_red = $('#ig_mapsAll').find('img[src*="/img/panel/fort_r"]').size(),
+      village_red = $('#ig_mapsAll').find('img[src*="/img/panel/village_r"]').size(),
+      branch_red = $('#ig_mapsAll').find('img[src*="/img/panel/branch_r"]').size(),
+      stronghold_red = $('#ig_mapsAll').find('img[src*="/img/panel/stronghold"]').size();
 
-    if( fort_red > 0 || village_red > 0 || branch_red > 0  ) {
+    if( fort_red > 0 || village_red > 0 || branch_red > 0 || stronghold_red > 0) {
       $('#fall_check').show();
     }
     else {
@@ -3982,16 +3945,17 @@ function Moko_main( $) {
     }
   }
 
-  // 本領陥落中の所領にマーク表示
+  // 本領陥落中の所領にマーク表示、盟主マーク表示、出城の人口表示
   function MapOverlay_FallMain(){
     $('#fall_check').live('click',function(){
       $('#mapOverlayMap > area').each(function(){
-        var href = $(this).attr('href'),
-          userId = $(this).attr('onClick').split(', ')[11],
-          imgSrc = $(this).attr('onMouseOver').split(', ')[13];
+        var $this = $(this),
+          href = $this.attr('href'),
+          userId = $this.attr('onClick').split(', ')[11],
+          imgSrc = $this.attr('onMouseOver').split(', ')[13];
         if ( userId<100 || imgSrc.match(/fall/))
           return true;
-        if( imgSrc.match(/branch|village|fort/)) {
+        if ( imgSrc.match(/branch_r|village_r|fort_r/)) {
           $.post( '/user/?user_id=' + userId, function (html){
             var url2 = $(html).find('#ig_mainareaboxInner tr.fs14 a:eq(0)').attr('href').replace( 'land', 'map');
             $.post( url2, function (html){
@@ -4001,7 +3965,7 @@ function Moko_main( $) {
               }
             });
           });
-        } else if( imgSrc.match(/capital|castle/)) {
+        } else if ( imgSrc.match(/capital_r|castle_\d_r/)) {
           $.post( '/user/?user_id=' + userId, function (html){
             var Ptext = $(html).find('div.pro5 > p:eq(1)').text();
             if ( Ptext.indexOf("補佐") < 0 ) {
@@ -4013,6 +3977,11 @@ function Moko_main( $) {
                 flat_overOperation(href, IMAGES.panel_solo);
               }
             }
+          });
+        } else if ( imgSrc.match(/stronghold_r/)) {
+          $.post( '/user/?user_id=' + userId, function (html){
+            var Ptext = $(html).find('#ig_mainareaboxInner div.pro3 p.para').html().match(/\d+/)[0];
+            $this.attr( 'onMouseOver', $this.attr('onMouseOver').replace( "'-'", "'" + Ptext + "'"));
           });
         }
       });
