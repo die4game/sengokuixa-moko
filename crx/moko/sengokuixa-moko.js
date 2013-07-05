@@ -199,7 +199,6 @@ function Moko_main( $) {
   funct_select_move();
   fall_Judgment();
   MapOverlay_FallMain();
-  MapOverlay_Leader();
   EnemyPlacementPoint();
   set_unit_color();
   soldier_set_support();
@@ -2225,7 +2224,6 @@ function Moko_main( $) {
         panelAttack();
         map_quarters();
         fall_Judgment();
-        MapOverlay_Leader();
         enemy_mark();
         prohibiJin();
       },
@@ -3988,95 +3986,36 @@ function Moko_main( $) {
   function MapOverlay_FallMain(){
     $('#fall_check').live('click',function(){
       $('#mapOverlayMap > area').each(function(){
-        var tmp2 = $(this).attr('onMouseOver').match(/'.*?'/g);
-        var href = $(this).attr('href').replace('land', 'map');
-        if( tmp2[13].match(/\/img\/panel\/fort_r/) || tmp2[13].match(/\/img\/panel\/village_r/) || tmp2[13].match(/\/img\/panel\/branch_r/) ) {
-          overlayOperationFM( tmp2, href );
-        }
-        
-      });
-    });
-  }
-
-  function overlayOperationFM( tmp2, href ){
-    var searchstr = tmp2[15]+ ', '  + tmp2[16] + ', ' + tmp2[17];
-    $('area[onmouseover]').each(function(){
-      var str = $(this).attr('onMouseOver');
-      if( str.indexOf(searchstr) >= 0 ) {
-        if( $(this).attr('balloon') != undefined ) {
-          var url1 = $(this).attr('href').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0];
-          $.post( url1, 
-            function (html){
-              var url2 = $(html).find('div.ig_mappanel_dataarea').find('a:eq(0)').attr('href');
-            $.post( url2,
-              function (html){
-                var table1 = $(html).find('table.common_table1.center:eq(0)'),
-                  url3 = table1.find('a:eq(1)').attr('href').replace('land', 'map'),
-                  nm   = table1.find('a:eq(0)').attr('href');
-              $.post( url3, 
-                function (html){
-                  var areas = $(html).find('#mapOverlayMap > area');
-                  var imgs = $(html).find('#ig_mapsAll > img')
-                  .filter(function(){
-                    if( $(this).attr('src').indexOf('outside') < 0 )
-                    return $(this);
-                  });
-                  var index = areas.index(areas.filter('[onclick*="' + nm + '"]'));
-                  if ( imgs.eq( index ).attr('src').indexOf('fall_capital') > 0 ) {
-                    flat_overOperation(href, IMAGES.panel_during_fall);
-                    return true;
-                  }
-                }
-              );
-              }
-            );
-            }
-          );
-        }
-      }
-    });
-  }
-
-  // 盟主城にマーク表示
-  function MapOverlay_Leader(){
-    if(!options.MapOverlay_Leader)
-      return;
-    if(location.pathname != "/map.php")
-      return;
-    
-    $('#mapOverlayMap > area').each(function(){
-      var tmp2 = $(this).attr('onMouseOver').match(/'.*?'/g);
-      var href = $(this).attr('href');
-      if ( tmp2[13].match(/\/img\/panel\/capital_r_/) || tmp2[13].match(/\/img\/panel\/castle_1_r/) || tmp2[13].match(/\/img\/panel\/castle_2_r/) || tmp2[13].match(/\/img\/panel\/castle_3_r/) || tmp2[13].match(/\/img\/panel\/castle_4_r/) ) {
-        overlayOperationL( tmp2, href );
-      }
-    });
-    
-  }
-  function overlayOperationL( tmp2, href ){
-    var searchstr = tmp2[15]+ ', '  + tmp2[16] + ', ' + tmp2[17];
-    $('area[onmouseover]').each(function(){
-      var str = $(this).attr('onMouseOver');
-      if( str.indexOf(searchstr) >= 0 ) {
-        if( $(this).attr('balloon') != undefined ) {
-          var url1 = $(this).attr('href').match(/\/land\.php\?x=(-?\d+)&y=(-?\d+)&c=(\d*)/)[0];
-          $.post( url1, function (html){
-            var url2 = $(html).find('div.ig_mappanel_dataarea').find('a:eq(0)').attr('href');
+        var href = $(this).attr('href'),
+          userId = $(this).attr('onClick').split(', ')[11],
+          imgSrc = $(this).attr('onMouseOver').split(', ')[13];
+        if ( userId<100 || imgSrc.match(/fall/))
+          return true;
+        if( imgSrc.match(/branch|village|fort/)) {
+          $.post( '/user/?user_id=' + userId, function (html){
+            var url2 = $(html).find('#ig_mainareaboxInner tr.fs14 a:eq(0)').attr('href').replace( 'land', 'map');
             $.post( url2, function (html){
-              var Ptext = $(html).find('div.pro5 > p:eq(1)').text();
-              if ( Ptext.indexOf("補佐") < 0 ) {
-                var solo = $(html).find('div.pro6 > p:eq(1)').text().split('人',1)[0];
-                if ( Ptext.indexOf("盟主") >= 0 && solo > 1 ) {
-                  flat_overOperation(href, IMAGES.panel_meisyu);
-                }
-                if ( Ptext.indexOf("盟主") >= 0 && solo == 1 ) {
-                  flat_overOperation(href, IMAGES.panel_solo);
-                }
+              var imgSrc = $(html).find('#ig_mapsAll > img.mapAll61').attr('src');
+              if ( imgSrc && imgSrc.match('fall_capital') ) {
+                flat_overOperation(href, IMAGES.panel_during_fall);
               }
             });
           });
+        } else if( imgSrc.match(/capital|castle/)) {
+          $.post( '/user/?user_id=' + userId, function (html){
+            var Ptext = $(html).find('div.pro5 > p:eq(1)').text();
+            if ( Ptext.indexOf("補佐") < 0 ) {
+              var solo = $(html).find('div.pro6 > p:eq(1)').text().split('人',1)[0];
+              if ( Ptext.indexOf("盟主") >= 0 && solo > 1 ) {
+                flat_overOperation(href, IMAGES.panel_meisyu);
+              }
+              if ( Ptext.indexOf("盟主") >= 0 && solo == 1 ) {
+                flat_overOperation(href, IMAGES.panel_solo);
+              }
+            }
+          });
         }
-      }
+      });
     });
   }
 

@@ -8,7 +8,6 @@ $( function () {
     // moko設定のデフォルト値
     options_def = {
       MapOverlay_FallMain: true,
-      MapOverlay_Leader: true,
       ad_sort: "1",
       all_area_map: true,
       all_deck_setting: true,
