@@ -1,71 +1,90 @@
 {
   "manifest_version": 2,
-
-  "name": "sengokuixa-moko.crx",
-  "version": "1.2056.7.7306",
-  "description": "sengokuixa-moko.crx版 @author: nameless, osafune, sengokuixa-moko @special thanks: hatt",
-
-  "background": {
-    "scripts": [
-      "plugin/jquery.min.js",
-      "moko/sengokuixa-moko.js",
-      "moko/data.js",
-      "moko/ixa_senkuji_10.user.js",
-      "plugin/TableSorter.js",
-      "background/background.js"
-   ],
-    "persistent": false
-  },
-
-  "page_action": {
-    "default_icon": {
-      "19": "icons/19.png"
-    },
-    "default_title": "moko",
-    "default_popup": "popup/popup.html"
-  },
-
-  "content_scripts": [
-    {
-      "js": [
-        "/plugin/jquery.min.js",
-        "main.js",
-        "moko/ixa_tradesupport.user.js"
-      ],
-      "run_at": "document_start",
-      "all_frames": true,
-      "matches": [
-          "http://*.sengokuixa.jp/*",
-          "http://mixi.jp/run_appl.pl?id=34581",
-          "http://*.app0.mixi-platform.com/*"
-      ],
-      "exclude_matches": [
-          "http://sengokuixa.jp/*"
-      ]
-    }
-  ],
-
+  "name": "MokoLight.crx",
+  "version": "0.1.1.7533",
+  "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
     "48": "icons/48.png",
     "128": "icons/128.png"
   },
-
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'", // TableSorter.js use eval().
-
   "permissions": [
-      "tabs",
-      "notifications",
-      "storage",
-
-      "http://*.sengokuixa.jp/*",
-      "http://sengokuixa.hangame.co.jp/*",
-      "http://mixi.jp/run_appl.pl?id=34581",
-      "http://*.app0.mixi-platform.com/*"
+//      "tabs",
+//      "notifications",
+      "storage"
+//
+//      "http://*.sengokuixa.jp/*",
+//      "http://sengokuixa.hangame.co.jp/*",
+//      "http://mixi.jp/run_appl.pl?id=34581",
+//      "http://*.app0.mixi-platform.com/*"
   ],
 
+
+//  "background": {
+//    "scripts": [
+//      "plugin/jquery.min.js",
+//      "moko/sengokuixa-moko.js",
+//      "moko/data.js",
+//      "moko/ixa_senkuji_10.user.js",
+//      "plugin/TableSorter.js",
+//      "background/background.js"
+//   ],
+//    "persistent": false
+//  },
+
+//  "page_action": {
+//    "default_icon": {
+//      "19": "icons/19.png"
+//    },
+//    "default_title": "moko",
+//    "default_popup": "popup/popup.html"
+//  },
   "web_accessible_resources": [
-    "moko/mokoStyle.css"
+    "/*/*.png"
+  ],
+
+  "content_scripts": [
+    {
+      "js": [
+        "/plugin/jquery.min.js"
+//        "main.js",
+//        "moko/ixa_tradesupport.user.js"
+      ],
+      "run_at": "document_start",
+//      "all_frames": true,
+      "matches": [
+          "http://*.sengokuixa.jp/*"
+//          "http://mixi.jp/run_appl.pl?id=34581",
+//          "http://*.app0.mixi-platform.com/*"
+      ]
+    },
+    {
+      "matches":[
+        "http://world.sengokuixa.jp/world/select_world.php*"
+      ],
+      "js": [
+        "contentScripts/select_world/select_world.js"
+      ]
+//      "run_at": "document_start",
+//      "all_frames": true
+    },
+    {
+      "matches":[
+        "http://*.sengokuixa.jp/map.php*" //地図
+      ],
+      "css": [
+        "contentScripts/map/map.css"
+      ],
+      "js": [
+        "contentScripts/map/map.js"
+      ]
+//      "run_at": "document_start",
+//      "all_frames": true
+    }
   ]
+
+//  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'", // TableSorter.js use eval().
+
+
 
 }

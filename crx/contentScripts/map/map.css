@@ -1,0 +1,20 @@
+div.ig_mappanel_dataarea {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/contentScripts/map/dataarea_back.png");
+  height: 86px;
+}
+#required {
+  margin-left: 85px;
+}
+#required > div.th {
+  float: left;
+  margin-right: 1em;
+  color: yellow;
+  padding: 0;
+}
+#ixamoko_potential h6, #ixamoko_potential li {
+  float: left;
+  margin-left: 1em;
+}
+#ixamoko_potential li.least {
+  color: orange;
+}
