@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "0.1.1.7536",
+  "version": "0.3.2.7546",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -9,15 +9,19 @@
     "128": "icons/128.png"
   },
   "permissions": [
-//      "tabs",
+      "tabs",
 //      "notifications",
-      "storage"
+      "storage",
 //
-//      "http://*.sengokuixa.jp/*",
+      "http://*.sengokuixa.jp/*"
 //      "http://sengokuixa.hangame.co.jp/*",
 //      "http://mixi.jp/run_appl.pl?id=34581",
 //      "http://*.app0.mixi-platform.com/*"
   ],
+  "web_accessible_resources": [
+    "/*/*.png"
+  ],
+
 
 
 //  "background": {
@@ -39,34 +43,49 @@
 //    "default_title": "moko",
 //    "default_popup": "popup/popup.html"
 //  },
-  "web_accessible_resources": [
-    "/*/*.png"
-  ],
-
   "content_scripts": [
     {
+      "matches": [
+        "http://*.sengokuixa.jp/*"
+//        "http://mixi.jp/run_appl.pl?id=34581",
+//        "http://*.app0.mixi-platform.com/*"
+      ],
       "js": [
         "/plugin/jquery.min.js"
 //        "main.js",
 //        "moko/ixa_tradesupport.user.js"
       ],
-      "run_at": "document_start",
+      "run_at": "document_start"
 //      "all_frames": true,
-      "matches": [
-          "http://*.sengokuixa.jp/*"
-//          "http://mixi.jp/run_appl.pl?id=34581",
-//          "http://*.app0.mixi-platform.com/*"
-      ]
     },
     {
       "matches":[
         "http://world.sengokuixa.jp/world/select_world.php*"
+//        "http://mixi.jp/run_appl.pl?id=34581",
+//        "http://*.app0.mixi-platform.com/*"
       ],
       "js": [
         "contentScripts/select_world/select_world.js"
       ]
 //      "run_at": "document_start",
 //      "all_frames": true
+    },
+    {
+      "matches": [
+        "http://*.sengokuixa.jp/*"
+//        "http://mixi.jp/run_appl.pl?id=34581",
+//        "http://*.app0.mixi-platform.com/*"
+      ],
+      "js": [
+        "contentScripts/sideBox/appendToolBox.js"
+//        "main.js",
+//        "moko/ixa_tradesupport.user.js"
+      ],
+      "css": [
+        "contentScripts/sideBox/toolBox.css"
+      ]
+//      "run_at": "document_start",
+//      "all_frames": true,
     },
     {
       "matches":[
@@ -83,7 +102,7 @@
     }
   ]
 
-//  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'", // TableSorter.js use eval().
+//  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'" // TableSorter.js use eval().
 
 
 

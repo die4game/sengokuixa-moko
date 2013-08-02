@@ -2,10 +2,10 @@
   <head>
     <meta charset="UTF-8">
     <script src="../../plugin/jquery.min.js"></script>
-    <script src="../../plugin/TableSorter.js"></script>
-    <script src="../data.js"></script>
+    <script src="../../plugin/jquery.tablesorter.min.js"></script>
+    <script src="../../plugin/jquery.tablesorter.pager.min.js"></script>
     <script src="unitListDialog.js"></script>
-    <link rel="styleSheet" href="TableSorter.css">
+    <link rel="styleSheet" href="unitListDialog.css">
     <style>
       body {
         color: lightgrey;
@@ -17,6 +17,7 @@
     <div>
       <div id="mokotool">
         <div class="Loading">
+          <img src="../../plugin/images/loading.gif">
         </div>
         <div id="unitlistdialog">
           <div id="v_head">
@@ -88,6 +89,11 @@
             </ul>
           </div>
           <div class="pager">
+            <img src="../../plugin/images/first.gif" class="first">
+            <img src="../../plugin/images/prev.gif" class="prev">
+            <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+            <img src="../../plugin/images/next.gif" class="next">
+            <img src="../../plugin/images/last.gif" class="last">
             <select class="pagesize">
               <option value="12">12</option>
               <option value="16" selected="selected">16</option>

@@ -1,6 +1,6 @@
 # MokoLight.crx
 
-Chrome用 sengokuixa-moko.user.js の派生版です。軽量・低機能を目指します。
+Chrome用 sengokuixa-moko.user.js の派生版です。軽量・低機能を目指します。今のところ、ヤフー鯖でのみ動作します。ミクシィでは動きません。ハンゲームでは未確認です。
 
 ## インストール
 ### .crxファイルからインストールする場合

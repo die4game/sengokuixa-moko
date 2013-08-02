@@ -562,7 +562,7 @@ chrome.storage.local.get( key, function ( store) {
   },
   POTENTIAL;
 
-//  console.log( store, store[key].season, store[key].piriod);
+  //console.log( store, store[key].season, store[key].piriod);
   POTENTIAL = setPotential( store[key].season, store[key].piriod);
 
   //カーソル対象の拡大表示と空地戦力表示：地図に必要攻撃力表示枠の形成
@@ -626,4 +626,3 @@ chrome.storage.local.get( key, function ( store) {
   }
 
 });
-

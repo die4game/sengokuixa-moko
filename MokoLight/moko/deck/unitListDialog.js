@@ -1,27 +1,28 @@
 ( function () {
-  var world, tabId, options = {}, groups, group_setting, groups_img, IMAGES = CRXMOKODATA.images,
+  var world, options = {}, groups, group_setting, groups_img,
     column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
     villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {};
 
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
     arg = tab.url.split( '?')[1].split( '&');
-    world = arg[0], tabId = arg[1];
-    //console.log( world, tabId, tab);
+    world = arg[0];
+    console.log( world, tab);
 
     // options、set_squad_id、グループ設定の取得
     chrome.storage.local.get( world, function ( store) {
-      var storeWorld = JSON.parse( store[world]);
+//      var storeWorld = JSON.parse( store[world]);
       //console.log( storeWorld);
-      options = storeWorld.crx_ixa_moko_options;
-      group_setting = storeWorld.crx_ixamoko_group_set;
-      groups = storeWorld.crx_ixamoko_init_groups;
-      groups_img = storeWorld.crx_ixamoko_init_groups_img;
+//      options = storeWorld.crx_ixa_moko_options;
+//      group_setting = storeWorld.crx_ixamoko_group_set;
+//      groups = storeWorld.crx_ixamoko_init_groups;
+//      groups_img = storeWorld.crx_ixamoko_init_groups_img;
       $(unitListDialog);
+      console.log('start unitListDialog');
     });
   });
-  tableSorter_($);
-  tablesorter_pager_plugin($);
+//  tableSorter_($);
+//  tablesorter_pager_plugin($);
 
 
   //////////////////
@@ -32,14 +33,14 @@
   function unitListDialog () {
 
     // imgのロード
-    $( '#mokotool>div.Loading').append( '<img src="' + IMAGES.unitListDialog.Loading + '">');
-    $( '#unitlistdialog>div.pager>select').before(
-        '<img src="' + IMAGES.unitListDialog.first + '" class="first"/>' +
-        '<img src="' + IMAGES.unitListDialog.prev + '" class="prev"/>' +
-        '<span class="pagedisplay"></span> <!-- this can be any element, including an input -->' +
-        '<img src="' + IMAGES.unitListDialog.next + '" class="next"/>' +
-        '<img src="' + IMAGES.unitListDialog.last + '" class="last"/>'
-    );
+//    $( '#mokotool>div.Loading').append( '<img src="' + IMAGES.unitListDialog.Loading + '">');
+//    $( '#unitlistdialog>div.pager>select').before(
+//        '<img src="' + IMAGES.unitListDialog.first + '" class="first"/>' +
+//        '<img src="' + IMAGES.unitListDialog.prev + '" class="prev"/>' +
+//        '<span class="pagedisplay"></span> <!-- this can be any element, including an input -->' +
+//        '<img src="' + IMAGES.unitListDialog.next + '" class="next"/>' +
+//        '<img src="' + IMAGES.unitListDialog.last + '" class="last"/>'
+//    );
 
     // 表示列チェックボックスのtoggle
     $('button.uldoption').click(function() {
@@ -193,6 +194,7 @@
 
   // 武将リスト取得
   function unitListLoad( p, ano) {
+    console.log( p, ano);
     if (p === 1 && $('#v_head span.deckcost').text()) {
       $('div.Loading').hide();
       $('#unitlistdialog').css({'opacity': '1.0'});
@@ -200,19 +202,20 @@
       return;
     }
     var data = {
-            target_card: '',
-            select_assign_no: ano,
-            mode: '',
-            btn_change_flg: '1',
-            set_village_id: '',
-            set_assign_id: '',
-            set_squad_id: '',
-            deck_mode: 'nomal',
-            p: p,
-            myselect_2: ''
-          },
+        target_card: '',
+        select_assign_no: ano,
+        mode: '',
+        btn_change_flg: '1',
+        set_village_id: '',
+        set_assign_id: '',
+        set_squad_id: '',
+        deck_mode: 'nomal',
+        p: p,
+        myselect_2: ''
+      },
       rank = {'SSS': 120,'SS': 115,'S': 110,'A': 105,'B': 100,'C': 95,'D': 90,'E': 85,'F': 80},
       drank = {240: 'SSS',235: 'SS+',230: 'SS',225: 'S+',220: 'S',215: 'A+',210: 'A',205: 'B+',200: 'B',195: 'C+',190: 'C',185: 'D+',180: 'D',175: 'E+',170: 'E',165: 'F+',160: 'F'};
+    console.log('2');
     $.ajax({
       type: "POST",
       url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
@@ -308,12 +311,12 @@
                   select_assign_no = ano,
                   unit_assign_id = set_assign_id,
                   unset_unit_squad_id = elm.match( /\d+/g)[1];
-                if (options.unit_list_group && group_setting[id]) {
-                  gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
-                  gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
-                    '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
-                    group_setting[id] + '" hidden>';
-                }
+//                if (options.unit_list_group && group_setting[id]) {
+//                  gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
+//                  gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
+//                    '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
+//                    group_setting[id] + '" hidden>';
+//                }
                 //console.log( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
                 setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id, unset_unit_squad_id);
               });
@@ -372,10 +375,10 @@
             
             var gp_1 = '',
               gp_2 = '';
-            if (options.unit_list_group && group_setting[id]) {
-              gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
-              gp_2 = (options.unit_list_group? '<img src="' + groups_img[group_setting[id]] + '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' + group_setting[id] + '" hidden>';
-            }
+//            if (options.unit_list_group && group_setting[id]) {
+//              gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
+//              gp_2 = (options.unit_list_group? '<img src="' + groups_img[group_setting[id]] + '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' + group_setting[id] + '" hidden>';
+//            }
             var set_squad_id = $this.find('a[id^="btn_gounit_"]').attr('onClick');
             set_squad_id = set_squad_id? set_squad_id.match(/'.*?'/g): false;
             if ( set_squad_id) {
@@ -790,12 +793,12 @@
             select_assign_no = ano,
             unit_assign_id = set_assign_id,
             unset_unit_squad_id = elm.match( /\d+/g)[1];
-          if (options.unit_list_group && group_setting[id]) {
-            gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
-            gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
-              '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
-              group_setting[id] + '" hidden>';
-          }
+//          if (options.unit_list_group && group_setting[id]) {
+//            gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
+//            gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
+//              '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
+//              group_setting[id] + '" hidden>';
+//          }
           //console.log( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
           setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id, unset_unit_squad_id);
           $v_head_div_ano.find( 'button:eq(' + idx + ')').val( unset_unit_squad_id);
