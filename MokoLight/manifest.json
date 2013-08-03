@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "0.3.2.7546",
+  "version": "0.4.1.7550",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -10,82 +10,42 @@
   },
   "permissions": [
       "tabs",
-//      "notifications",
       "storage",
-//
       "http://*.sengokuixa.jp/*"
-//      "http://sengokuixa.hangame.co.jp/*",
-//      "http://mixi.jp/run_appl.pl?id=34581",
-//      "http://*.app0.mixi-platform.com/*"
   ],
   "web_accessible_resources": [
     "/*/*.png"
   ],
 
 
-
-//  "background": {
-//    "scripts": [
-//      "plugin/jquery.min.js",
-//      "moko/sengokuixa-moko.js",
-//      "moko/data.js",
-//      "moko/ixa_senkuji_10.user.js",
-//      "plugin/TableSorter.js",
-//      "background/background.js"
-//   ],
-//    "persistent": false
-//  },
-
-//  "page_action": {
-//    "default_icon": {
-//      "19": "icons/19.png"
-//    },
-//    "default_title": "moko",
-//    "default_popup": "popup/popup.html"
-//  },
   "content_scripts": [
     {
       "matches": [
         "http://*.sengokuixa.jp/*"
-//        "http://mixi.jp/run_appl.pl?id=34581",
-//        "http://*.app0.mixi-platform.com/*"
       ],
       "js": [
         "/plugin/jquery.min.js"
-//        "main.js",
-//        "moko/ixa_tradesupport.user.js"
       ],
       "run_at": "document_start"
-//      "all_frames": true,
     },
     {
       "matches":[
         "http://world.sengokuixa.jp/world/select_world.php*"
-//        "http://mixi.jp/run_appl.pl?id=34581",
-//        "http://*.app0.mixi-platform.com/*"
       ],
       "js": [
         "contentScripts/select_world/select_world.js"
       ]
-//      "run_at": "document_start",
-//      "all_frames": true
     },
     {
       "matches": [
         "http://*.sengokuixa.jp/*"
-//        "http://mixi.jp/run_appl.pl?id=34581",
-//        "http://*.app0.mixi-platform.com/*"
       ],
       "js": [
         "contentScripts/sideBox/appendToolBox.js"
-//        "main.js",
-//        "moko/ixa_tradesupport.user.js"
       ],
       "css": [
         "contentScripts/sideBox/toolBox.css"
       ]
-//      "run_at": "document_start",
-//      "all_frames": true,
     },
     {
       "matches":[
@@ -97,13 +57,15 @@
       "js": [
         "contentScripts/map/map.js"
       ]
-//      "run_at": "document_start",
-//      "all_frames": true
+    },
+    {
+      "matches":[
+        "http://*.sengokuixa.jp/card/deck.php*" //部隊編成
+      ],
+      "css": [
+        "contentScripts/deck/deck.css"
+      ],
+      "run_at": "document_start"
     }
   ]
-
-//  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'" // TableSorter.js use eval().
-
-
-
 }

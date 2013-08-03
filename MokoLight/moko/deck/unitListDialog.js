@@ -5,12 +5,11 @@
 
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
-    arg = tab.url.split( '?')[1].split( '&');
-    world = arg[0];
-    console.log( world, tab);
+    world = tab.url.split( '?')[1];
+//    console.log( world, tab);
 
     // options、set_squad_id、グループ設定の取得
-    chrome.storage.local.get( world, function ( store) {
+//    chrome.storage.local.get( world, function ( store) {
 //      var storeWorld = JSON.parse( store[world]);
       //console.log( storeWorld);
 //      options = storeWorld.crx_ixa_moko_options;
@@ -18,8 +17,8 @@
 //      groups = storeWorld.crx_ixamoko_init_groups;
 //      groups_img = storeWorld.crx_ixamoko_init_groups_img;
       $(unitListDialog);
-      console.log('start unitListDialog');
-    });
+//      console.log('start unitListDialog');
+//    });
   });
 //  tableSorter_($);
 //  tablesorter_pager_plugin($);
@@ -194,7 +193,7 @@
 
   // 武将リスト取得
   function unitListLoad( p, ano) {
-    console.log( p, ano);
+//    console.log( p, ano);
     if (p === 1 && $('#v_head span.deckcost').text()) {
       $('div.Loading').hide();
       $('#unitlistdialog').css({'opacity': '1.0'});
@@ -215,7 +214,7 @@
       },
       rank = {'SSS': 120,'SS': 115,'S': 110,'A': 105,'B': 100,'C': 95,'D': 90,'E': 85,'F': 80},
       drank = {240: 'SSS',235: 'SS+',230: 'SS',225: 'S+',220: 'S',215: 'A+',210: 'A',205: 'B+',200: 'B',195: 'C+',190: 'C',185: 'D+',180: 'D',175: 'E+',170: 'E',165: 'F+',160: 'F'};
-    console.log('2');
+    //console.log('2');
     $.ajax({
       type: "POST",
       url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
@@ -228,163 +227,57 @@
 
           //コストを取得
           $('#v_head span.deckcost').prepend( $html.find('#ig_deckcost > span.ig_deckcostdata').text()).css({'margin-right': '1em'});
-/*
-          //部隊を取得
-          $html.find( '#ig_unitchoice > li').each( function ( i) {
-            var leader = $( this).text(),
-              unitLeader = '<button>解散</button><span value="' + i + '" class="ano' + i + '">' + leader + '</span><br/>';
-            $('#v_head div.ano:eq(' + i + ')').empty().append( unitLeader);
-            if ( leader.match(/新規部隊を作成/)) {
-              return false;
-            }
-          });
-*/
         }
 
         if (ano !== '') {
           getButai( $html, ano);
-/*
-          //部隊のIDを取得、DOMオブジェクトを取得
-          var set_assign_id = $html.find('#set_assign_id').val();
-          var $ig_deck_unitdetailbox = $html.find('#ig_deck_unitdetailbox');
-          var $v_head_div_ano = $('#v_head div.ano:eq(' + ano + ')');//.hide();
-          var base = $ig_deck_unitdetailbox.parent().find('div.ig_deck_unitdata_assign.deck_wide_select').html()
-               || $html.find('#select_village').parent().html();
-          if (set_assign_id) {
-            $v_head_div_ano.append(
-              '<button>外す</button><span class="subleader"></span><br/>' +
-              '<button>外す</button><span class="subleader"></span><br/>' +
-              '<button>外す</button><span class="subleader"></span><br/>' +
-              '<span class=condition></span><br/>' +
-              '<span class=base style="margin-right: 1em;"></span>' +
-              '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="' + set_assign_id + '">配置</button></span>'
-            );
-            $v_head_div_ano.attr( { select_assign_no: ano, unit_assign_id: set_assign_id});
-
-            //部隊副長を取得
-            $ig_deck_unitdetailbox.find('span.ig_deck_unitdata_subleader').each(function(i) {
-              $v_head_div_ano.find('span.subleader:eq(' + i + ')').text('[' + $(this).text().match(/[\S]+/)[0] + ']');
-            });
-
-            //部隊の状態を取得
-            var unit_condition_text = $ig_deck_unitdetailbox.find('span.ig_deck_unitdata_condition').text().trim();
-            $v_head_div_ano.find('span.condition').text('(' + unit_condition_text + ')');
-            $( function () {
-              var unset_unit_squad_id = [],
-                sols = { commandsol_yari1: '足軽', commandsol_yari2: '長槍足軽', commandsol_yari3: '武士', commandsol_yari4: '国人衆', commandsol_yumi1: '弓足軽', commandsol_yumi2: '長弓兵', commandsol_yumi3: '弓騎馬', commandsol_yumi4: '海賊衆', commandsol_kiba1: '騎馬兵', commandsol_kiba2: '精鋭騎馬', commandsol_kiba3: '赤備え', commandsol_kiba4: '母衣衆', commandsol_heiki1: '破城鎚', commandsol_heiki2: '攻城櫓', commandsol_heiki3: '大筒兵', commandsol_heiki4: '鉄砲足軽', commandsol_heiki5: '騎馬鉄砲', commandsol_heiki6: '雑賀衆', commandsol_heiki7: '焙烙火矢'},
-                rarerity = [ 0, '序', '上', '極', '天'],
-                tai = [ '一番隊', '二番隊', '三番隊', '四番隊', '五番隊'];
-              unset_unit_squad_id.push( $html.find( '#ig_deckunitdetail div.deck_navi a:eq(0)').attr( 'onclick'));
-              unset_unit_squad_id.push( $html.find( '#id_deck_card2 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
-              unset_unit_squad_id.push( $html.find( '#id_deck_card3 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
-              unset_unit_squad_id.push( $html.find( '#id_deck_card4 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
-              unset_unit_squad_id.forEach( function ( elm, idx, arr) {
-                if ( !elm) return false;
-                arr[ idx] = elm.match( /\d+/g)[1];
-                var card = $html.find( '#id_deck_card' + ++idx);
-                //console.log( card);
-                //console.log( unset_unit_squad_id);
-                var id = card.find( 'span[id^="card_commandsol_"]').prop( 'id').match( /\d+/)[0],
-                  p = '{ select_assign_no:' + ano + ', set_assign_id:' + set_assign_id + '}',
-                  ssID,
-                  no = card.find( 'span.ig_card_cardno').text(),
-                  grps = tai[ano],
-                  gp_1 = '',
-                  gp_2 = '',
-                  rr = rarerity[ card.find( 'span[class^="rarerity_"]').prop( 'class').replace( 'rarerity_', '')],
-                  hi = card.find( 'span.ig_card_name').attr( 'title'),
-                  nm = card.find( 'span.ig_card_name').text(),
-                  ct = card.find( 'span.ig_card_cost_over').text(),
-                  lv = [ card.find( 'span.level_star img').prop( 'width') / 20, card.find( 'span.ig_card_level').text()],
-                  hp = card.find( 'span.ig_card_status_hp').text().replace( '/100', ''),
-                  bg = card.find( 'span.ig_deck_battlepoint').text(),
-                  uc = card.find( 'span.commandsol_no').text().split( '/'),
-                  hs = sols[ card.find( 'span[class^=commandsol_]:eq(0)').prop( 'class')],
-                  at = card.find( 'span.ig_card_status_att').text(),
-                  df = card.find( 'span.ig_card_status_def').text(),
-                  hy = card.find( 'span.ig_card_status_int').text(),
-                  ya = card.find( 'span.yari').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
-                  um = card.find( 'span.kiba').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
-                  yu = card.find( 'span.yumi').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
-                  ki = card.find( 'span.heiki').prop( 'class').match( /lv_(.)/)[1].toUpperCase(),
-                  sk = [ card.find( 'span.ig_skill_name:eq(0)').text(), card.find( 'span.ig_skill_name:eq(1)').text(), card.find( 'span.ig_skill_name:eq(2)').text(),],
-                  select_assign_no = ano,
-                  unit_assign_id = set_assign_id,
-                  unset_unit_squad_id = elm.match( /\d+/g)[1];
-//                if (options.unit_list_group && group_setting[id]) {
-//                  gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
-//                  gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
-//                    '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
-//                    group_setting[id] + '" hidden>';
-//                }
-                //console.log( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
-                setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id, unset_unit_squad_id);
-              });
-            });
-            
-          } else {
-            base = $($.parseHTML(base)).removeAttr('onchange');
-            $v_head_div_ano.append(
-              '<span class=base style="margin-right: 1em;"></span>' +
-              '<span class="set_button"><br/><button class="set_unitlist" style="padding: 0 4px;" value="">配置</button></span>'
-            );
-          }
-
-          //部隊の拠点を取得
-          $v_head_div_ano.find('span.base').append('拠点：' ,base);
-          $('#v_head div.ano:eq('+ano+')').append($v_head_div_ano);
-*/
         }
 
         //武将情報の取得
         if ( p) {
           $html.find( 'div.ig_deck_smallcardarea').each( function() {
-            var $this = $(this);
-            
-            var cid = $this.find('a[href^="#TB_inline"]').attr('href').match(/\d+/g)[2];
-            var no = $html.find('#cardWindow_' + cid ).find('span.ig_card_cardno').text();
-            var grps = $this.find('div[id^="unit_group_type_"]').attr('class').replace('unit_brigade', '');  //グループ
-              if( grps == '5' ) {
-                grps = '未設定';
-              }
-              else{
-                grps = '第' + grps + '組';
-              }
-            var rr = $this.find('span.ig_deck_smallcard_cardrarety').text();  //レアリティ
-            var hi = $html.find('#cardWindow_' + cid ).find('span.ig_card_hiragana').text();//ひらがな
-            var nm = $this.find('span.ig_deck_smallcard_cardname').text();  //名前
-            var ct = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(0)').text();
-            var lv = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(1)').text().match(/\d+/g);
-            var hp = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(2)').text().match(/\d+/);
-            var uc = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(3)').text().match(/\d+/g);
-            var bg = $this.find('span.ig_deck_battlepoint2').text();
-            var hs = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(4)').text();
-            var at = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(0)').text();
-            var df = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(2)').text();
-            var hy = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(1)').text();
-            var ya = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(4)').text();
-            var um = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(5)').text();
-            var yu = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(6)').text();
-            var ki = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(7)').text();
-            var $tmp = $this.find('table.ig_deck_smallcarddata:eq(2)');
-            var sk = [$tmp.find('td:eq(0)').text(), $tmp.find('td:eq(1)').text(), $tmp.find('td:eq(2)').text()];
-            var id = $this.find('a[href^="#TB_inline"]').attr('href');
-              id = id.split('=');
-              id = id[3].replace('cardWindow_', '');
-              id = id.split('&')[0];
-            
-            var gp_1 = '',
-              gp_2 = '';
-//            if (options.unit_list_group && group_setting[id]) {
-//              gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
-//              gp_2 = (options.unit_list_group? '<img src="' + groups_img[group_setting[id]] + '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' + group_setting[id] + '" hidden>';
-//            }
-            var set_squad_id = $this.find('a[id^="btn_gounit_"]').attr('onClick');
+            var $this, cid, no, grps, rr, hi, nm, ct, lv, hp, uc, bg, hs, at,
+              df, hy, ya, um, yu, ki, $tmp, sk, id, gp_1, gp_2, set_squad_id;
+
+            $this = $(this);
+            cid = $this.find('div:nth-child(3) a[href^="#TB_inline"]').attr('href');
+            if ( !cid)
+              return true;
+            cid = cid.match(/\d+/g)[2];
+            no = $html.find('#cardWindow_' + cid ).find('span.ig_card_cardno').text();
+            grps = $this.find('div[id^="unit_group_type_"]').attr('class').replace('unit_brigade', '');  //グループ
+            if( grps == '5' ) {
+              grps = '未設定';
+            }
+            else{
+              grps = '第' + grps + '組';
+            }
+            rr = $this.find('span.ig_deck_smallcard_cardrarety').text();  //レアリティ
+            hi = $html.find('#cardWindow_' + cid ).find('span.ig_card_hiragana').text();//ひらがな
+            nm = $this.find('span.ig_deck_smallcard_cardname').text();  //名前
+            ct = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(0)').text();
+            lv = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(1)').text().match(/\d+/g);
+            hp = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(2)').text().match(/\d+/);
+            uc = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(3)').text().match(/\d+/g);
+            bg = $this.find('span.ig_deck_battlepoint2').text();
+            hs = $this.find('table.ig_deck_smallcarddata:eq(0)').find('td:eq(4)').text();
+            at = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(0)').text();
+            df = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(2)').text();
+            hy = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(1)').text();
+            ya = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(4)').text();
+            um = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(5)').text();
+            yu = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(6)').text();
+            ki = $this.find('table.ig_deck_smallcarddata:eq(1)').find('td:eq(7)').text();
+            $tmp = $this.find('table.ig_deck_smallcarddata:eq(2)');
+            sk = [$tmp.find('td:eq(0)').text(), $tmp.find('td:eq(1)').text(), $tmp.find('td:eq(2)').text()];
+            gp_1 = '',
+            gp_2 = '';
+            set_squad_id = $this.find('#btn_gounit_'+cid).attr('onClick');
             set_squad_id = set_squad_id? set_squad_id.match(/'.*?'/g): false;
             if ( set_squad_id) {
               set_squad_id = set_squad_id[1].replace(/\'/g, '');
             }
-            setBushoToList( id, p, set_squad_id, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
+            setBushoToList( cid, p, set_squad_id, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
           });
         }
 
@@ -483,24 +376,11 @@
     $('#tb_unitlist').append( $tmp);
   }
 
-  // set_squad_idのchrome.storage.localへの読み書き
-  function setStorage (  key, obj, toggle, world) {
-    chrome.storage.local.get( world, function ( store) {
-      allSettings = store[world]? JSON.parse(store[world]): {};
-      allSettings[key] = obj;
-      allSettings.toggle ^= toggle;
-      store[world] = JSON.stringify(allSettings);
-      chrome.storage.local.set( store, function(){
-        //console.log(allSettings)
-      });
-    });
-  }
-
   //兵士一括セット
   function setHeishi() {
     var $tb_unitlist = $( '#tb_unitlist'), dataArray = [],
-      unitID = $( '[id^="unit_id_select_"]').val(), unitCnt = $( '#unit_cnt_text').val(),
-      max = $( '#unitSet>select[id^="unit_id_select_"] option:selected').text().match(/\d+/)[0];
+      unitID = $( '#unitSet > select').val(), unitCnt = $( '#unit_cnt_text').val(),
+      max = $( '#unitSet > select').text().match(/\d+/)[0];
     $tb_unitlist.find('td.選択>input:checked').each( function () {
       var cnt = unitCnt;
       if ( unitCnt.match(/max/i)) {
@@ -542,9 +422,7 @@
     //チェックされた武将のset_squad_idを取得
     $('#tb_unitlist input[name^="id"]:checked').each( function() {
       var busho_chk = $(this).parent(), ssid = busho_chk.find('.set_squad_id').val();
-      if ( ssid === 'false') {
-        get_squad_id(select_assign_no, busho_chk.find('input[name=page]').val(), busho_chk.parent(), set_squad_id, busho_list);
-      } else if ( ssid) {
+      if ( ssid) {
         set_squad_id.push( ssid);
         busho_list.push( busho_chk.parent());
       }
@@ -554,12 +432,18 @@
       alert('セット可能な武将がいません。');
       return;
       //getButai( $html, select_assign_no);
+    } else if ( !set_village_id && !set_assign_id) {
+      alert('拠点が選択されていません。');
+      return;
     }
     $('#unitlistdialog').css({'opacity': '0.3'});
     $('div.Loading').show();
-    if (confirm(set_squad_id.length+'人がセット可能です。リスト順に配置します。')) {
+    if (confirm(set_squad_id.length+'人。リスト順に配置します。')) {
       //武将をセット
       set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, 0);
+    } else {
+      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('div.Loading').hide();
     }
 
     //カードを部隊にセットする関数
@@ -625,89 +509,6 @@
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           //console.log(textStatus);
-        }
-      });
-    }
-
-    //set_squad_idを取得する関数
-    function get_squad_id( select_assign_no, p, busho, set_squad_id_list, busho_list) {
-
-      var data =  {  target_card: '',
-              select_assign_no: select_assign_no,
-              mode: '',
-              btn_change_flg: '1',
-              set_village_id: '',
-              set_assign_id: '',
-              set_squad_id: '',
-              deck_mode: 'nomal',
-              p: p,
-              myselect_2: ''
-            },
-        set_squad_id;
-
-      $.ajax({
-        type: "POST",
-        url: 'http://'+world+'.sengokuixa.jp/card/deck.php',
-        data: data,
-        cache: false,
-        async: false,
-        success: function(html) {
-
-          //ページ内の全カード
-          var cards = $(html).find('#ig_deck_smallcardarea_out');
-          var list = $('#tb_unitlist');
-
-          //カードのidと一致するリストの武将データを取得
-          cards.find('div.ig_deck_smallcardarea').each(function() {
-            var $this = $(this);
-            if ($this.find('a[href^="/facility/set_unit.php"]').attr('href') == undefined) {
-              return true;
-            }
-
-            var id = $this.find('a[href^="/facility/set_unit.php"]').attr('href').split('=');
-            id = id[1].replace('&ano', '');
-
-            var busho = list.find('input[value="'+id+'"]');
-            if (busho[0]) {
-              busho.parent().find('input[name="page"]').val(p);
-              var set_squad_id = $this.find('a[id^="btn_gounit_"]').attr('onClick').match(/'.*?'/g);
-              if (set_squad_id) {
-                set_squad_id = set_squad_id[1].replace(/'/g, '');
-                busho.parent().find('input.set_squad_id').val(set_squad_id);
-              }
-            }
-          });
-
-          //カードIDが一致するカードを取得
-          var card_sameID = cards.find('div.ig_deck_smallcardarea:has(div.ig_deck_smallcardbox a[href*=' + busho.find('input[name=id]').val() + '])');
-          var busho_p = parseInt(busho.find('input[name=page]').val());
-          if (card_sameID[0]) {
-            //カードがあった場合
-            var gounitOnClick = card_sameID.find('a[id^="btn_gounit_"]').attr('onClick');
-            set_squad_id = gounitOnClick? gounitOnClick.match(/'.*?'/g): false;
-            if (set_squad_id) {
-              set_squad_id = set_squad_id[1].replace(/'/g, '');
-              set_squad_id_list.push(set_squad_id);
-              busho_list.push(busho);
-            }
-            //カードがあるページを更新
-            busho.find('input[name="page"]').val(p);
-          } else {
-            //カードが無かった場合
-            //カードNo.が一致するカードを取得し次ページ移動の判断
-            var cards_sameNo = cards.find('div.ig_deck_smallcardarea:contains(' + busho.find('td.No').text() + ')');
-            if (parseInt(p,10) >= busho_p && (!cards_sameNo[0] || cards.find('div.ig_deck_smallcardarea').index(cards_sameNo[cards_sameNo.length-1]) === 14)) {
-              p++;
-              if ($(html).find('ul.pager.cardstock > li.last:eq(0) > a:eq(1)')[0] && p - 2 <= busho_p) {
-                get_squad_id(select_assign_no, p, busho, set_squad_id_list, busho_list);
-              }
-            } else if (parseInt(p,10) <= busho_p && (!cards_sameNo[0] || cards.find('div.ig_deck_smallcardarea').index(cards_sameNo[0]) === 0)) {
-              p--;
-              if (p > 0 && p + 2 >= busho_p) {
-                get_squad_id(select_assign_no, p, busho, set_squad_id_list, busho_list);
-              }
-            }
-          }
         }
       });
     }
