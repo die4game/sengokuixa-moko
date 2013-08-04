@@ -47,6 +47,7 @@
           </div>
           <button id="energy">総攻防力</button><span id="power"></span>
           <div id="unitSet">
+            <span>(max：指定兵科を可能な限り最大兵数でセット, all：全ての兵科を可能な限り最大兵数でセット)</span>
           </div>
           <div id="coloption">
             <button class="uldoption">列表示選択</button>
@@ -88,21 +89,31 @@
               <label><li><input type="checkbox"> : 弓器</li></label>
             </ul>
           </div>
-          <div class="pager">
-            <img src="../../plugin/images/first.gif" class="first">
-            <img src="../../plugin/images/prev.gif" class="prev">
-            <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
-            <img src="../../plugin/images/next.gif" class="next">
-            <img src="../../plugin/images/last.gif" class="last">
-            <select class="pagesize">
-              <option value="12">12</option>
-              <option value="16" selected="selected">16</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="200">200</option>
-            </select>
-            <span>Shift+Clickで複数行選択</span>
+          <div id="onTable">
+            <div class="pager">
+              <img src="../../plugin/images/first.gif" class="first">
+              <img src="../../plugin/images/prev.gif" class="prev">
+              <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+              <img src="../../plugin/images/next.gif" class="next">
+              <img src="../../plugin/images/last.gif" class="last">
+              <select class="pagesize">
+                <option value="12">12</option>
+                <option value="16" selected="selected">16</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+              </select>
+            </div>
+            <span>(Shift+Clickで複数行選択)</span>
+            <span>チェック：</span>
+            <button id="checkAll">全て</button>
+            <button id="checkDeck">部隊</button>
+            <button id="checkToggle">トグル</button>
+            <button id="checkPage">ページ</button>
+            <span>お気に入り：</span>
+            <button id="favoriteWrite">登録</button>
+            <select></select><button id="favoriteDelete">削除</button>
           </div>
           <table id="tb_unit" class="tablesorter">
             <thead><tr>

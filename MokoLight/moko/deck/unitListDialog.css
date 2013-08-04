@@ -127,10 +127,17 @@ table#tb_unit th {
   width: 20px;
 }
 
-#unitlistdialog>div.pager {
-  float: left;
+#onTable {
   clear: both;
-  padding-top: 5px;
+  white-space: nowrap;
+}
+
+#onTable > div.pager {
+  float: left;
+}
+
+#onTable > span {
+  margin-left: 1ex;
 }
 
 #tb_unit {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "0.4.1.7550",
+  "version": "0.5.1.7563",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -60,7 +60,8 @@
     },
     {
       "matches":[
-        "http://*.sengokuixa.jp/card/deck.php*" //部隊編成
+        "http://*.sengokuixa.jp/card/deck.php*", //部隊編成
+        "http://*.sengokuixa.jp/union/levelup.php*" //部隊編成
       ],
       "css": [
         "contentScripts/deck/deck.css"

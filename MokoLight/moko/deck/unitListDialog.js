@@ -1,14 +1,15 @@
-( function () {
-  var world, options = {}, groups, group_setting, groups_img,
+$( function () {
+  var world, //options = {}, groups, group_setting, groups_img,
     column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
-    villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {};
+    villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {},
+    favorite = [];
 
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
     world = tab.url.split( '?')[1];
 //    console.log( world, tab);
 
-    // options、set_squad_id、グループ設定の取得
+    // options、set_card_id、グループ設定の取得
 //    chrome.storage.local.get( world, function ( store) {
 //      var storeWorld = JSON.parse( store[world]);
       //console.log( storeWorld);
@@ -19,6 +20,24 @@
       $(unitListDialog);
 //      console.log('start unitListDialog');
 //    });
+    chrome.storage.local.get( world, function ( store) {
+      if ( !store[ world])
+        store[ world] = {};
+      if ( !store[ world].cardList)
+        store[ world].cardList = {};
+      if ( !store[ world].cardList.favorite)
+        store[ world].cardList.favorite = [];
+      else
+        favorite = store[ world].cardList.favorite;
+      chrome.storage.local.set( store, function () {
+        var no = favorite.length;
+        for ( no; no > 0; no--) {
+          $( '#checkPage').after( '<button class="favo" value=' + no + '>favo' + no + '</button>');
+          $( '#favoriteDelete').prev().prepend( '<option value=' + no + '>favo' + no + '</option>');
+        }
+        //$( '#favoriteWrite').after( '<select></select><button id="favoriteDelete">削除</button>')
+      });
+    });
   });
 //  tableSorter_($);
 //  tablesorter_pager_plugin($);
@@ -191,6 +210,82 @@
     });
   }
 
+  //選択
+  $( '#checkAll').on( 'click', function ( e) {
+    $(this).toggleClass( 'checked');
+    bool = $(this).hasClass( 'checked');
+    $( '#tb_unitlist .選択 [name=id]').prop( 'checked', bool);
+    $( '#tb_unit').trigger( 'update');
+  });
+
+  $( '#checkDeck').on( 'click', function ( e) {
+    $(this).toggleClass( 'checked');
+    bool = $(this).hasClass( 'checked');
+    $( '#tb_unitlist .選択.隊 [name=id]').prop( 'checked', bool);
+    $( '#tb_unit').trigger( 'update');
+  });
+
+  $( '#checkToggle').on( 'click', function ( e) {
+    $( '#tb_unitlist .選択 [name=id]').each( function ( i, elm) {
+      $( elm).prop( 'checked', !$( elm).prop( 'checked'));
+    });
+    $( '#tb_unit').trigger( 'update');
+  });
+
+  $( '#checkPage').on( 'click', function ( e) {
+    $(this).toggleClass( 'checked');
+    bool = $(this).hasClass( 'checked');
+    $( '#tb_unitlist .選択:visible [name=id]').prop( 'checked', bool);
+    $( '#tb_unit').trigger( 'update');
+  });
+
+  //お気に入り
+  $( '#onTable').on( 'click', 'button.favo', function ( e) {
+    var idx = $( this).val() - 1, bool;
+    $(this).toggleClass( 'checked');
+    bool = $(this).hasClass( 'checked');
+    console.log( idx, bool, favorite[idx]);
+    $.each( favorite[idx], function ( idx, elm) {
+      $( '#tb_unitlist td.選択 input[value=' + elm + ']').prop( 'checked', bool);
+    });
+    $( '#tb_unit').trigger( 'update');
+  });
+
+  $( '#favoriteWrite').on( 'click', function ( e) {
+    var idList = [];
+    $( '#tb_unitlist .選択 [name=id]:checked').each( function ( i, elm) {
+      idList.push( $(elm).val());
+    });
+    if ( idList.length === 0)
+      return;
+    chrome.storage.local.get( world, function ( store) {
+      favorite.push( idList);
+      store[ world].cardList.favorite = favorite;
+      chrome.storage.local.set( store, function () {
+        var no = favorite.length;
+        $( e.target).prev().before( '<button class="favo" value=' + no + '>favo' + no + '</button>');
+        $( '#favoriteDelete').prev().append( '<option value=' + no + '>favo' + no + '</option>');
+        //console.log(e.target);
+      });
+    });
+  });
+
+  $( '#favoriteDelete').on( 'click', function ( e) {
+    var no = $( this).prev().val();
+    if ( !no)
+      return;
+    chrome.storage.local.get( world, function ( store) {
+      favorite.splice( no - 1, 1);
+      store[ world].cardList.favorite = favorite;
+      chrome.storage.local.set( store, function () {
+        var no = favorite.length;
+        $( '#onTable > button.favo:last').remove();
+        $( '#favoriteDelete').prev().children( 'option:last').remove();
+        //console.log(e.target);
+      });
+    });
+  });
+
   // 武将リスト取得
   function unitListLoad( p, ano) {
 //    console.log( p, ano);
@@ -296,7 +391,10 @@
           $('div.Loading').hide();
           $('#unitlistdialog').css({'opacity': '1.0'});
           $('#tb_unit').ready( setupTableSorter);
-          $( '#unitSet').append( $html.find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange')).append( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">').on( 'click', 'input:eq(1)', setHeishi);
+          $( '#unitSet')
+            .prepend( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">')
+              .on( 'click', 'input:eq(1)', setHeishi)
+            .prepend( $html.find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange'));
           $('ul.uldoption').find('input').each(function() {
             if (!$(this).prop('checked')) {
               $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
@@ -377,16 +475,43 @@
   }
 
   //兵士一括セット
-  function setHeishi() {
+  function setHeishi( ) {
     var $tb_unitlist = $( '#tb_unitlist'), dataArray = [],
-      unitID = $( '#unitSet > select').val(), unitCnt = $( '#unit_cnt_text').val(),
-      max = $( '#unitSet > select').text().match(/\d+/)[0];
+      unitID = $( '#unitSet > select').val(),
+      unitCnt = $( '#unit_cnt_text').val(),
+      max;
+    if ( unitCnt.match('all')) {
+      max = {};
+      $( '#unitSet > select > option').each( function ( idx, elm) {
+        var cnt = $( elm).text().match(/\d+/);
+        if ( cnt && cnt[0]) {
+          max[ $( elm).val()] = parseInt( cnt[0], 10);
+        }
+      });
+    } else {
+      max = $( '#unitSet > select > option:selected').text().match(/\d+/);
+      max = max? max[0]: max;
+    }
     $tb_unitlist.find('td.選択>input:checked').each( function () {
-      var cnt = unitCnt;
-      if ( unitCnt.match(/max/i)) {
+      var cnt = unitCnt, key, tmp;
+      if ( unitCnt.match('max')) {
         cnt = Math.min( $(this).parent().siblings( 'td.指揮力').text(), max);
+        if ( cnt === 0)
+          return false;
         max -= cnt;
         //console.log(unitCnt,cnt,max);
+      } else if ( unitCnt.match('all')) {
+        tmp = 0;
+        for ( key in max) {
+          if ( max[ key] > tmp) {
+            tmp = max[ key];
+            unitID = key;
+          }
+        }
+        if ( !tmp)
+          return false;
+        cnt = Math.min( $(this).parent().siblings( 'td.指揮力').text(), tmp);
+        max[ unitID] -= cnt;
       }
       dataArray.push( { card_id: $( this).val(), unit_type: unitID, unit_count: cnt});
     });
@@ -417,18 +542,18 @@
       set_village_id = $this.find('#select_village').find('option:selected').val(),
       set_assign_id = $this.find('button.set_unitlist').val(),
       set_squad_id = [],
+      set_card_id = [],
       busho_list = [];
 
-    //チェックされた武将のset_squad_idを取得
+    //チェックされた武将のset_card_idを取得
     $('#tb_unitlist input[name^="id"]:checked').each( function() {
-      var busho_chk = $(this).parent(), ssid = busho_chk.find('.set_squad_id').val();
-      if ( ssid) {
-        set_squad_id.push( ssid);
-        busho_list.push( busho_chk.parent());
-      }
+      var busho_chk = $(this).parent(),
+        cid = busho_chk.find('[name="id"]').val();
+      set_card_id.push( cid);
+      busho_list.push( busho_chk.parent());
     });
 
-    if (set_squad_id.length == 0) {
+    if (set_card_id.length == 0) {
       alert('セット可能な武将がいません。');
       return;
       //getButai( $html, select_assign_no);
@@ -438,17 +563,17 @@
     }
     $('#unitlistdialog').css({'opacity': '0.3'});
     $('div.Loading').show();
-    if (confirm(set_squad_id.length+'人。リスト順に配置します。')) {
+    if (confirm(set_card_id.length+'人が選択されています。リスト順に配置します。')) {
       //武将をセット
-      set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, 0);
+      set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, 0);
     } else {
       $('#unitlistdialog').css({'opacity': '1.0'});
       $('div.Loading').hide();
     }
 
     //カードを部隊にセットする関数
-    function set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i) {
-      //console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
+    function set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, i) {
+      //console.log( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, i);
       //POSTデータ
       var data = {
         target_card: '',
@@ -457,7 +582,8 @@
         btn_change_flg: '',
         set_village_id: set_village_id,
         set_assign_id: set_assign_id,
-        set_squad_id: set_squad_id[i],
+        set_squad_id: '',
+        set_card_id: set_card_id[i],
         deck_mode: 'nomal',
         p: '1',
         myselect_2: ''
@@ -480,16 +606,16 @@
           } else {
             //busho_list[i].find('td.選択').toggleClass( '隊').find( ':checked').prop( 'checked', false);
             $('#v_head > span.deckcost').text($html.find('#ig_deckcost > span.ig_deckcostdata').text());
-            if (i < set_squad_id.length - 1) {
+            if (i < set_card_id.length - 1) {
               if ( (!set_assign_id && $html.find('#ig_unitchoice > li.now').text().match(regexpname)) || (set_assign_id && !$html.find('#ig_unitchoice > li.now').text().match(regexpname)) ) {
                 if ( !set_assign_id ) {
                   set_assign_id = $html.find('#set_assign_id').val();
                 }
-                //console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
-                setTimeout(set_card_to_deck, 100, select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i + 1);
+                //console.log( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, i);
+                setTimeout(set_card_to_deck, 100, select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, i + 1);
               } else {
                 alert(busho_list[i+1].find('#kanji').text() + 'をセットできませんでした。');
-                //console.log( select_assign_no, set_village_id, set_assign_id, set_squad_id, busho_list, i);
+                //console.log( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, i);
                 getButai( $html, select_assign_no);
                 $( '#tb_unit').trigger( 'update');
                 $('#unitlistdialog').css({'opacity': '1.0'});
@@ -845,4 +971,4 @@
       $('#tb_unit').trigger('updateCell', [this.parentNode]);
     });
   }
-})();
+});
