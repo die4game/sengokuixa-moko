@@ -209,8 +209,7 @@ $( function () {
       stone2 = 0,
       iron2 = 0,
       rice2 = 0,
-      checker = 0,
-      rate = 0.5;
+      checker = 0;
     for (var key in soldiertype) {
       localStorage.setItem('crx_checked_soldier' + key, JSON.stringify( $( 'input#' + key).prop( 'checked')? true: false));
       if ($('input#' + key).prop('checked')) {
