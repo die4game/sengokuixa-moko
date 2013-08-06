@@ -1,0 +1,1 @@
+$( 'table.table_waigintunit input[name="unit_select[]"]').prop( 'checked', true);
