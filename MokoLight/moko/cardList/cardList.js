@@ -17,8 +17,8 @@ $( function () {
 //      group_setting = storeWorld.crx_ixamoko_group_set;
 //      groups = storeWorld.crx_ixamoko_init_groups;
 //      groups_img = storeWorld.crx_ixamoko_init_groups_img;
-      $(unitListDialog);
-//      console.log('start unitListDialog');
+      $(cardList);
+//      console.log('start cardList');
 //    });
     chrome.storage.local.get( world, function ( store) {
       if ( !store[ world])
@@ -48,16 +48,16 @@ $( function () {
   //////////////////
 
   // 初期設定、イベント設定
-  function unitListDialog () {
+  function cardList () {
 
     // imgのロード
-//    $( '#mokotool>div.Loading').append( '<img src="' + IMAGES.unitListDialog.Loading + '">');
-//    $( '#unitlistdialog>div.pager>select').before(
-//        '<img src="' + IMAGES.unitListDialog.first + '" class="first"/>' +
-//        '<img src="' + IMAGES.unitListDialog.prev + '" class="prev"/>' +
+//    $( '#mokotool>div.Loading').append( '<img src="' + IMAGES.cardList.Loading + '">');
+//    $( '#cardList>div.pager>select').before(
+//        '<img src="' + IMAGES.cardList.first + '" class="first"/>' +
+//        '<img src="' + IMAGES.cardList.prev + '" class="prev"/>' +
 //        '<span class="pagedisplay"></span> <!-- this can be any element, including an input -->' +
-//        '<img src="' + IMAGES.unitListDialog.next + '" class="next"/>' +
-//        '<img src="' + IMAGES.unitListDialog.last + '" class="last"/>'
+//        '<img src="' + IMAGES.cardList.next + '" class="next"/>' +
+//        '<img src="' + IMAGES.cardList.last + '" class="last"/>'
 //    );
 
     // 表示列チェックボックスのtoggle
@@ -112,7 +112,7 @@ $( function () {
     // 武将リスト取得実行
     $( function () {
       $('div.pager').hide();
-      $('#unitlistdialog').css({'opacity': '0.3'});
+      $('#cardList').css({'opacity': '0.3'});
       $('div.Loading').show();
       unitListLoad(1, 0);
     });
@@ -127,7 +127,7 @@ $( function () {
           btn_send: true
         }, key;
       if ( !data.dungeon_select) return;
-      $('#unitlistdialog').css({'opacity': '0.3'});
+      $('#cardList').css({'opacity': '0.3'});
       $('div.Loading').show();
       if ( confirm( '全部隊を秘境へ送ります')) {
         $( '#v_head button.set_unitlist').each( function ( i, el) {
@@ -170,7 +170,7 @@ $( function () {
           });
         }
       }
-      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('#cardList').css({'opacity': '1.0'});
       $('div.Loading').hide();
     });
 
@@ -179,7 +179,7 @@ $( function () {
       //console.log( 'click', $(this).val());
       var div_ano = $( this).parent(), btn = $( this);
       if ( !$( this).val()) return;
-      $('#unitlistdialog').css({'opacity': '0.3'});
+      $('#cardList').css({'opacity': '0.3'});
       $('div.Loading').show();
       if ( confirm( btn.next().text() + 'を' + btn.text())) {
         $.post( 'http://' + world + '.sengokuixa.jp/card/deck.php',
@@ -205,7 +205,7 @@ $( function () {
           }
         );
       }
-      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('#cardList').css({'opacity': '1.0'});
       $('div.Loading').hide();
     });
   }
@@ -291,7 +291,7 @@ $( function () {
 //    console.log( p, ano);
     if (p === 1 && $('#v_head span.deckcost').text()) {
       $('div.Loading').hide();
-      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('#cardList').css({'opacity': '1.0'});
       $('div.pager').show();
       return;
     }
@@ -389,7 +389,7 @@ $( function () {
           //取得終了後の処理
           $('#v_head > span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
           $('div.Loading').hide();
-          $('#unitlistdialog').css({'opacity': '1.0'});
+          $('#cardList').css({'opacity': '1.0'});
           $('#tb_unit').ready( setupTableSorter);
           $( '#unitSet')
             .prepend( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">')
@@ -516,7 +516,7 @@ $( function () {
       dataArray.push( { card_id: $( this).val(), unit_type: unitID, unit_count: cnt});
     });
     $('div.Loading').show();
-    $( '#unitlistdialog').css( 'opacity', '0.3');
+    $( '#cardList').css( 'opacity', '0.3');
     postSetHeishi( dataArray);
   }
 
@@ -561,13 +561,13 @@ $( function () {
       alert('拠点が選択されていません。');
       return;
     }
-    $('#unitlistdialog').css({'opacity': '0.3'});
+    $('#cardList').css({'opacity': '0.3'});
     $('div.Loading').show();
     if (confirm(set_card_id.length+'人が選択されています。リスト順に配置します。')) {
       //武将をセット
       set_card_to_deck( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, 0);
     } else {
-      $('#unitlistdialog').css({'opacity': '1.0'});
+      $('#cardList').css({'opacity': '1.0'});
       $('div.Loading').hide();
     }
 
@@ -601,7 +601,7 @@ $( function () {
             alert( busho_list[ i].find( '#kanji').text() + 'をセットできませんでした。');
             getButai( $html, select_assign_no);
             $( '#tb_unit').trigger( 'update');
-            $('#unitlistdialog').css({'opacity': '1.0'});
+            $('#cardList').css({'opacity': '1.0'});
             $('div.Loading').hide();
           } else {
             //busho_list[i].find('td.選択').toggleClass( '隊').find( ':checked').prop( 'checked', false);
@@ -618,14 +618,14 @@ $( function () {
                 //console.log( select_assign_no, set_village_id, set_assign_id, set_card_id, busho_list, i);
                 getButai( $html, select_assign_no);
                 $( '#tb_unit').trigger( 'update');
-                $('#unitlistdialog').css({'opacity': '1.0'});
+                $('#cardList').css({'opacity': '1.0'});
                 $('div.Loading').hide();
               }
             } else {
 //              alert('完了');
               getButai( $html, select_assign_no);
               $( '#tb_unit').trigger( 'update');
-              $('#unitlistdialog').css({'opacity': '1.0'});
+              $('#cardList').css({'opacity': '1.0'});
               $('div.Loading').hide();
             }
           }
