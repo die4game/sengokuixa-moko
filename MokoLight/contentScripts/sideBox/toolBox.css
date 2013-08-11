@@ -4,3 +4,6 @@
 #mokoToolBox > ul {
   margin-left: 4px;
 }
+#mokoToolBox > ul > li {
+  margin-top: 2px;
+}
