@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "0.8.2.8277",
+  "version": "0.9.0.8279",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -14,7 +14,8 @@
       "http://*.sengokuixa.jp/*"
   ],
   "web_accessible_resources": [
-    "/*/*.png"
+    "/*/*.png",
+    "/plugin/jquery-2.0.3.min.map"
   ],
 
 
@@ -80,6 +81,18 @@
     },
     {
       "matches":[
+        "http://*.sengokuixa.jp/card/trade.php*", //取引
+        "http://*.sengokuixa.jp/card/exhibit_list.php*", //出品中
+        "http://*.sengokuixa.jp/card/bid_list.php*", //入札中
+        "http://*.sengokuixa.jp/card/trade_card.php*" //出品
+      ],
+      "js": [
+        "contentScripts/card/ixa_tradesupport.user.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches":[
         "http://*.sengokuixa.jp/facility/facility.php*" //施設
       ],
       "js": [
@@ -92,6 +105,14 @@
       ],
       "js": [
         "contentScripts/facility/dungeon.js"
+      ]
+    },
+    {
+      "matches":[
+        "http://*.sengokuixa.jp/senkuji/senkuji.php*" //くじ
+      ],
+      "js": [
+        "contentScripts/senkuji/ixa_senkuji_10.user.js"
       ]
     }
   ]
