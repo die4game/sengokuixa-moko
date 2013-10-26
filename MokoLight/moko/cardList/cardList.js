@@ -185,8 +185,8 @@ $( function () {
         $.post( 'http://' + world + '.sengokuixa.jp/card/deck.php',
           { select_assign_no: div_ano.attr( 'select_assign_no'),
             unit_assign_id: div_ano.attr( 'unit_assign_id'),
-            unset_unit_squad_id: btn.val(),
-            deck_mode: 'nomal',
+            unset_card_id: btn.val(),
+            change_unit_squad_id: '',
             p: 1,
             select_card_group: 0
           },
