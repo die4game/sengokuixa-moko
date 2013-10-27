@@ -86,7 +86,9 @@ ul.append(
           a = $( html).find( 'div.deck_navi>a[onclick^=confirmUnregist]'),
           a_onclick = a.attr( 'onclick'),
           formdata = a_onclick? a_onclick.match( /\d+/g): false,
+          li = $( e.target).parent(),
           span = $( '<span></span>').css( 'color', 'white');
+      li.find( 'span').remove();
       $( e.target).after( span);
       span.text( ' 解散中..');
       ( function kaisan( formdata, cnt) {
@@ -114,3 +116,73 @@ ul.append(
     });
   })
 );
+
+ul.append(
+  $(
+    '<li>' +
+      '<a href="javascript:void(0);" id="deck_regist_all">全配置</a>' +
+    '</li>'
+  ).on( 'click', function ( e) {
+    var ano = $( '#select_assign_no').val(),
+        p = '1',
+        cnt = ano*4,
+        shoryo = $( '#select_village').val(),
+        li = $( e.target).parent(),
+        span = $( '<span></span>').css( 'color', 'white');
+    li.find( 'span').remove();
+    $( e.target).after( span);
+    if ( shoryo) {
+      span.text( ' 配置中..');
+      ( function deckset() {
+        $.get( 'http://'+location.host+'/card/deck.php?ano='+ano+'&p='+p)
+        .done( function ( data) {
+          var html = $.parseHTML( data),
+              a = $(html).find( 'a[onclick^=confirmRegist2]'),
+              a_onclick = a.attr('onclick'),
+              formdata = a_onclick? a_onclick.match(/\d+/g): false,
+              p_max, cost, cost_zan;
+          if ( formdata) {
+            formdata.shift();
+            span.text( ' 配置中..(ano:'+ano+', p:'+p+', cnt:'+cnt+')');
+            $.post(
+              'http://'+location.host+'/card/deck.php',
+              { target_card: '',
+                select_assign_no: ano,
+                mode: 'assign_insert',
+                btn_change_flg: '',
+                set_village_id: shoryo,
+                set_assign_id: formdata.length<5? '': formdata.shift(),
+                set_squad_id: '',
+                set_card_id: formdata.shift(),
+                p: p,
+                myselect_2: shoryo }
+            ).done( function ( data) {
+              var html = $.parseHTML( data),
+                  p = $(html).find( 'p.red');
+              if ( p.length) {
+                span.text( p.text());
+              } else {
+                cnt++;
+                ano = Math.floor( cnt/4);
+                deckset();
+              }
+            });
+          } else {
+            p_max = $( html).find( 'ul.pager li.last');
+            cost = $( html).find( '#ig_deckcost span.ig_deckcostdata').text().match( /[\d.]+/g);
+            cost_zan = cost[1] - cost[0];
+            if ( cnt < 20 && p_max.length > 0 && cost_zan >= 1) {
+              p++;
+              deckset();
+            } else {
+              span.remove();
+              $( e.target).after( $( '<span> 完了</span>').css( 'color', 'white'));
+            }
+          }
+        });
+      })();
+    } else
+      span.text( ' 拠点未設定');
+  })
+);
+
