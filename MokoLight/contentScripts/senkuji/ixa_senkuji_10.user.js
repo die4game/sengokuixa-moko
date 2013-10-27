@@ -28,9 +28,8 @@ $( function kuji10_main()
           'color: white;'+
           'background: black;'+
           'width: 80px;'+
-          'top: 50%;'+
+          'top: 20%;'+
           'left: 50%;'+
-          'margin-top: -70px;'+
           'margin-left: -40px;'+
           'border: solid 2px goldenrod;'+
           'text-align: center;'+

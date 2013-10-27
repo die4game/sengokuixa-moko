@@ -73,3 +73,44 @@ ul.append(
     )
   })
 );
+
+ul.append(
+  $(
+    '<li>' +
+      '<a href="javascript:void(0);" id="deck_unregist_all">全解散</a>' +
+    '</li>'
+  ).on( 'click', function ( e) {
+    $.get( 'http://'+location.host+'/card/deck.php')
+    .done( function ( data) {
+      var html = $.parseHTML( data),
+          a = $( html).find( 'div.deck_navi>a[onclick^=confirmUnregist]'),
+          a_onclick = a.attr( 'onclick'),
+          formdata = a_onclick? a_onclick.match( /\d+/g): false,
+          span = $( '<span></span>').css( 'color', 'white');
+      $( e.target).after( span);
+      span.text( ' 解散中..');
+      ( function kaisan( formdata, cnt) {
+        if ( formdata) {
+          $.post( 'http://'+location.host+'/card/deck.php',
+            { select_assign_no: '0',
+              unit_assign_id: formdata[0],
+              unset_card_id: formdata[1],
+              change_unit_squad_id: '',
+              p: 1,
+              select_card_group: '' }
+          ).done( function ( data) {
+            var html = $.parseHTML( data),
+                a = $( html).find( 'div.deck_navi>a[onclick^=confirmUnregist]'),
+                a_onclick = a.attr( 'onclick'),
+                formdata = a_onclick? a_onclick.match( /\d+/g): false;
+            kaisan( formdata, ++cnt);
+            span.text( ' 解散中..'+cnt);
+          });
+        } else {
+          span.remove();
+          $( e.target).after( $( '<span> 完了</span>').css( 'color', 'white'));
+        }
+      })( formdata, 0);
+    });
+  })
+);
