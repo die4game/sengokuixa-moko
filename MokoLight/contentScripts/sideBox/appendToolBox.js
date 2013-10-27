@@ -137,7 +137,7 @@ ul.append(
         $.get( 'http://'+location.host+'/card/deck.php?ano='+ano+'&p='+p)
         .done( function ( data) {
           var html = $.parseHTML( data),
-              a = $(html).find( 'a[onclick^=confirmRegist2]'),
+              a = $(html).find( 'a[style=""][onclick^=confirmRegist2]'),
               a_onclick = a.attr('onclick'),
               formdata = a_onclick? a_onclick.match(/\d+/g): false,
               p_max, cost, cost_zan;
