@@ -2,7 +2,18 @@ $( function () {
   var world, //options = {}, groups, group_setting, groups_img,
     column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
     villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {},
-    favorite = [];
+    favorite = [],
+    UnitCode = {
+      "足軽" : 321, "長槍足軽": 322, "武士" : 323, "国人衆" : 324, "弓足軽" : 325, "長弓兵" : 326, "弓騎馬" : 327,
+      "海賊衆" : 328, "騎馬兵" : 329, "精鋭騎馬": 330, "赤備え" : 331, "母衣衆" : 332, "破城鎚" : 333, "攻城櫓" : 334,
+      "大筒兵" : 335, "鉄砲足軽": 336, "騎馬鉄砲": 337, "雑賀衆" : 338, "焙烙火矢": 345,
+      getKey: function ( val) {
+        var returnKey = '';
+        for ( var key in this)
+          if ( this[key] === parseInt( val, 10)) returnKey = key;
+        return returnKey;
+      }
+    };
 
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
@@ -388,13 +399,25 @@ $( function () {
 
           //取得終了後の処理
           $('#v_head > span.' + $('#v_head > select.unit_ano').find('option:selected').attr('class')).show();
-          $('div.Loading').hide();
-          $('#cardList').css({'opacity': '1.0'});
-          $('#tb_unit').ready( setupTableSorter);
           $( '#unitSet')
             .prepend( '<input type="text" id="unit_cnt_text" value="max"><input type="button" value="兵士セット">')
-              .on( 'click', 'input:eq(1)', setHeishi)
-            .prepend( $html.find( '[id^=unit_id_select_]:eq(0)').removeAttr( 'onchange'));
+              .on( 'click', 'input:eq(1)', setHeishi);
+          $.get( 'http://' + world + '.sengokuixa.jp/facility/set_unit_list.php', function ( data) {
+            var html = $.parseHTML( data),
+                select_unit = $( '<select></select>'),
+                unit;
+            $( '#unitSet').prepend( select_unit);
+            select_unit.append( '<option label="なし" value="">なし</option>');
+            $( html).find( '#soldiers_catalog img[alt]').each( function ( idx, elm) {
+              if ( UnitCode[elm.alt]) {
+                unit = { name: elm.alt, code: UnitCode[elm.alt], num: $(elm).parent().next().text()};
+                select_unit.append( '<option label="'+unit.name+'('+unit.num+')" value="'+unit.code+'">'+unit.name+'('+unit.num+')</option>');
+              }
+            });
+            $('div.Loading').hide();
+            $( '#cardList').css( 'opacity', '1.0');
+          });
+          $('#tb_unit').ready( setupTableSorter);
           $('ul.uldoption').find('input').each(function() {
             if (!$(this).prop('checked')) {
               $('#tb_unit .' + $(this).parent().text().match(/ : ([\S]+)/)[1]).hide();
@@ -479,7 +502,7 @@ $( function () {
     var $tb_unitlist = $( '#tb_unitlist'), dataArray = [],
       unitID = $( '#unitSet > select').val(),
       unitCnt = $( '#unit_cnt_text').val(),
-      max;
+      max, selectedCards = [];
     if ( unitCnt.match('all')) {
       max = {};
       $( '#unitSet > select > option').each( function ( idx, elm) {
@@ -514,23 +537,52 @@ $( function () {
         max[ unitID] -= cnt;
       }
       dataArray.push( { card_id: $( this).val(), unit_type: unitID, unit_count: cnt});
+      selectedCards.push( $( this).parent().parent());
     });
     $('div.Loading').show();
     $( '#cardList').css( 'opacity', '0.3');
-    postSetHeishi( dataArray);
+    postSetHeishi( dataArray, selectedCards);
   }
 
-  function postSetHeishi(dataArray) {
+  function postSetHeishi(dataArray, selectedCards) {
+    var postData, card;
     if ( dataArray[0]) {
+      postData = dataArray.shift();
+      card = selectedCards.shift();
       $.post(
         'http://' + world + '.sengokuixa.jp/facility/set_unit_list_if.php',
-        dataArray.shift(), // { card_id: data0, unit_type: data1, unit_count: data2 },
-        function () {
-          setTimeout( postSetHeishi, 100, dataArray);
+        postData, // { card_id: data0, unit_type: data1, unit_count: data2 },
+        function (data) {
+          var result = JSON.parse(data).result;
+          if ( result === 'ok') {
+            card.find( '.兵数').text( postData.unit_count)
+            .next().text( UnitCode.getKey( postData.unit_type));
+          }
+          if ( result !== 'ipu')
+            setTimeout( postSetHeishi, 100, dataArray, selectedCards);
+          else {
+            $( '#tb_unit').trigger( 'update');
+            $('div.Loading').hide();
+            $( '#cardList').css( 'opacity', '1.0');
+          }
         }
       );
     } else {
-      location.reload();
+      $.get( 'http://' + world + '.sengokuixa.jp/facility/set_unit_list.php', function ( data) {
+        var html = $.parseHTML( data),
+            select_unit = $( '#unitSet select').empty(),
+            unit;
+        select_unit.append( '<option label="なし" value="">なし</option>');
+        $( html).find( '#soldiers_catalog img[alt]').each( function ( idx, elm) {
+          if ( UnitCode[elm.alt]) {
+            unit = { name: elm.alt, code: UnitCode[elm.alt], num: $(elm).parent().next().text()};
+            select_unit.append( '<option label="'+unit.name+'('+unit.num+')" value="'+unit.code+'">'+unit.name+'('+unit.num+')</option>');
+          }
+        });
+        $( '#tb_unit').trigger( 'update');
+        $('div.Loading').hide();
+        $( '#cardList').css( 'opacity', '1.0');
+      });
     }
   }
 
