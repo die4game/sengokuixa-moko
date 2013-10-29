@@ -19,6 +19,7 @@ $( function () {
   function initOption( world) {
     $.each( world, function ( key, val) {
       var div = $( '<div>ワールド'+key+'</div>'),
+          btn = $( '<button>削除</button>'),
           p = $( '<p>兵1セットリンクの兵科選択<br></p>'),
           input = $( '<label><input type="radio" name="hei1setlink" value="0">騎馬兵</label>'+
                      '<label><input type="radio" name="hei1setlink" value="1">精鋭騎馬</label>');
@@ -26,8 +27,13 @@ $( function () {
       p.append( input).change( function (e) {
         world[key] = input.find( ':checked').val();
         chrome.storage.local.set( { world: world});
-      })
-      $( '#worldList').append( div.append( p));
+      });
+      btn.click( function (e) {
+        delete world[key];
+        chrome.storage.local.set( options);
+        div.remove();
+      });
+      $( '#worldList').append( div.append( btn, p));
     });
   }
 });

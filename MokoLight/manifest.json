@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "0.11.0.8299",
+  "version": "0.11.1.8302",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
