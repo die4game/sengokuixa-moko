@@ -1,7 +1,7 @@
 chrome.storage.local.get( 'world', function ( item) {
   var mokoToolBox = $( '<div id="mokoToolBox"></div>'),
       ul = $('<ul></ul>'),
-      flg = 2,
+      flg = '2',
       w = location.host.replace( '.sengokuixa.jp', '');
 
   if ( item.world && item.world[w])
@@ -39,7 +39,7 @@ chrome.storage.local.get( 'world', function ( item) {
     })
   );
 
-  if ( flg === '0' || flg === 2)
+  if ( flg === '0' || flg === '2')
     ul.append(
       $(
         '<li>' +
@@ -61,7 +61,7 @@ chrome.storage.local.get( 'world', function ( item) {
       })
     );
 
-  if ( flg === '1' || flg === 2)
+  if ( flg === '1' || flg === '2')
     ul.append(
       $(
         '<li>' +
