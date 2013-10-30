@@ -1,177 +1,169 @@
-<html>
-  <head>
+<!DOCTYPE html>
     <meta charset="UTF-8">
-    <script src="../../plugin/jquery.min.js"></script>
-    <script src="../../plugin/jquery.tablesorter.min.js"></script>
-    <script src="../../plugin/jquery.tablesorter.pager.min.js"></script>
-    <script src="cardList.js"></script>
-    <link rel="styleSheet" href="cardList.css">
-    <style>
-      body {
-        color: lightgrey;
-        background-color: black;
-      }
-    </style>
-  </head>
-  <body>
-    <div>
-      <div id="mokotool">
-        <div class="Loading">
-          <img src="../../plugin/images/loading.gif">
-        </div>
-        <div id="cardList">
-          <div id="v_head">
-            <div>
-              デッキコスト：<span class="deckcost"></span>
-            </div>
-            <table>
-              <tbody>
-                <tr>
-                  <td><div class="ano"><button>解散</button><span value="0">[---新規部隊を作成---]</span><br/></div></td>
-                  <td><div class="ano"><button>解散</button><span value="1">[---新規部隊を作成---]</span><br/></div></td>
-                  <td><div class="ano"><button>解散</button><span value="2">[---新規部隊を作成---]</span><br/></div></td>
-                  <td><div class="ano"><button>解散</button><span value="3">[---新規部隊を作成---]</span><br/></div></td>
-                  <td><div class="ano"><button>解散</button><span value="4">[---新規部隊を作成---]</span><br/></div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div id="dungeon">
-            <button>全部隊秘境へ</button>
-            <label><input type="radio" name="dungeon_select" value="1"><span>修験の山：渓谷</span></label>
-            <label><input type="radio" name="dungeon_select" value="2"><span>修験の山：樹海</span></label>
-            <label><input type="radio" name="dungeon_select" value="3"><span>絶壁の祠</span></label>
-            <label><input type="radio" name="dungeon_select" value="4"><span>長寿の泉</span></label>
-            <label><input type="radio" name="dungeon_select" value="100"><span>風の霊峰</span></label>
-            <label><input type="radio" name="dungeon_select" value="200"><span>煉獄の島</span></label>
-          </div>
-          <button id="energy">総攻防力</button><span id="power"></span>
-          <div id="unitSet">
-            <span>(max：指定兵科を可能な限り最大兵数でセット, all：全ての兵科を可能な限り最大兵数でセット)</span>
-          </div>
-          <div id="coloption">
-            <button class="uldoption">列表示選択</button>
-            <ul class="uldoption">
-              <label><li><input type="checkbox" checked > : No</li></label>
-              <label><li><input type="checkbox" checked > : 組</li></label>
-              <label><li><input type="checkbox" checked > : grp</li></label>
-              <label><li><input type="checkbox"> : ﾚｱ</li></label>
-              <label><li><input type="checkbox" checked > : 名前</li></label>
-              <label><li><input type="checkbox" checked > : ｺｽﾄ</li></label>
-              <label><li><input type="checkbox" checked > : ★</li></label>
-              <label><li><input type="checkbox" checked > : Lv</li></label>
-              <label><li><input type="checkbox" checked > : HP</li></label>
-              <label><li><input type="checkbox" checked > : 討伐</li></label>
-            </ul>
-            <ul class="uldoption">
-              <label><li><input type="checkbox" checked > : 指揮力</li></label>
-              <label><li><input type="checkbox" checked > : 兵数</li></label>
-              <label><li><input type="checkbox" checked > : 兵種</li></label>
-              <label><li><input type="checkbox" checked > : 攻撃</li></label>
-              <label><li><input type="checkbox" checked > : 防御</li></label>
-              <label><li><input type="checkbox" checked > : 兵法</li></label>
-              <label><li><input type="checkbox" checked > : 技1</li></label>
-              <label><li><input type="checkbox" checked > : 技2</li></label>
-              <label><li><input type="checkbox" checked > : 技3</li></label>
-            </ul>
-            <ul class="uldoption">
-              <label><li><input type="checkbox"> : 実指揮</li></label>
-              <label><li><input type="checkbox"> : ｺｽﾄ比</li></label>
-              <label><li><input type="checkbox" checked > : 槍</li></label>
-              <label><li><input type="checkbox" checked > : 馬</li></label>
-              <label><li><input type="checkbox" checked > : 弓</li></label>
-              <label><li><input type="checkbox" checked > : 器</li></label>
-              <label><li><input type="checkbox"> : 槍馬</li></label>
-              <label><li><input type="checkbox"> : 槍弓</li></label>
-              <label><li><input type="checkbox"> : 弓馬</li></label>
-              <label><li><input type="checkbox"> : 槍器</li></label>
-              <label><li><input type="checkbox"> : 馬器</li></label>
-              <label><li><input type="checkbox"> : 弓器</li></label>
-            </ul>
-          </div>
-          <div id="onTable">
-            <div class="pager">
-              <img src="../../plugin/images/first.gif" class="first">
-              <img src="../../plugin/images/prev.gif" class="prev">
-              <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
-              <img src="../../plugin/images/next.gif" class="next">
-              <img src="../../plugin/images/last.gif" class="last">
-              <select class="pagesize">
-                <option value="12">12</option>
-                <option value="16" selected="selected">16</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="200">200</option>
-              </select>
-            </div>
-            <span>(Shift+Clickで複数行選択)</span>
-            <span>チェック：</span>
-            <button id="checkAll">全て</button>
-            <button id="checkDeck">部隊</button>
-            <button id="checkToggle">トグル</button>
-            <button id="checkPage">ページ</button>
-            <span>お気に入り：</span>
-            <button id="favoriteWrite">登録</button>
-            <select></select><button id="favoriteDelete">削除</button>
-          </div>
-          <table id="tb_unit" class="tablesorter">
-            <thead><tr>
-              <th class="選択">選択</th>
-              <th class="No">No</th>
-              <th class="組">組</th>
-              <th class="grp">grp</th>
-              <th class="ﾚｱ">ﾚｱ</th>
-              <th class="名前">名前</th>
-              <th class="ｺｽﾄ">ｺｽﾄ</th>
-              <th class="★">★</th>
-              <th class="Lv">Lv</th>
-              <th class="HP">HP</th>
-              <th class="討伐">討伐</th>
-              <th class="指揮力">指揮力</th>
-              <th class="兵数">兵数</th>
-              <th class="兵種">兵種</th>
-              <th class="攻撃">攻撃</th>
-              <th class="防御">防御</th>
-              <th class="兵法">兵法</th>
-              <th class="槍">槍</th>
-              <th class="槍 実指揮">実指揮</th>
-              <th class="槍 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="馬">馬</th>
-              <th class="馬 実指揮">実指揮</th>
-              <th class="馬 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="弓">弓</th>
-              <th class="弓 実指揮">実指揮</th>
-              <th class="弓 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="器">器</th>
-              <th class="器 実指揮">実指揮</th>
-              <th class="器 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="技1">技1</th>
-              <th class="技2">技2</th>
-              <th class="技3">技3</th>
-              <th class="槍馬">槍馬</th>
-              <th class="槍馬 実指揮">実指揮</th>
-              <th class="槍馬 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="槍弓">槍弓</th>
-              <th class="槍弓 実指揮">実指揮</th>
-              <th class="槍弓 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="弓馬">弓馬</th>
-              <th class="弓馬 実指揮">実指揮</th>
-              <th class="弓馬 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="槍器">槍器</th>
-              <th class="槍器 実指揮">実指揮</th>
-              <th class="槍器 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="馬器">馬器</th>
-              <th class="馬器 実指揮">実指揮</th>
-              <th class="馬器 ｺｽﾄ比">ｺｽﾄ比</th>
-              <th class="弓器">弓器</th>
-              <th class="弓器 実指揮">実指揮</th>
-              <th class="弓器 ｺｽﾄ比">ｺｽﾄ比</th>
-            </tr></thead>
-            <tbody id="tb_unitlist"></tbody>
-          </table>
-        </div>
-      </div>
+<script src="../../plugin/jquery.min.js"></script>
+<script src="../../plugin/jquery.tablesorter.min.js"></script>
+<script src="../../plugin/jquery.tablesorter.pager.min.js"></script>
+<script src="cardList.js"></script>
+<link rel="styleSheet" href="cardList.css">
+<style>
+  body {
+    color: lightgrey;
+    background-color: black;
+  }
+</style>
+<div>
+  <div id="mokotool">
+    <div class="Loading">
+      <img src="../../plugin/images/loading.gif">
     </div>
-  </body>
-</html>
+    <div id="cardList">
+      <div id="v_head">
+        <div>
+          デッキコスト：<span class="deckcost"></span>
+        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td><div class="ano"><button>解散</button><span value="0">[---新規部隊を作成---]</span><br/></div>
+              <td><div class="ano"><button>解散</button><span value="1">[---新規部隊を作成---]</span><br/></div>
+              <td><div class="ano"><button>解散</button><span value="2">[---新規部隊を作成---]</span><br/></div>
+              <td><div class="ano"><button>解散</button><span value="3">[---新規部隊を作成---]</span><br/></div>
+              <td><div class="ano"><button>解散</button><span value="4">[---新規部隊を作成---]</span><br/></div>
+        </table>
+      </div>
+      <div id="dungeon">
+        <button>全部隊秘境へ</button>
+        <label><input type="radio" name="dungeon_select" value="1"><span>修験の山：渓谷</span></label>
+        <label><input type="radio" name="dungeon_select" value="2"><span>修験の山：樹海</span></label>
+        <label><input type="radio" name="dungeon_select" value="3"><span>絶壁の祠</span></label>
+        <label><input type="radio" name="dungeon_select" value="4"><span>長寿の泉</span></label>
+        <label><input type="radio" name="dungeon_select" value="100"><span>風の霊峰</span></label>
+        <label><input type="radio" name="dungeon_select" value="200"><span>煉獄の島</span></label>
+      </div>
+      <button id="energy">総攻防力</button><span id="power"></span>
+      <div id="unitSet">
+        <span>(max：指定兵科を可能な限り最大兵数でセット, all：全ての兵科を可能な限り最大兵数でセット)</span>
+      </div>
+      <div id="coloption">
+        <button class="uldoption">列表示選択</button>
+        <ul class="uldoption">
+          <li><label><input type="checkbox" checked > : No</label>
+          <li><label><input type="checkbox" checked > : 組</label>
+          <li><label><input type="checkbox" checked > : grp</label>
+          <li><label><input type="checkbox"> : ﾚｱ</label>
+          <li><label><input type="checkbox" checked > : 名前</label>
+          <li><label><input type="checkbox" checked > : ｺｽﾄ</label>
+          <li><label><input type="checkbox" checked > : ★</label>
+          <li><label><input type="checkbox" checked > : Lv</label>
+          <li><label><input type="checkbox" checked > : HP</label>
+          <li><label><input type="checkbox" checked > : 討伐</label>
+        </ul>
+        <ul class="uldoption">
+          <li><label><input type="checkbox" checked > : 指揮力</label>
+          <li><label><input type="checkbox" checked > : 兵数</label>
+          <li><label><input type="checkbox" checked > : 兵種</label>
+          <li><label><input type="checkbox" checked > : 攻撃</label>
+          <li><label><input type="checkbox" checked > : 防御</label>
+          <li><label><input type="checkbox" checked > : 兵法</label>
+          <li><label><input type="checkbox" checked > : 技1</label>
+          <li><label><input type="checkbox" checked > : 技2</label>
+          <li><label><input type="checkbox" checked > : 技3</label>
+        </ul>
+        <ul class="uldoption">
+          <li><label><input type="checkbox"> : 実指揮</label>
+          <li><label><input type="checkbox"> : ｺｽﾄ比</label>
+          <li><label><input type="checkbox" checked > : 槍</label>
+          <li><label><input type="checkbox" checked > : 馬</label>
+          <li><label><input type="checkbox" checked > : 弓</label>
+          <li><label><input type="checkbox" checked > : 器</label>
+          <li><label><input type="checkbox"> : 槍馬</label>
+          <li><label><input type="checkbox"> : 槍弓</label>
+          <li><label><input type="checkbox"> : 弓馬</label>
+          <li><label><input type="checkbox"> : 槍器</label>
+          <li><label><input type="checkbox"> : 馬器</label>
+          <li><label><input type="checkbox"> : 弓器</label>
+        </ul>
+      </div>
+      <div id="onTable">
+        <div class="pager">
+          <img src="../../plugin/images/first.gif" class="first">
+          <img src="../../plugin/images/prev.gif" class="prev">
+          <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+          <img src="../../plugin/images/next.gif" class="next">
+          <img src="../../plugin/images/last.gif" class="last">
+          <select class="pagesize">
+            <option value="12">12
+            <option value="16" selected="selected">16
+            <option value="20">20
+            <option value="50">50
+            <option value="100">100
+            <option value="200">200
+          </select>
+        </div>
+        <span>(Shift+Clickで複数行選択)</span>
+        <span>チェック：</span>
+        <button id="checkAll">全て</button>
+        <button id="checkDeck">部隊</button>
+        <button id="checkToggle">トグル</button>
+        <button id="checkPage">ページ</button>
+        <span>お気に入り：</span>
+        <button id="favoriteWrite">登録</button>
+        <select></select><button id="favoriteDelete">削除</button>
+      </div>
+      <table id="tb_unit" class="tablesorter">
+        <thead><tr>
+          <th class="選択">選択
+          <th class="No">No
+          <th class="組">組
+          <th class="grp">grp
+          <th class="ﾚｱ">ﾚｱ
+          <th class="名前">名前
+          <th class="ｺｽﾄ">ｺｽﾄ
+          <th class="★">★
+          <th class="Lv">Lv
+          <th class="HP">HP
+          <th class="討伐">討伐
+          <th class="指揮力">指揮力
+          <th class="兵数">兵数
+          <th class="兵種">兵種
+          <th class="攻撃">攻撃
+          <th class="防御">防御
+          <th class="兵法">兵法
+          <th class="槍">槍
+          <th class="槍 実指揮">実指揮
+          <th class="槍 ｺｽﾄ比">ｺｽﾄ比
+          <th class="馬">馬
+          <th class="馬 実指揮">実指揮
+          <th class="馬 ｺｽﾄ比">ｺｽﾄ比
+          <th class="弓">弓
+          <th class="弓 実指揮">実指揮
+          <th class="弓 ｺｽﾄ比">ｺｽﾄ比
+          <th class="器">器
+          <th class="器 実指揮">実指揮
+          <th class="器 ｺｽﾄ比">ｺｽﾄ比
+          <th class="技1">技1
+          <th class="技2">技2
+          <th class="技3">技3
+          <th class="槍馬">槍馬
+          <th class="槍馬 実指揮">実指揮
+          <th class="槍馬 ｺｽﾄ比">ｺｽﾄ比
+          <th class="槍弓">槍弓
+          <th class="槍弓 実指揮">実指揮
+          <th class="槍弓 ｺｽﾄ比">ｺｽﾄ比
+          <th class="弓馬">弓馬
+          <th class="弓馬 実指揮">実指揮
+          <th class="弓馬 ｺｽﾄ比">ｺｽﾄ比
+          <th class="槍器">槍器
+          <th class="槍器 実指揮">実指揮
+          <th class="槍器 ｺｽﾄ比">ｺｽﾄ比
+          <th class="馬器">馬器
+          <th class="馬器 実指揮">実指揮
+          <th class="馬器 ｺｽﾄ比">ｺｽﾄ比
+          <th class="弓器">弓器
+          <th class="弓器 実指揮">実指揮
+          <th class="弓器 ｺｽﾄ比">ｺｽﾄ比
+        <tbody id="tb_unitlist">
+      </table>
+    </div>
+  </div>
+</div>

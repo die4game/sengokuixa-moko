@@ -1,5 +1,5 @@
 $( function () {
-  var world, //options = {}, groups, group_setting, groups_img,
+  var world,
     column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
     villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {},
     favorite = [],
@@ -18,19 +18,7 @@ $( function () {
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
     world = tab.url.split( '?')[1];
-//    console.log( world, tab);
-
-    // options、set_card_id、グループ設定の取得
-//    chrome.storage.local.get( world, function ( store) {
-//      var storeWorld = JSON.parse( store[world]);
-      //console.log( storeWorld);
-//      options = storeWorld.crx_ixa_moko_options;
-//      group_setting = storeWorld.crx_ixamoko_group_set;
-//      groups = storeWorld.crx_ixamoko_init_groups;
-//      groups_img = storeWorld.crx_ixamoko_init_groups_img;
-      $(cardList);
-//      console.log('start cardList');
-//    });
+    $(cardList);
     chrome.storage.local.get( world, function ( store) {
       if ( !store[ world])
         store[ world] = {};
@@ -46,12 +34,9 @@ $( function () {
           $( '#checkPage').after( '<button class="favo" value=' + no + '>favo' + no + '</button>');
           $( '#favoriteDelete').prev().prepend( '<option value=' + no + '>favo' + no + '</option>');
         }
-        //$( '#favoriteWrite').after( '<select></select><button id="favoriteDelete">削除</button>')
       });
     });
   });
-//  tableSorter_($);
-//  tablesorter_pager_plugin($);
 
 
   //////////////////
@@ -60,16 +45,6 @@ $( function () {
 
   // 初期設定、イベント設定
   function cardList () {
-
-    // imgのロード
-//    $( '#mokotool>div.Loading').append( '<img src="' + IMAGES.cardList.Loading + '">');
-//    $( '#cardList>div.pager>select').before(
-//        '<img src="' + IMAGES.cardList.first + '" class="first"/>' +
-//        '<img src="' + IMAGES.cardList.prev + '" class="prev"/>' +
-//        '<span class="pagedisplay"></span> <!-- this can be any element, including an input -->' +
-//        '<img src="' + IMAGES.cardList.next + '" class="next"/>' +
-//        '<img src="' + IMAGES.cardList.last + '" class="last"/>'
-//    );
 
     // 表示列チェックボックスのtoggle
     $('button.uldoption').click(function() {
@@ -206,12 +181,11 @@ $( function () {
             if ( tag === '解散')
               location.reload();
             else {
-              var busho = $( '#tb_unitlist>tr>td.選択>input.unset_unit_squad_id[value="' + btn.val() + '"]').parent();
-              busho.toggleClass( '隊').find( 'input.unset_unit_squad_id').removeClass().addClass( 'set_squad_id');
+              var busho = $( '#tb_unitlist>tr>td.選択>input[value="' + btn.val() + '"]').parent();
+              busho.toggleClass( '隊');
               busho.parent().find( 'td.組').text('');
               btn.val( '').next().text( '[-----]');
-              //$( this).next();
-              //console.log( '外す', btn);
+              $( '#tb_unit').trigger( 'update');
             }
           }
         );
@@ -313,7 +287,6 @@ $( function () {
         btn_change_flg: '1',
         set_village_id: '',
         set_assign_id: '',
-        set_squad_id: '',
         deck_mode: 'nomal',
         p: p,
         myselect_2: ''
@@ -342,8 +315,7 @@ $( function () {
         //武将情報の取得
         if ( p) {
           $html.find( 'div.ig_deck_smallcardarea').each( function() {
-            var $this, cid, no, grps, rr, hi, nm, ct, lv, hp, uc, bg, hs, at,
-              df, hy, ya, um, yu, ki, $tmp, sk, id, gp_1, gp_2, set_squad_id;
+            var $this, cid, no, grps, rr, hi, nm, ct, lv, hp, uc, bg, hs, at, df, hy, ya, um, yu, ki, $tmp, sk, id, gp_1, gp_2;
 
             $this = $(this);
             cid = $this.find('div:nth-child(3) a[href^="#TB_inline"]').attr('href');
@@ -378,12 +350,7 @@ $( function () {
             sk = [$tmp.find('td:eq(0)').text(), $tmp.find('td:eq(1)').text(), $tmp.find('td:eq(2)').text()];
             gp_1 = '',
             gp_2 = '';
-            set_squad_id = $this.find('#btn_gounit_'+cid).attr('onClick');
-            set_squad_id = set_squad_id? set_squad_id.match(/'.*?'/g): false;
-            if ( set_squad_id) {
-              set_squad_id = set_squad_id[1].replace(/\'/g, '');
-            }
-            setBushoToList( cid, p, set_squad_id, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
+            setBushoToList( cid, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
           });
         }
 
@@ -429,64 +396,62 @@ $( function () {
     });
   }
 
-  function setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, butai, select_assign_no, unit_assign_id, unset_unit_squad_id) {
+  function setBushoToList( id, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, butai, select_assign_no, unit_assign_id) {
 
     $( '#tb_unitlist').find( 'td.選択>input[value="' + id + '"]').parent().parent().remove();
     var tmp = '<tr>' +
     '<td class="選択"><input type=checkbox name="id" value="' + id + '">' +
-    ( butai? ( '<input class="select_assign_no" value="' + select_assign_no + '" hidden><input class="unit_assign_id" value="' + unit_assign_id + '" hidden><input class="unset_unit_squad_id" value="' + unset_unit_squad_id + '" hidden>'):
-      ( '<input name="page" value="' + p + '"  hidden><input class="set_squad_id" value="' + ssID + '" hidden></td>')
-    ) +
-    '<td class="No">' + no + '</td>' +
-    '<td class="組">' + grps + '</td>' +
-    '<td class="grp"' + gp_1 + '>' + gp_2 + '</td>' +
-    '<td class="ﾚｱ">' + rr + '</td>' +
+      '<input class="select_assign_no" value="' + select_assign_no + '" hidden>' +
+      '<input class="unit_assign_id" value="' + unit_assign_id + '" hidden>'+
+    '<td class="No">' + no  +
+    '<td class="組">' + grps  +
+    '<td class="grp"' + gp_1 + '>' + gp_2  +
+    '<td class="ﾚｱ">' + rr  +
     '<td class="名前"><span id="kana" style="display: inline-block;text-indent: -9999px;">' + hi + '</span><span id="kanji">' + nm + '</span></td>' +
-    '<td class="ｺｽﾄ">' + ct + '</td>' +
-    '<td class="★">' + lv[0] + '</td>' +
-    '<td class="Lv">' + lv[1] + '</td>' +
-    '<td class="HP">' + hp + '</td>' +
-    '<td class="討伐">' + bg + '</td>' +
-    '<td class="指揮力">' + uc[1] + '</td>' +
-    '<td class="兵数">' + uc[0] + '</td>' +
-    '<td class="兵種">' + hs + '</td>' +
-    '<td class="攻撃">' + at + '</td>' +
-    '<td class="防御">' + df + '</td>' +
-    '<td class="兵法">' + hy + '</td>' +
-    '<td class="槍">' + ya + '</td>' +
-    '<td class="槍 実指揮">' + Math.round(uc[1] * rank[ya] / 100) + '</td>' +
-    '<td class="槍 ｺｽﾄ比">' + Math.round(uc[1] * rank[ya] / ct / 100) + '</td>' +
-    '<td class="馬">' + um + '</td>' +
-    '<td class="馬 実指揮">' + Math.round(uc[1] * rank[um] / 100) + '</td>' +
-    '<td class="馬 ｺｽﾄ比">' + Math.round(uc[1] * rank[um] / ct / 100) + '</td>' +
-    '<td class="弓">' + yu + '</td>' +
-    '<td class="弓 実指揮">' + Math.round(uc[1] * rank[yu] / 100) + '</td>' +
-    '<td class="弓 ｺｽﾄ比">' + Math.round(uc[1] * rank[yu] / ct / 100) + '</td>' +
-    '<td class="器">' + ki + '</td>' +
-    '<td class="器 実指揮">' + Math.round(uc[1] * rank[ki] / 100) + '</td>' +
-    '<td class="器 ｺｽﾄ比">' + Math.round(uc[1] * rank[ki] / ct / 100) + '</td>' +
-    '<td class="技1">' + sk[0] + '</td>' +
-    '<td class="技2">' + sk[1] + '</td>' +
-    '<td class="技3">' + sk[2] + '</td>' +
-    '<td class="槍馬">' + drank[rank[ya] + rank[um]] + '</td>' +
-    '<td class="槍馬 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / 100) + '</td>' +
-    '<td class="槍馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / ct / 100) + '</td>' +
-    '<td class="槍弓">' + drank[rank[ya] + rank[yu]] + '</td>' +
-    '<td class="槍弓 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / 100) + '</td>' +
-    '<td class="槍弓 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / ct / 100) + '</td>' +
-    '<td class="弓馬">' + drank[rank[yu] + rank[um]] + '</td>' +
-    '<td class="弓馬 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / 100) + '</td>' +
-    '<td class="弓馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / ct / 100) + '</td>' +
-    '<td class="槍器">' + drank[rank[ya] + rank[ki]] + '</td>' +
-    '<td class="槍器 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / 100) + '</td>' +
-    '<td class="槍器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / ct / 100) + '</td>' +
-    '<td class="馬器">' + drank[rank[um] + rank[ki]] + '</td>' +
-    '<td class="馬器 実指揮">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / 100) + '</td>' +
-    '<td class="馬器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / ct / 100) + '</td>' +
-    '<td class="弓器">' + drank[rank[yu] + rank[ki]] + '</td>' +
-    '<td class="弓器 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / 100) + '</td>' +
-    '<td class="弓器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / ct / 100) + '</td>' +
-    '</tr>';
+    '<td class="ｺｽﾄ">' + ct  +
+    '<td class="★">' + lv[0]  +
+    '<td class="Lv">' + lv[1]  +
+    '<td class="HP">' + hp  +
+    '<td class="討伐">' + bg  +
+    '<td class="指揮力">' + uc[1]  +
+    '<td class="兵数">' + uc[0]  +
+    '<td class="兵種">' + hs  +
+    '<td class="攻撃">' + at  +
+    '<td class="防御">' + df  +
+    '<td class="兵法">' + hy  +
+    '<td class="槍">' + ya  +
+    '<td class="槍 実指揮">' + Math.round(uc[1] * rank[ya] / 100)  +
+    '<td class="槍 ｺｽﾄ比">' + Math.round(uc[1] * rank[ya] / ct / 100)  +
+    '<td class="馬">' + um  +
+    '<td class="馬 実指揮">' + Math.round(uc[1] * rank[um] / 100)  +
+    '<td class="馬 ｺｽﾄ比">' + Math.round(uc[1] * rank[um] / ct / 100)  +
+    '<td class="弓">' + yu  +
+    '<td class="弓 実指揮">' + Math.round(uc[1] * rank[yu] / 100)  +
+    '<td class="弓 ｺｽﾄ比">' + Math.round(uc[1] * rank[yu] / ct / 100)  +
+    '<td class="器">' + ki  +
+    '<td class="器 実指揮">' + Math.round(uc[1] * rank[ki] / 100)  +
+    '<td class="器 ｺｽﾄ比">' + Math.round(uc[1] * rank[ki] / ct / 100)  +
+    '<td class="技1">' + sk[0]  +
+    '<td class="技2">' + sk[1]  +
+    '<td class="技3">' + sk[2]  +
+    '<td class="槍馬">' + drank[rank[ya] + rank[um]]  +
+    '<td class="槍馬 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / 100)  +
+    '<td class="槍馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / ct / 100)  +
+    '<td class="槍弓">' + drank[rank[ya] + rank[yu]]  +
+    '<td class="槍弓 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / 100)  +
+    '<td class="槍弓 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / ct / 100)  +
+    '<td class="弓馬">' + drank[rank[yu] + rank[um]]  +
+    '<td class="弓馬 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / 100)  +
+    '<td class="弓馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / ct / 100)  +
+    '<td class="槍器">' + drank[rank[ya] + rank[ki]]  +
+    '<td class="槍器 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / 100)  +
+    '<td class="槍器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / ct / 100)  +
+    '<td class="馬器">' + drank[rank[um] + rank[ki]]  +
+    '<td class="馬器 実指揮">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / 100)  +
+    '<td class="馬器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / ct / 100)  +
+    '<td class="弓器">' + drank[rank[yu] + rank[ki]]  +
+    '<td class="弓器 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / 100)  +
+    '<td class="弓器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / ct / 100);
     var $tmp = $( tmp);
     if ( butai) $tmp.find( 'td.選択').toggleClass( '隊');
     $('ul.uldoption').find('input').each(function() {
@@ -593,7 +558,6 @@ $( function () {
     var select_assign_no = $this.children().eq(1).attr( 'value'),
       set_village_id = $this.find('#select_village').find('option:selected').val(),
       set_assign_id = $this.find('button.set_unitlist').val(),
-      set_squad_id = [],
       set_card_id = [],
       busho_list = [];
 
@@ -608,7 +572,6 @@ $( function () {
     if (set_card_id.length == 0) {
       alert('セット可能な武将がいません。');
       return;
-      //getButai( $html, select_assign_no);
     } else if ( !set_village_id && !set_assign_id) {
       alert('拠点が選択されていません。');
       return;
@@ -634,7 +597,6 @@ $( function () {
         btn_change_flg: '',
         set_village_id: set_village_id,
         set_assign_id: set_assign_id,
-        set_squad_id: '',
         set_card_id: set_card_id[i],
         deck_mode: 'nomal',
         p: '1',
@@ -656,7 +618,6 @@ $( function () {
             $('#cardList').css({'opacity': '1.0'});
             $('div.Loading').hide();
           } else {
-            //busho_list[i].find('td.選択').toggleClass( '隊').find( ':checked').prop( 'checked', false);
             $('#v_head > span.deckcost').text($html.find('#ig_deckcost > span.ig_deckcostdata').text());
             if (i < set_card_id.length - 1) {
               if ( (!set_assign_id && $html.find('#ig_unitchoice > li.now').text().match(regexpname)) || (set_assign_id && !$html.find('#ig_unitchoice > li.now').text().match(regexpname)) ) {
@@ -674,7 +635,6 @@ $( function () {
                 $('div.Loading').hide();
               }
             } else {
-//              alert('完了');
               getButai( $html, select_assign_no);
               $( '#tb_unit').trigger( 'update');
               $('#cardList').css({'opacity': '1.0'});
@@ -696,10 +656,6 @@ $( function () {
 
     var rank = {'SSS': 120,'SS': 115,'S': 110,'A': 105,'B': 100,'C': 95,'D': 90,'E': 85,'F': 80},
       drank = {240: 'SSS',235: 'SS+',230: 'SS',225: 'S+',220: 'S',215: 'A+',210: 'A',205: 'B+',200: 'B',195: 'C+',190: 'C',185: 'D+',180: 'D',175: 'E+',170: 'E',165: 'F+',160: 'F'};
-
-//    //コストを取得
-//    $('#v_head span.deckcost').empty()
-//      .append( $html.find( '#ig_deckcost > span.ig_deckcostdata').text()).css( { 'margin-right': '1em'});
 
     //部隊を取得
     var unitLeader = '<button>解散</button><span value="' + ano + '" class="ano' + ano + '">' +
@@ -744,10 +700,7 @@ $( function () {
           if ( !elm) return false;
           var card = $html.find( '#id_deck_card' + (idx + 1));
           //console.log( card);
-          //console.log( unset_unit_squad_id);
           var id = card.find( 'span[id^="card_commandsol_"]').prop( 'id').match( /\d+/)[0],
-            p = '{ select_assign_no:' + ano + ', set_assign_id:' + set_assign_id + '}',
-            ssID,
             no = card.find( 'span.ig_card_cardno').text(),
             grps = tai[ano],
             gp_1 = '',
@@ -772,14 +725,7 @@ $( function () {
             select_assign_no = ano,
             unit_assign_id = set_assign_id,
             unset_unit_squad_id = elm.match( /\d+/g)[1];
-//          if (options.unit_list_group && group_setting[id]) {
-//            gp_1 = 'style="background-color:' + groups[group_setting[id]] + '"';
-//            gp_2 = ( options.unit_list_group? '<img src="' + groups_img[group_setting[id]] +
-//              '" style="height:24px; width:24px;">': group_setting[id]) + '<input name="grp" value="' +
-//              group_setting[id] + '" hidden>';
-//          }
-          //console.log( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk);
-          setBushoToList( id, p, ssID, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id, unset_unit_squad_id);
+          setBushoToList( id, no, grps, gp_1, gp_2, rr, hi, nm, ct, lv, hp, bg, uc, hs, at, df, hy, ya, um, yu, ki, rank, drank, sk, true, select_assign_no, unit_assign_id);
           $v_head_div_ano.find( 'button:eq(' + idx + ')').val( unset_unit_squad_id);
         });
       });
@@ -826,15 +772,15 @@ $( function () {
       },
       rank = {SSS: 1.20,SS: 1.15,S: 1.10,A: 1.05,B: 1,C: 0.95,D: 0.9,E: 0.85,F: 0.80}, check_list = [], tmp;
     $('input[name^="id"]:checked').each(function() {
-      var $tr = $(this).parent().parent();
-      var num = $tr.find('td.兵数').text();
-      var unit = $tr.find('td.兵種').text();
-      var off = $tr.find('td.攻撃').text();
-      var def = $tr.find('td.防御').text();
-      var t1 = $tr.find('td.槍:eq(0)').text();
-      var t2 = $tr.find('td.馬:eq(0)').text();
-      var t3 = $tr.find('td.弓:eq(0)').text();
-      var t4 = $tr.find('td.器:eq(0)').text();
+      var $tr = $(this).parent().parent(),
+        num = $tr.find('td.兵数').text(),
+        unit = $tr.find('td.兵種').text(),
+        off = $tr.find('td.攻撃').text(),
+        def = $tr.find('td.防御').text(),
+        t1 = $tr.find('td.槍:eq(0)').text(),
+        t2 = $tr.find('td.馬:eq(0)').text(),
+        t3 = $tr.find('td.弓:eq(0)').text(),
+        t4 = $tr.find('td.器:eq(0)').text();
       //t1:槍,t2:馬,t3:弓,t4:器
       check_list.push({unit: unit,off: off,def: def,num: num,t1: t1,t2: t2,t3: t3,t4: t4});
     });

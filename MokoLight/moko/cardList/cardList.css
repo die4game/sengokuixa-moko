@@ -113,10 +113,11 @@ table#tb_unit th {
   display: none;
 }
 
-#coloption>ul>label>li {
+#coloption>ul>li {
   float: left;
   width: 5.5em;
   margin-bottom: 4px;
+  list-style: none;
 }
 
 #mokotool>div.Loading {
