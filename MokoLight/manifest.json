@@ -101,14 +101,6 @@
     },
     {
       "matches":[
-        "http://*.sengokuixa.jp/facility/dungeon.php*" //秘境
-      ],
-      "js": [
-        "contentScripts/facility/dungeon.js"
-      ]
-    },
-    {
-      "matches":[
         "http://*.sengokuixa.jp/senkuji/senkuji.php*" //くじ
       ],
       "js": [
