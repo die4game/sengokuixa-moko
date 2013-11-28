@@ -19,6 +19,10 @@
   ],
   "options_page": "/moko/option/option.html",
 
+  "background": {
+    "scripts": ["/moko/background/background.js"],
+    "persistent": false
+  },
   "content_scripts": [
     {
       "matches": [

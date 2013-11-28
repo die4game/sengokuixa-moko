@@ -1,33 +1,23 @@
 $( function () {
   var fname = $('DIV.ig_tilesection_detailarea > H3:eq(0) > A').text(),
-    wood, stone, iron, rice, rate, key, soldiertype = {};
-  soldiertype['足軽'] = [9, 14, 5, 5];
-  soldiertype['長槍足軽'] = [14, 20, 7, 8];
-  soldiertype['武士'] = [18, 27, 9, 11];
-  soldiertype['弓足軽'] = [14, 9, 5, 5];
-  soldiertype['長弓兵'] = [20, 14, 8, 7];
-  soldiertype['弓騎馬'] = [27, 18, 11, 9];
-  soldiertype['騎馬兵'] = [5, 5, 9, 14];
-  soldiertype['精鋭騎馬'] = [7, 8, 14, 20];
-  soldiertype['赤備え'] = [9, 11, 18, 27];
-  soldiertype['鉄砲足軽'] = [72, 67, 90, 75];
-  soldiertype['騎馬鉄砲'] = [67, 90, 72, 75];
-  soldiertype['焙烙火矢'] = [90, 72, 67, 75];
-  soldiertype['破城鎚'] = [14, 7, 11, 9];
-  soldiertype['攻城櫓'] = [22, 16, 11, 14];
-  soldiertype['大筒兵'] = [69, 81, 108, 45];
-
-  if ( fname == '市') {
-    $( function () {
-      var top = $('div.ig_decksection_top'),
-          mid = $('div.ig_tilesection_mid:eq(0)'),
-          bottom = $('div.ig_tilesection_bottom:eq(0)'),
-          newtop = $('div.ig_tilesection_bottom:eq(1)');
-      newtop.after(top);
-      top.after(mid);
-      mid.after(bottom);
-    });
-  }
+    wood, stone, iron, rice, rate, key,
+    soldiertype = {
+        足軽: [9, 14, 5, 5],
+        長槍足軽: [14, 20, 7, 8],
+        武士: [18, 27, 9, 11],
+        弓足軽: [14, 9, 5, 5],
+        長弓兵: [20, 14, 8, 7],
+        弓騎馬: [27, 18, 11, 9],
+        騎馬兵: [5, 5, 9, 14],
+        精鋭騎馬: [7, 8, 14, 20],
+        赤備え: [9, 11, 18, 27],
+        鉄砲足軽: [72, 67, 90, 75],
+        騎馬鉄砲: [67, 90, 72, 75],
+        焙烙火矢: [90, 72, 67, 75],
+        破城鎚: [14, 7, 11, 9],
+        攻城櫓: [22, 16, 11, 14],
+        大筒兵: [69, 81, 108, 45]
+      };
 
   if ( fname == '厩舎' || fname == '足軽兵舎' || fname == '弓兵舎' || fname == '兵器鍛冶') {
     wood = parseInt( $( '#wood').text(), 10);
@@ -117,6 +107,15 @@ $( function () {
     });
   //取引後最大作成兵数表示
   } else if ( fname == '市') {
+    $( function () {
+      var top = $('div.ig_decksection_top'),
+          mid = $('div.ig_tilesection_mid:eq(0)'),
+          bottom = $('div.ig_tilesection_bottom:eq(0)'),
+          newtop = $('div.ig_tilesection_bottom:eq(1)');
+      newtop.after(top);
+      top.after(mid);
+      mid.after(bottom);
+    });
     $( function () {
       wood = parseInt( $( '#wood').text(), 10);
       stone = parseInt( $( '#stone').text(), 10);
@@ -352,5 +351,9 @@ $( function () {
       shortt: tmp1t
     };
     return moko;
+  }
+
+  function flat() {
+    
   }
 });

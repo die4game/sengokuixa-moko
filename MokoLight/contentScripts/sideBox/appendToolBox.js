@@ -13,10 +13,12 @@ chrome.storage.local.get( 'world', function ( item) {
 
   ul.append(
     '<li>' +
-      '<a href="' + chrome.extension.getURL( 'moko/cardList/cardList.html') + '?' +
-      location.host.match(/^\w+/)[0] + '" target="_new">武将リスト</a>' +
+      '<a href="javascript:void(0)">武将リスト</a>' +
     '</li>'
-  );
+  ).on( 'click', function ( e) {
+    chrome.runtime.sendMessage( chrome.extension.getURL( 'moko/cardList/cardList.html') + '?' +
+      location.host.match(/^\w+/)[0]);
+  });
 
   ul.append(
     $(
