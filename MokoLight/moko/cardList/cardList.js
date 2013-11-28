@@ -690,7 +690,7 @@ $( function () {
       $( function () {
         var unset_unit_squad_id = [],
           sols = { commandsol_yari1: '足軽', commandsol_yari2: '長槍足軽', commandsol_yari3: '武士', commandsol_yari4: '国人衆', commandsol_yumi1: '弓足軽', commandsol_yumi2: '長弓兵', commandsol_yumi3: '弓騎馬', commandsol_yumi4: '海賊衆', commandsol_kiba1: '騎馬兵', commandsol_kiba2: '精鋭騎馬', commandsol_kiba3: '赤備え', commandsol_kiba4: '母衣衆', commandsol_heiki1: '破城鎚', commandsol_heiki2: '攻城櫓', commandsol_heiki3: '大筒兵', commandsol_heiki4: '鉄砲足軽', commandsol_heiki5: '騎馬鉄砲', commandsol_heiki6: '雑賀衆', commandsol_heiki7: '焙烙火矢'},
-          rarerity = [ 0, '序', '上', '極', '天'],
+          rarerity = [ 0, '序', '上', '特', '極', '天'],
           tai = [ '一番隊', '二番隊', '三番隊', '四番隊', '五番隊'];
         unset_unit_squad_id.push( $html.find( '#ig_deckunitdetail div.deck_navi a:eq(0)').attr( 'onclick'));
         unset_unit_squad_id.push( $html.find( '#id_deck_card2 div.ig_cardarea_btn a:eq(0)').attr( 'onclick'));
