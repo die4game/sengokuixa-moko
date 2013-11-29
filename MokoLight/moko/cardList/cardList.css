@@ -152,6 +152,10 @@ table#tb_unit th {
   width: 4em;
 }
 
+#attack input{
+  width: 2em;
+}
+
 #v_head div.ano {
   float: left;
   margin: 1ex;

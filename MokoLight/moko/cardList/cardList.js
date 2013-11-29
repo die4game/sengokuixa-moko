@@ -28,12 +28,18 @@ $( function () {
         store[ world].cardList.favorite = [];
       else
         favorite = store[ world].cardList.favorite;
+      if ( !store[ world].xyc)
+        store[ world].xyc = [ '', '', ''];
       chrome.storage.local.set( store, function () {
-        var no = favorite.length;
+        var no = favorite.length,
+            xyc = store[ world].xyc;
         for ( no; no > 0; no--) {
           $( '#checkPage').after( '<button class="favo" value=' + no + '>favo' + no + '</button>');
           $( '#favoriteDelete').prev().prepend( '<option value=' + no + '>favo' + no + '</option>');
         }
+        $( '#attack input').each( function ( idx, obj) {
+          obj.value = xyc[idx];
+        });
       });
     });
   });
@@ -101,6 +107,78 @@ $( function () {
       $('#cardList').css({'opacity': '0.3'});
       $('div.Loading').show();
       unitListLoad(1, 0);
+    });
+
+    // 出陣
+    $( '#attack').on( 'click', 'button', function ( e) {
+      var $attack = $( '#attack'),
+        x = $attack.find( 'input[name="village_x_value"]').val(),
+        y = $attack.find( 'input[name="village_y_value"]').val(),
+        c = $attack.find( 'input[name="country_id"]').val(),
+        url = 'http://'+world+'.sengokuixa.jp/facility/send_troop.php?x='+x+'&y='+y+'&c='+c,
+        unit_select = [],
+        data = {
+          village_name: '',
+          village_x_value: x,
+          village_y_value: y,
+          country_id: c,
+          unit_assign_card_id: '',
+          radio_move_type: 302,
+          show_beat_bandit_flg: '',
+          unit_select: '',
+          x: '',
+          y: '',
+          card_id: 204,
+          btn_send: true
+        },
+        village = {},
+        key;
+      $('#cardList').css({'opacity': '0.3'});
+      $('div.Loading').show();
+      if ( confirm( '全部隊を( '+x+', '+y+', '+c+')へ出陣')) {
+        $( '#v_head button.set_unitlist').each( function ( i, el) {
+          var base = $( el).parent().prev( 'span.base').text().match(/\S+/g),
+              val = $( el).val();
+          if ( base[1] === '未設定') {
+            return false;
+          } else if ( $( el).parent().prevAll( 'span.condition').text() === '(待機)') {
+            if ( !villageIds[ base[ 1]]) get_villageId();
+            village[ val] = 'http://' + world + '.sengokuixa.jp/village_change.php?village_id=' + villageIds[ base[ 1]];
+            unit_select.push( val);
+          }
+        });
+        unit_select.map( function ( elm) {
+          data.unit_select = elm;
+          $.ajax({
+            url: village[ elm],
+            async: false,
+            success: function ( html, textStatus, jqXHR) {
+              $.ajax({
+                url: url,
+                async: false,
+                type: 'POST',
+                data: data,
+                success: function ( html, textStatus, jqXHR) {
+                  //console.log(html);
+                  $( 'div.ano[unit_assign_id='+elm+'] span.condition').text( '(攻撃)');
+                }
+              });
+            }
+          });
+        });
+      }
+      $('#cardList').css({'opacity': '1.0'});
+      $('div.Loading').hide();
+    }).on( 'change', 'input', function ( e) {
+      var xyc = [];
+      console.log(e);
+      $( '#attack input').each( function ( idx, elm) {
+        xyc.push( elm.value);
+      });
+      chrome.storage.local.get( world, function ( store) {
+        store[ world].xyc = xyc;
+        chrome.storage.local.set( store);
+      })
     });
 
     // 秘境
