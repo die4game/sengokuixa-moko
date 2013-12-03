@@ -196,4 +196,56 @@ chrome.storage.local.get( 'world', function ( item) {
         span.text( ' 拠点未設定');
     })
   );
+
+  //資源平滑化
+  ul.append(
+    $(
+      '<li>' +
+        '<a href="javascript:void(0);" id="source_flat">資源平滑化</a>' +
+      '</li>'
+    ).on( 'click', function ( e) {
+      var quantity = [], item = [ '101', '102', '103', '104'], reverce = {}, m, t, trade = [],
+          world = w, shoryo = $( 'input[name="village_id"]').val(), x = $( 'input[name="x"]').val(), y = $( 'input[name="y"]').val(),
+          r = parseFloat( $( 'tr:has(img[alt="取引相場"])>td:eq(0)>span').text())/100;
+      $( 'span.normal').each( function ( idx, elm) {
+        var num = parseInt( elm.innerText, 10);
+        quantity.push( num);
+        reverce[ num] = item[ idx];
+      });
+      quantity.sort( function ( a, b) { return b - a;});
+      m = ( r*quantity[ 0] + quantity[ 1] + quantity[ 2] + quantity[ 3])/( r + 3);
+      t = [ quantity[ 0]-m, quantity[ 1]-m, quantity[ 2]-m, quantity[ 3]-m];
+      if ( t[ 1] > 0) {
+        m = ( r*( quantity[ 0] + quantity[ 1]) + quantity[ 2] + quantity[ 3])/( 2*r + 2);
+        t = [ quantity[ 0]-m, quantity[ 1]-m, quantity[ 2]-m, quantity[ 3]-m];
+        if ( t[ 2] > 0) {
+          m = ( r*( quantity[ 0] + quantity[ 1] + quantity[ 2]) + quantity[ 3])/( 3*r + 1);
+          t = [ quantity[ 0]-m, quantity[ 1]-m, quantity[ 2]-m, quantity[ 3]-m];
+        }
+      }
+      if ( t[ 1] < 0) {
+        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 1]], Math.floor( -t[ 1]/r/100)*100]);
+        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 2]], Math.floor( -t[ 2]/r/100)*100]);
+        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 3]], Math.floor( -t[ 3]/r/100)*100]);
+      } else if ( t[ 2] < 0) {
+        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 2]], Math.floor( -t[ 2]/r/100)*100]);
+        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 3]], Math.floor( ( t[ 0]+t[ 2]/r)/100)*100]);
+        trade.push( [ reverce[ quantity[ 1]], reverce[ quantity[ 3]], Math.floor( t[ 1]/100)*100]);
+      } else if ( t[ 3] < 0) {
+        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 3]], Math.floor( t[ 0]/100)*100]);
+        trade.push( [ reverce[ quantity[ 1]], reverce[ quantity[ 3]], Math.floor( t[ 1]/100)*100]);
+        trade.push( [ reverce[ quantity[ 2]], reverce[ quantity[ 3]], Math.floor( t[ 2]/100)*100]);
+      }
+      //console.log( trade);
+      if ( confirm( '資源量を'+Math.floor(m/100)*100+'に揃えます。よろしいですか？')) {
+        for( i=0; i<3; i++) {
+          if ( trade[i][2] === 0)
+            continue;
+          $.post( 'http://'+world+'.sengokuixa.jp/facility/facility.php',
+            { x: x, y: y, village_id: shoryo, tf_id: trade[i][0], tt_id: trade[i][1], tc: trade[i][2], change_btn: true}
+          );
+        }
+      }
+    })
+  );
 });

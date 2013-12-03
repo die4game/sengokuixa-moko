@@ -55,20 +55,14 @@ $( function () {
           $('<select class="set_num" style="margin-right: 5px;">' +
             '<option value="" selected>兵数選択</option>' +
             '<option value="100">100</option>' +
-            '<option value="200">200</option>' +
             '<option value="300">300</option>' +
-            '<option value="400">400</option>' +
             '<option value="500">500</option>' +
-            '<option value="600">600</option>' +
-            '<option value="700">700</option>' +
-            '<option value="800">800</option>' +
-            '<option value="900">900</option>' +
             '<option value="1000">1000</option>' +
-            '<option value="1200">1200</option>' +
-            '<option value="1500">1500</option>' +
             '<option value="2000">2000</option>' +
-            '<option value="2500">2500</option>' +
             '<option value="3000">3000</option>' +
+            '<option value="4000">4000</option>' +
+            '<option value="5000">5000</option>' +
+            '<option value="6000">6000</option>' +
           '</select>'
         ).insertBefore( $(this).closest('span').find('input[name="send"]') );
         $('select.set_num').change(function() {
@@ -351,9 +345,5 @@ $( function () {
       shortt: tmp1t
     };
     return moko;
-  }
-
-  function flat() {
-    
   }
 });
