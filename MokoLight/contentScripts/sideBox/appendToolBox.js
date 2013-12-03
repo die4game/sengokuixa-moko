@@ -170,10 +170,12 @@ chrome.storage.local.get( 'world', function ( item) {
                     p = $(html).find( 'p.red');
                 if ( p.length) {
                   span.text( p.text());
-                } else {
+                } else if ( cnt < 19 ) {
                   cnt++;
                   ano = Math.floor( cnt/4);
                   deckset();
+                } else {
+                  dfd.resolve();
                 }
               });
             } else {
