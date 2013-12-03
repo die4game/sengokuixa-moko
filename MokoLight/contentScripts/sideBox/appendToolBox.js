@@ -204,8 +204,9 @@ chrome.storage.local.get( 'world', function ( item) {
         '<a href="javascript:void(0);" id="source_flat">資源平滑化</a>' +
       '</li>'
     ).on( 'click', function ( e) {
-      var quantity = [], item = [ '101', '102', '103', '104'], reverce = {}, m, t, trade = [],
-          world = w, shoryo = $( 'input[name="village_id"]').val(), x = $( 'input[name="x"]').val(), y = $( 'input[name="y"]').val(),
+      var quantity = [], item = [ '101', '102', '103', '104'], item_name = { 101: '木', 102: '綿', 103: '鉄', 104: '米'},
+          reverce = {}, m, t, trade = [], world = w,
+          shoryo = $( 'input[name="village_id"]').val(), x = $( 'input[name="x"]').val(), y = $( 'input[name="y"]').val(),
           r = parseFloat( $( 'tr:has(img[alt="取引相場"])>td:eq(0)>span').text())/100;
       $( 'span.normal').each( function ( idx, elm) {
         var num = parseInt( elm.innerText, 10);
@@ -237,7 +238,11 @@ chrome.storage.local.get( 'world', function ( item) {
         trade.push( [ reverce[ quantity[ 2]], reverce[ quantity[ 3]], Math.floor( t[ 2]/100)*100]);
       }
       //console.log( trade);
-      if ( confirm( '資源量を'+Math.floor(m/100)*100+'に揃えます。よろしいですか？')) {
+      if ( confirm( '資源量を'+Math.floor(m/100)*100+'に揃えます。\n'+
+        item_name[ trade[0][0]]+'→'+item_name[ trade[0][1]]+':'+trade[0][2]+'\n'+
+        item_name[ trade[1][0]]+'→'+item_name[ trade[1][1]]+':'+trade[1][2]+'\n'+
+        item_name[ trade[2][0]]+'→'+item_name[ trade[2][1]]+':'+trade[2][2]+'\n'+
+        'よろしいですか？')) {
         for( i=0; i<3; i++) {
           if ( trade[i][2] === 0)
             continue;
