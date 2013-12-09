@@ -210,32 +210,31 @@ chrome.storage.local.get( 'world', function ( item) {
           r = parseFloat( $( 'tr:has(img[alt="取引相場"])>td:eq(0)>span').text())/100;
       $( 'span.normal').each( function ( idx, elm) {
         var num = parseInt( elm.innerText, 10);
-        quantity.push( num);
-        reverce[ num] = item[ idx];
+        quantity.push( [ num, item[ idx]]);
       });
-      quantity.sort( function ( a, b) { return b - a;});
-      m = ( r*quantity[ 0] + quantity[ 1] + quantity[ 2] + quantity[ 3])/( r + 3);
-      t = [ quantity[ 0]-m, quantity[ 1]-m, quantity[ 2]-m, quantity[ 3]-m];
+      quantity.sort( function ( a, b) { return b[0] - a[0];});
+      m = ( r*quantity[ 0][ 0] + quantity[ 1][ 0] + quantity[ 2][ 0] + quantity[ 3][ 0])/( r + 3);
+      t = [ quantity[ 0][ 0]-m, quantity[ 1][ 0]-m, quantity[ 2][ 0]-m, quantity[ 3][ 0]-m];
       if ( t[ 1] > 0) {
-        m = ( r*( quantity[ 0] + quantity[ 1]) + quantity[ 2] + quantity[ 3])/( 2*r + 2);
-        t = [ quantity[ 0]-m, quantity[ 1]-m, quantity[ 2]-m, quantity[ 3]-m];
+        m = ( r*( quantity[ 0][ 0] + quantity[ 1][ 0]) + quantity[ 2][ 0] + quantity[ 3][ 0])/( 2*r + 2);
+        t = [ quantity[ 0][ 0]-m, quantity[ 1][ 0]-m, quantity[ 2][ 0]-m, quantity[ 3][ 0]-m];
         if ( t[ 2] > 0) {
-          m = ( r*( quantity[ 0] + quantity[ 1] + quantity[ 2]) + quantity[ 3])/( 3*r + 1);
-          t = [ quantity[ 0]-m, quantity[ 1]-m, quantity[ 2]-m, quantity[ 3]-m];
+          m = ( r*( quantity[ 0][ 0] + quantity[ 1][ 0] + quantity[ 2][ 0]) + quantity[ 3][ 0])/( 3*r + 1);
+          t = [ quantity[ 0][ 0]-m, quantity[ 1][ 0]-m, quantity[ 2][ 0]-m, quantity[ 3][ 0]-m];
         }
       }
       if ( t[ 1] < 0) {
-        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 1]], Math.floor( -t[ 1]/r/100)*100]);
-        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 2]], Math.floor( -t[ 2]/r/100)*100]);
-        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 3]], Math.floor( -t[ 3]/r/100)*100]);
+        trade.push( [ quantity[ 0][ 1], quantity[ 1][ 1], Math.floor( -t[ 1]/r/100)*100]);
+        trade.push( [ quantity[ 0][ 1], quantity[ 2][ 1], Math.floor( -t[ 2]/r/100)*100]);
+        trade.push( [ quantity[ 0][ 1], quantity[ 3][ 1], Math.floor( -t[ 3]/r/100)*100]);
       } else if ( t[ 2] < 0) {
-        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 2]], Math.floor( -t[ 2]/r/100)*100]);
-        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 3]], Math.floor( ( t[ 0]+t[ 2]/r)/100)*100]);
-        trade.push( [ reverce[ quantity[ 1]], reverce[ quantity[ 3]], Math.floor( t[ 1]/100)*100]);
+        trade.push( [ quantity[ 0][ 1], quantity[ 2][ 1], Math.floor( -t[ 2]/r/100)*100]);
+        trade.push( [ quantity[ 0][ 1], quantity[ 3][ 1], Math.floor( ( t[ 0]+t[ 2]/r)/100)*100]);
+        trade.push( [ quantity[ 1][ 1], quantity[ 3][ 1], Math.floor( t[ 1]/100)*100]);
       } else if ( t[ 3] < 0) {
-        trade.push( [ reverce[ quantity[ 0]], reverce[ quantity[ 3]], Math.floor( t[ 0]/100)*100]);
-        trade.push( [ reverce[ quantity[ 1]], reverce[ quantity[ 3]], Math.floor( t[ 1]/100)*100]);
-        trade.push( [ reverce[ quantity[ 2]], reverce[ quantity[ 3]], Math.floor( t[ 2]/100)*100]);
+        trade.push( [ quantity[ 0][ 1], quantity[ 3][ 1], Math.floor( t[ 0]/100)*100]);
+        trade.push( [ quantity[ 1][ 1], quantity[ 3][ 1], Math.floor( t[ 1]/100)*100]);
+        trade.push( [ quantity[ 2][ 1], quantity[ 3][ 1], Math.floor( t[ 2]/100)*100]);
       }
       //console.log( trade);
       if ( confirm( '資源量を'+Math.floor(m/100)*100+'に揃えます。\n'+
