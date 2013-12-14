@@ -175,7 +175,8 @@ chrome.storage.local.get( 'world', function ( item) {
                   ano = Math.floor( cnt/4);
                   deckset();
                 } else {
-                  dfd.resolve();
+                  span.remove();
+                  $( e.target).after( $( '<span> 完了</span>').css( 'color', 'white'));
                 }
               });
             } else {
