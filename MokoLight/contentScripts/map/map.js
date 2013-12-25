@@ -547,16 +547,18 @@ chrome.storage.local.get( key, function ( store) {
     });
       return potential;
   },
-  POTENTIAL, season;
+  POTENTIAL, season, period;
 
-  if ( store[key].season === '5') {
+  if ( !store || !store[key]) {
+    season = 6, period = 6;
+  } else if ( store[key].season === '5') {
     season = 5;
     typesOfSoldiers['国人衆'] = [ '槍', 13];
   } else { //6,7章
     season = 6;
   }
-  //console.log( store, store[key].season, store[key].piriod);
-  POTENTIAL = setPotential( season, store[key].piriod);
+  //console.log( store, store[key].season, store[key].period);
+  POTENTIAL = setPotential( season, store[key].period);
 
   //カーソル対象の拡大表示と空地戦力表示：地図に必要攻撃力表示枠の形成
   $(function(){
@@ -618,4 +620,23 @@ chrome.storage.local.get( key, function ( store) {
     });
   }
 
+  // mini map クリックで移動
+  $( '#map_navi').click( function ( e) {
+    var $this = $( this),
+      offset = $this.offset(),
+      l = e.pageX - offset.left - 100,
+      t = e.pageY - offset.top - 60,
+      x = Math.floor( 200*( l/90 + t/30)),
+      y = Math.floor( 200*( l/90 - t/30)),
+      c = $( '#ig_map_movepanel').find( 'input[name="c"]').val();
+    if ( Math.abs(x) < 200 && Math.abs(y) < 200)
+      $.get( '/map.php?x='+x+'&y='+y+'&c='+c, function ( html) {
+        var $html = $( $.parseHTML( html)),
+          navi = [ 91+( l>75? 75: ( l<-75? -75: l)), 50+( t>25? 25: ( t<-25? -25: t))];
+        $( '#ig_mapbox_container').html( $html.find( '#ig_mapbox_container').html());
+        $( '#mnavi_box').css( { left: navi[0]+'px', top: navi[1]+'px'});
+        //$( '#map_navi').html( $( $.parseHTML( html)).find( '#map_navi').html());
+        zoomMap();
+      });
+  });
 });

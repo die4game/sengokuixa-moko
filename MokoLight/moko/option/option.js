@@ -27,8 +27,8 @@ $( function () {
           input = $( '<label><input type="radio" name="hei1setlink'+key+'" value="0">騎馬兵</label>'+
                      '<label><input type="radio" name="hei1setlink'+key+'" value="1">精鋭騎馬</label>'),
           world = key+'ワールド',
-          p2 = $( '<p><input type="text" name="season">章'+'<input type="text" name="piriod">期 (7章7期の場合「7」章「07」期)</p>'),
-          season, piriod;
+          p2 = $( '<p><input type="text" name="season">章'+'<input type="text" name="period">期 (7章7期の場合「7」章「07」期)</p>'),
+          season, period;
       input.find( ':radio').eq(store[key]).prop('checked',true);
       p.append( input).change( function (e) {
         store[key] = input.find( ':checked').val();
@@ -37,11 +37,11 @@ $( function () {
       chrome.storage.local.get( world, function ( item) {
         if ( item[world]) {
           p2.find( '[name=season]').val( item[world].season);
-          p2.find( '[name=piriod]').val( item[world].piriod);
+          p2.find( '[name=period]').val( item[world].period);
         }
       });
       p2.change( function (e) {
-        store[world] = { season: p2.find( '[name=season]').val(), piriod: p2.find( '[name=piriod]').val()};
+        store[world] = { season: p2.find( '[name=season]').val(), period: p2.find( '[name=period]').val()};
         chrome.storage.local.set( store);
       });
       btn.click( function (e) {
