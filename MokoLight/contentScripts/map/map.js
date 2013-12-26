@@ -628,14 +628,15 @@ chrome.storage.local.get( key, function ( store) {
       t = e.pageY - offset.top - 60,
       x = Math.floor( 200*( l/90 + t/30)),
       y = Math.floor( 200*( l/90 - t/30)),
-      c = $( '#ig_map_movepanel').find( 'input[name="c"]').val();
+      c = $( '#ig_map_movepanel').find( 'input[name="c"]').val(),
+      url = '/map.php?x='+x+'&y='+y+'&c='+c;
     if ( Math.abs(x) < 200 && Math.abs(y) < 200)
-      $.get( '/map.php?x='+x+'&y='+y+'&c='+c, function ( html) {
+      $.get( url, function ( html) {
         var $html = $( $.parseHTML( html)),
           navi = [ 91+( l>75? 75: ( l<-75? -75: l)), 50+( t>25? 25: ( t<-25? -25: t))];
+        history.pushState( {}, '('+x+', '+y+', '+c+')', url);
         $( '#ig_mapbox_container').html( $html.find( '#ig_mapbox_container').html());
         $( '#mnavi_box').css( { left: navi[0]+'px', top: navi[1]+'px'});
-        //$( '#map_navi').html( $( $.parseHTML( html)).find( '#map_navi').html());
         zoomMap();
       });
   });
