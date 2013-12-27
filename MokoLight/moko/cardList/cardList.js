@@ -181,63 +181,6 @@ $( function () {
       })
     });
 
-    // 秘境
-    $( '#dungeon').on( 'click', 'button', function () {
-      var url = 'http://'+world+'.sengokuixa.jp/facility/dungeon.php',
-        village = {},
-        data = {
-          dungeon_select: $( this).nextAll().find( ':checked').val(),
-          unit_select: [],
-          btn_send: true
-        }, key;
-      if ( !data.dungeon_select) return;
-      $('#cardList').css({'opacity': '0.3'});
-      $('div.Loading').show();
-      if ( confirm( '全部隊を秘境へ送ります')) {
-        $( '#v_head button.set_unitlist').each( function ( i, el) {
-          var base = $( el).parent().prev( 'span.base').text().match(/\S+/g);
-          if ( base[1] === '未設定') {
-            //console.log( base[1]);
-            return false;
-          } else {
-            if ( !villageIds[ base[ 1]]) get_villageId();
-            village[ base[ 1]] = 'http://' + world + '.sengokuixa.jp/village_change.php?village_id=' + villageIds[ base[ 1]];
-            data.unit_select.push( $( el).val());
-          }
-        });
-        var i = Object.keys( village).length;
-        for ( key in village) {
-          i--;
-          $.ajax({
-            url: village[ key],
-            async: false,
-            success: function ( html, textStatus, jqXHR) {
-              $.ajax({
-                url: url,
-                type: 'POST',
-                async: false,
-                data: data,
-                beforeSend: function () {
-                },
-                success: function ( html, textStatus, jqXHR) {
-                  var obj = $( $.parseHTML( html)).find( 'td.radio_frame');
-                  if ( obj.length && obj.has('input').length) {
-                    alert( textStatus + '\n' + '秘境へ送れませんでした。');
-                  } else if ( obj.length > 0) {
-                    alert( textStatus + '\n' + '秘境へ送りました。');
-                  } else {
-                    alert( textStatus + '\n' + '秘境のページを確認してください。');
-                  }
-                }
-              });
-            }
-          });
-        }
-      }
-      $('#cardList').css({'opacity': '1.0'});
-      $('div.Loading').hide();
-    });
-
     // 解散、外す
     $( '#v_head').on( 'click', 'div.ano>button', function () {
       //console.log( 'click', $(this).val());
