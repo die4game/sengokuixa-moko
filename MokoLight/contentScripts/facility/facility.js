@@ -219,6 +219,8 @@ chrome.storage.local.get( world, function ( store) {
         $.each( renpeiSet, function ( idx, data) {
           appendRenpeiSet( data);
         });
+
+        // 登録
         table2.find( 'button:eq(0)').on( 'click', function ( e) {
           var data = [];
           e.preventDefault();
@@ -262,8 +264,11 @@ chrome.storage.local.get( world, function ( store) {
           });
         }
 
+        // 兵退避
         table2.find( 'button:eq(1)').on( 'click', function ( e) {
+          var btn = this;
           e.preventDefault();
+          btn.disabled = true;
           $.post(
             '/facility/set_unit_list.php',
             { show_deck_card_count: '',
@@ -311,6 +316,8 @@ chrome.storage.local.get( world, function ( store) {
             //console.log( postData);
             $.each( postData, function ( idx, data) {
               $.post( '/facility/set_unit_list_if.php', data);
+              if ( postData.length === idx + 1)
+                btn.disabled = false;
             });
           });
         });
