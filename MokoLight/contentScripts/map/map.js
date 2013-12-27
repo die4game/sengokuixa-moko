@@ -549,16 +549,16 @@ chrome.storage.local.get( key, function ( store) {
   },
   POTENTIAL, season, period;
 
-  if ( !store || !store[key]) {
+  if ( !store[key] || !store[key].season || !store[key].period) {
     season = 6, period = 6;
   } else if ( store[key].season === '5') {
-    season = 5;
+    season = 5, period = parseInt( store[key].period, 10);
     typesOfSoldiers['国人衆'] = [ '槍', 13];
   } else { //6,7章
-    season = 6;
+    season = 6, period = parseInt( store[key].period, 10);
   }
   //console.log( store, store[key].season, store[key].period);
-  POTENTIAL = setPotential( season, store[key].period);
+  POTENTIAL = setPotential( season, period);
 
   //カーソル対象の拡大表示と空地戦力表示：地図に必要攻撃力表示枠の形成
   $(function(){
