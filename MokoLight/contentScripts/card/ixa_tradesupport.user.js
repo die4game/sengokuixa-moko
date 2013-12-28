@@ -107,7 +107,7 @@ $( function(){
   		var html = "";
 
   		html += "<table class='tradeTables'><tr><td>";
-  		html += "<b>IXA　FavoriteTrade　ver." + version + ":auto save</b><br>";
+  		html += "<b>IXA　FavoriteTrade　ver." + version + ": auto save</b> (各々価格昇順ソートの1ページ目のみ取得)<br>";
   		html += "　<br>";
 
 
