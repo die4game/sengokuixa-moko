@@ -151,8 +151,8 @@ chrome.storage.local.get( world, function ( store) {
           table2 = $(
             '<table class="common_table1 center">' +
               '<tr><th></th><th>所領:ID</th><th>座標:x</th><th>座標:y</th><th>兵種</th><th>兵数</th><th>分割数</th><th></th><th></th></tr>' +
-              '<tr><td></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>' +
-                '<td><select></select></td><td><input type="text"></td><td><input type="text"></td><td><button>登録</button></td><td><button>兵退避</button></td></tr>' +
+              '<tr><td><button>登録</button></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>' +
+                '<td><select></select></td><td><input type="text"></td><td><input type="text"></td><td><button>兵退避</button></td><td></td></tr>' +
             '</table>'),
           tmp2,
           solId = {
@@ -198,6 +198,7 @@ chrome.storage.local.get( world, function ( store) {
         table1 += '</TABLE>';
         $( 'div.ig_tilesection_btnarea').after( ( table1 = $( table1)), table2);
 
+        table2.find( 'th').last().css( { width: '9em'});
         table2.find( 'input').css( { width: '4em'});
         table2.find( 'select').append(
           '<option value="321">足軽</option>' +
@@ -252,13 +253,15 @@ chrome.storage.local.get( world, function ( store) {
             .done( function ( htmlData) {
               $.post( '/facility/facility.php', 'btnSend=true&create_count='+data[5]+'&count='+data[4]+'&unit_id='+data[3]+'&y='+data[2]+'&x='+data[1])
               .done( function ( html) {
-                var pred = $( $.parseHTML( html)).find( 'p.red');
-                if ( pred.length < 1)
-                  result.text( '完了');
-                else {
+                var $html = $( $.parseHTML( html));
+                  pred = $html.find( 'p.red');
+                if ( pred.length < 1) {
+                  if ( $html.find( 'h3>a:eq(0)').text().match( /足軽兵舎|弓兵舎|厩舎|兵器鍛冶/))
+                    result.text( '完了');
+                  else
+                    result.text( '兵舎以外のページにアクセスしました。');
+                } else
                   result.text( pred.text());
-                  
-                }
               }).fail( function ( html) { result.text( 'ajax error'); console.log(html)});
             });
           });
