@@ -256,12 +256,10 @@ chrome.storage.local.get( world, function ( store) {
                 var $html = $( $.parseHTML( html));
                   pred = $html.find( 'p.red');
                 if ( pred.length < 1) {
-                  if ( !$html.find( 'h3>a:eq(0)').text().match( /足軽兵舎|弓兵舎|厩舎|兵器鍛冶/)) {
+                  if ( $html.find( 'h3>a:eq(0)').text().match( /足軽兵舎|弓兵舎|厩舎|兵器鍛冶/)) {
+                    result.text( '送信(要確認)');
+                  } else
                     result.text( '兵舎以外のページにアクセスしました。');
-                  } else if ( $html.find( 'p.ig_top_alartbox').length)
-                    result.text( $html.find( 'p.ig_top_alartbox').text());
-                  else
-                    result.text( '完了');
                 } else
                   result.text( pred.text());
               }).fail( function ( html) { result.text( 'ajax error'); console.log(html)});
