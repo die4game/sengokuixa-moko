@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<title>mokoLight 武将カード</title>
 <script src="../../plugin/jquery.min.js"></script>
 <script src="../../plugin/jquery.tablesorter.min.js"></script>
 <script src="../../plugin/jquery.tablesorter.pager.min.js"></script>
 <script src="cardList.js"></script>
 <link rel="styleSheet" href="cardList.css">
-<style>
-  body {
-    color: lightgrey;
-    background-color: black;
-  }
-</style>
 <div>
   <div id="mokotool">
     <div class="Loading">
@@ -31,15 +26,17 @@
               <td><div class="ano"><button>解散</button><span value="4">[---新規部隊を作成---]</span><br/></div>
         </table>
       </div>
+      <div id="energy">
+        <button>総攻防力</button><span>攻撃力/防御力</span>
+      </div>
+      <div id="unitSet">
+        <span>(max：指定兵科で最大値セット)</span>
+      </div>
       <div id="attack">
         <button>全部隊出陣</button>
         x: <input type="text" name="village_x_value">
         y: <input type="text" name="village_y_value">
-        c: <input type="text" name="country_id">
-      </div>
-      <button id="energy">総攻防力</button><span id="power"></span>
-      <div id="unitSet">
-        <span>(max：指定兵科を可能な限り最大兵数でセット, all：全ての兵科を可能な限り最大兵数でセット)</span>
+        <span></span>
       </div>
       <div id="coloption">
         <button class="uldoption">列表示選択</button>

@@ -94,8 +94,14 @@ table#tb_unit th {
   opacity: 0.5;
 }
 
+body {
+  color: lightgrey;
+  background-color: black;
+}
+
 #energy {
-  margin-top: 4px;
+  float: left;
+  white-space: nowrap;
 }
 
 #coloption {
@@ -152,8 +158,19 @@ table#tb_unit th {
   width: 4em;
 }
 
+#attack {
+  float:left;
+  white-space: nowrap;
+}
+
 #attack input{
   width: 2em;
+}
+
+#unitSet {
+  float: left;
+  margin: 0 1em;
+  font-size: small;
 }
 
 #v_head div.ano {

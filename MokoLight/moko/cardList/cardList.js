@@ -97,7 +97,7 @@ $( function () {
     });
 
     // 総攻防力
-    $('#energy').on('click', function() {
+    $('#energy').on('click', 'button', function () {
       cal_energy($(this).next());
     });
 
@@ -112,16 +112,16 @@ $( function () {
     // 出陣
     $( '#attack').on( 'click', 'button', function ( e) {
       var $attack = $( '#attack'),
+        msg = $attack.find( 'span').text( ''),
         x = $attack.find( 'input[name="village_x_value"]').val(),
         y = $attack.find( 'input[name="village_y_value"]').val(),
-        c = $attack.find( 'input[name="country_id"]').val(),
-        url = 'http://'+world+'.sengokuixa.jp/facility/send_troop.php?x='+x+'&y='+y+'&c='+c,
+        url = 'http://'+world+'.sengokuixa.jp/facility/send_troop.php?x='+x+'&y='+y,
         unit_select = [],
         data = {
           village_name: '',
           village_x_value: x,
           village_y_value: y,
-          country_id: c,
+          country_id: '',
           unit_assign_card_id: '',
           radio_move_type: 302,
           show_beat_bandit_flg: '',
@@ -135,7 +135,7 @@ $( function () {
         key;
       $('#cardList').css({'opacity': '0.3'});
       $('div.Loading').show();
-      if ( confirm( '全部隊を( '+x+', '+y+', '+c+')へ出陣')) {
+      if ( confirm( '全部隊を( '+x+', '+y+')へ出陣')) {
         $( '#v_head button.set_unitlist').each( function ( i, el) {
           var base = $( el).parent().prev( 'span.base').text().match(/\S+/g),
               val = $( el).val();
@@ -144,13 +144,13 @@ $( function () {
           } else if ( $( el).parent().prevAll( 'span.condition').text() === '(待機)') {
             if ( !villageIds[ base[ 1]]) get_villageId();
             village[ val] = 'http://' + world + '.sengokuixa.jp/village_change.php?village_id=' + villageIds[ base[ 1]];
-            unit_select.push( val);
+            unit_select.push( [ val, $( el).parent().parent().attr( 'select_assign_no')]);
           }
         });
         unit_select.map( function ( elm) {
-          data.unit_select = elm;
+          data.unit_select = elm[0];
           $.ajax({
-            url: village[ elm],
+            url: village[ elm[0]],
             async: false,
             success: function ( html, textStatus, jqXHR) {
               $.ajax({
@@ -160,7 +160,12 @@ $( function () {
                 data: data,
                 success: function ( html, textStatus, jqXHR) {
                   //console.log(html);
-                  $( 'div.ano[unit_assign_id='+elm+'] span.condition').text( '(攻撃)');
+                  if ( html.match( 'ano='+elm[1]) && html.match( 'mode_attack')) {
+                    msg.append( ' ano'+elm[1]+':完了');
+                    $( 'div.ano[unit_assign_id='+elm[0]+'] span.condition').text( '(攻撃)');
+                  } else {
+                    msg.append( ' ano'+elm[1]+':失敗');
+                  }
                 }
               });
             }
@@ -171,7 +176,6 @@ $( function () {
       $('div.Loading').hide();
     }).on( 'change', 'input', function ( e) {
       var xyc = [];
-      console.log(e);
       $( '#attack input').each( function ( idx, elm) {
         xyc.push( elm.value);
       });
@@ -489,38 +493,16 @@ $( function () {
       unitID = $( '#unitSet > select').val(),
       unitCnt = $( '#unit_cnt_text').val(),
       max, selectedCards = [];
-    if ( unitCnt.match('all')) {
-      max = {};
-      $( '#unitSet > select > option').each( function ( idx, elm) {
-        var cnt = $( elm).text().match(/\d+/);
-        if ( cnt && cnt[0]) {
-          max[ $( elm).val()] = parseInt( cnt[0], 10);
-        }
-      });
-    } else {
-      max = $( '#unitSet > select > option:selected').text().match(/\d+/);
-      max = max? max[0]: max;
-    }
+    max = $( '#unitSet > select > option:selected').text().match(/\d+/);
+    max = max? max[0]: max;
     $tb_unitlist.find('td.選択>input:checked').each( function () {
       var cnt = unitCnt, key, tmp;
       if ( unitCnt.match('max')) {
         cnt = Math.min( $(this).parent().siblings( 'td.指揮力').text(), max);
-        if ( cnt === 0)
+        if ( cnt > 0)
+          max -= cnt;
+        else
           return false;
-        max -= cnt;
-        //console.log(unitCnt,cnt,max);
-      } else if ( unitCnt.match('all')) {
-        tmp = 0;
-        for ( key in max) {
-          if ( max[ key] > tmp) {
-            tmp = max[ key];
-            unitID = key;
-          }
-        }
-        if ( !tmp)
-          return false;
-        cnt = Math.min( $(this).parent().siblings( 'td.指揮力').text(), tmp);
-        max[ unitID] -= cnt;
       }
       dataArray.push( { card_id: $( this).val(), unit_type: unitID, unit_count: cnt});
       selectedCards.push( $( this).parent().parent());

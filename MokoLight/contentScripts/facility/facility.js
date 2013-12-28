@@ -198,7 +198,7 @@ chrome.storage.local.get( world, function ( store) {
         table1 += '</TABLE>';
         $( 'div.ig_tilesection_btnarea').after( ( table1 = $( table1)), table2);
 
-        table2.find( 'th').last().css( { width: '9em'});
+        table2.find( 'th').last().css( { width: '8em'});
         table2.find( 'input').css( { width: '4em'});
         table2.find( 'select').append(
           '<option value="321">足軽</option>' +
@@ -256,10 +256,12 @@ chrome.storage.local.get( world, function ( store) {
                 var $html = $( $.parseHTML( html));
                   pred = $html.find( 'p.red');
                 if ( pred.length < 1) {
-                  if ( $html.find( 'h3>a:eq(0)').text().match( /足軽兵舎|弓兵舎|厩舎|兵器鍛冶/))
-                    result.text( '完了');
-                  else
+                  if ( !$html.find( 'h3>a:eq(0)').text().match( /足軽兵舎|弓兵舎|厩舎|兵器鍛冶/)) {
                     result.text( '兵舎以外のページにアクセスしました。');
+                  } else if ( $html.find( 'p.ig_top_alartbox').length)
+                    result.text( $html.find( 'p.ig_top_alartbox').text());
+                  else
+                    result.text( '完了');
                 } else
                   result.text( pred.text());
               }).fail( function ( html) { result.text( 'ajax error'); console.log(html)});
@@ -393,7 +395,7 @@ chrome.storage.local.get( world, function ( store) {
     }
 
     //複合の最大兵数表示
-    function combo_soldier() {console.log('yes');
+    function combo_soldier() {
       var tmp2 = '',
         wood2 = 0,
         stone2 = 0,
