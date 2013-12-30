@@ -43,7 +43,6 @@
         <ul class="uldoption">
           <li><label><input type="checkbox" checked > : No</label>
           <li><label><input type="checkbox" checked > : 組</label>
-          <li><label><input type="checkbox" checked > : grp</label>
           <li><label><input type="checkbox"> : ﾚｱ</label>
           <li><label><input type="checkbox" checked > : 名前</label>
           <li><label><input type="checkbox" checked > : ｺｽﾄ</label>
@@ -59,6 +58,8 @@
           <li><label><input type="checkbox" checked > : 攻撃</label>
           <li><label><input type="checkbox" checked > : 防御</label>
           <li><label><input type="checkbox" checked > : 兵法</label>
+          <li><label><input type="checkbox" checked > : 小隊攻</label>
+          <li><label><input type="checkbox" checked > : 小隊防</label>
           <li><label><input type="checkbox" checked > : 技1</label>
           <li><label><input type="checkbox" checked > : 技2</label>
           <li><label><input type="checkbox" checked > : 技3</label>
@@ -87,11 +88,12 @@
           <img src="../../plugin/images/last.gif" class="last">
           <select class="pagesize">
             <option value="12">12
-            <option value="16" selected="selected">16
-            <option value="20">20
+            <option value="16">16
+            <option value="20" selected="selected">20
             <option value="50">50
             <option value="100">100
             <option value="200">200
+            <option value="300">300
           </select>
         </div>
         <span>(Shift+Clickで複数行選択)</span>
@@ -109,7 +111,6 @@
           <th class="選択">選択
           <th class="No">No
           <th class="組">組
-          <th class="grp">grp
           <th class="ﾚｱ">ﾚｱ
           <th class="名前">名前
           <th class="ｺｽﾄ">ｺｽﾄ
@@ -123,6 +124,8 @@
           <th class="攻撃">攻撃
           <th class="防御">防御
           <th class="兵法">兵法
+          <th class="小隊攻">小隊攻
+          <th class="小隊防">小隊防
           <th class="槍">槍
           <th class="槍 実指揮">実指揮
           <th class="槍 ｺｽﾄ比">ｺｽﾄ比
@@ -135,9 +138,6 @@
           <th class="器">器
           <th class="器 実指揮">実指揮
           <th class="器 ｺｽﾄ比">ｺｽﾄ比
-          <th class="技1">技1
-          <th class="技2">技2
-          <th class="技3">技3
           <th class="槍馬">槍馬
           <th class="槍馬 実指揮">実指揮
           <th class="槍馬 ｺｽﾄ比">ｺｽﾄ比
@@ -156,6 +156,9 @@
           <th class="弓器">弓器
           <th class="弓器 実指揮">実指揮
           <th class="弓器 ｺｽﾄ比">ｺｽﾄ比
+          <th class="技1">技1
+          <th class="技2">技2
+          <th class="技3">技3
         <tbody id="tb_unitlist">
       </table>
     </div>

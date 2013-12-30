@@ -98,7 +98,7 @@ $( function () {
 
     // 総攻防力
     $('#energy').on('click', 'button', function () {
-      cal_energy($(this).next());
+      $(this).next().text( cal_energy( $('tr:has( input[name^="id"]:checked)')));
     });
 
     // 武将リスト取得実行
@@ -430,7 +430,6 @@ $( function () {
       '<input class="unit_assign_id" value="' + unit_assign_id + '" hidden>'+
     '<td class="No">' + no  +
     '<td class="組">' + grps  +
-    '<td class="grp"' + gp_1 + '>' + gp_2  +
     '<td class="ﾚｱ">' + rr  +
     '<td class="名前"><span id="kana" style="display: inline-block;text-indent: -9999px;">' + hi + '</span><span id="kanji">' + nm + '</span></td>' +
     '<td class="ｺｽﾄ">' + ct  +
@@ -444,40 +443,46 @@ $( function () {
     '<td class="攻撃">' + at  +
     '<td class="防御">' + df  +
     '<td class="兵法">' + hy  +
+    '<td class="小隊攻">' +
+    '<td class="小隊防">' +
     '<td class="槍">' + ya  +
-    '<td class="槍 実指揮">' + Math.round(uc[1] * rank[ya] / 100)  +
-    '<td class="槍 ｺｽﾄ比">' + Math.round(uc[1] * rank[ya] / ct / 100)  +
+    '<td class="槍 実指揮">' + Math.floor(uc[1] * rank[ya] / 100)  +
+    '<td class="槍 ｺｽﾄ比">' + Math.floor(uc[1] * rank[ya] / ct / 100)  +
     '<td class="馬">' + um  +
-    '<td class="馬 実指揮">' + Math.round(uc[1] * rank[um] / 100)  +
-    '<td class="馬 ｺｽﾄ比">' + Math.round(uc[1] * rank[um] / ct / 100)  +
+    '<td class="馬 実指揮">' + Math.floor(uc[1] * rank[um] / 100)  +
+    '<td class="馬 ｺｽﾄ比">' + Math.floor(uc[1] * rank[um] / ct / 100)  +
     '<td class="弓">' + yu  +
-    '<td class="弓 実指揮">' + Math.round(uc[1] * rank[yu] / 100)  +
-    '<td class="弓 ｺｽﾄ比">' + Math.round(uc[1] * rank[yu] / ct / 100)  +
+    '<td class="弓 実指揮">' + Math.floor(uc[1] * rank[yu] / 100)  +
+    '<td class="弓 ｺｽﾄ比">' + Math.floor(uc[1] * rank[yu] / ct / 100)  +
     '<td class="器">' + ki  +
-    '<td class="器 実指揮">' + Math.round(uc[1] * rank[ki] / 100)  +
-    '<td class="器 ｺｽﾄ比">' + Math.round(uc[1] * rank[ki] / ct / 100)  +
+    '<td class="器 実指揮">' + Math.floor(uc[1] * rank[ki] / 100)  +
+    '<td class="器 ｺｽﾄ比">' + Math.floor(uc[1] * rank[ki] / ct / 100)  +
+    '<td class="槍馬">' + drank[rank[ya] + rank[um]]  +
+    '<td class="槍馬 実指揮">' + Math.floor(uc[1] * (rank[ya] + rank[um]) / 2 / 100)  +
+    '<td class="槍馬 ｺｽﾄ比">' + Math.floor(uc[1] * (rank[ya] + rank[um]) / 2 / ct / 100)  +
+    '<td class="槍弓">' + drank[rank[ya] + rank[yu]]  +
+    '<td class="槍弓 実指揮">' + Math.floor(uc[1] * (rank[ya] + rank[yu]) / 2 / 100)  +
+    '<td class="槍弓 ｺｽﾄ比">' + Math.floor(uc[1] * (rank[ya] + rank[yu]) / 2 / ct / 100)  +
+    '<td class="弓馬">' + drank[rank[yu] + rank[um]]  +
+    '<td class="弓馬 実指揮">' + Math.floor(uc[1] * (rank[yu] + rank[um]) / 2 / 100)  +
+    '<td class="弓馬 ｺｽﾄ比">' + Math.floor(uc[1] * (rank[yu] + rank[um]) / 2 / ct / 100)  +
+    '<td class="槍器">' + drank[rank[ya] + rank[ki]]  +
+    '<td class="槍器 実指揮">' + Math.floor(uc[1] * (rank[ya] + rank[ki]) / 2 / 100)  +
+    '<td class="槍器 ｺｽﾄ比">' + Math.floor(uc[1] * (rank[ya] + rank[ki]) / 2 / ct / 100)  +
+    '<td class="馬器">' + drank[rank[um] + rank[ki]]  +
+    '<td class="馬器 実指揮">' + Math.floor(uc[1] * (rank[um] + rank[ki]) / 2 / 100)  +
+    '<td class="馬器 ｺｽﾄ比">' + Math.floor(uc[1] * (rank[um] + rank[ki]) / 2 / ct / 100)  +
+    '<td class="弓器">' + drank[rank[yu] + rank[ki]]  +
+    '<td class="弓器 実指揮">' + Math.floor(uc[1] * (rank[yu] + rank[ki]) / 2 / 100)  +
+    '<td class="弓器 ｺｽﾄ比">' + Math.floor(uc[1] * (rank[yu] + rank[ki]) / 2 / ct / 100) +
     '<td class="技1">' + sk[0]  +
     '<td class="技2">' + sk[1]  +
     '<td class="技3">' + sk[2]  +
-    '<td class="槍馬">' + drank[rank[ya] + rank[um]]  +
-    '<td class="槍馬 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / 100)  +
-    '<td class="槍馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[um]) / 2 / ct / 100)  +
-    '<td class="槍弓">' + drank[rank[ya] + rank[yu]]  +
-    '<td class="槍弓 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / 100)  +
-    '<td class="槍弓 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[yu]) / 2 / ct / 100)  +
-    '<td class="弓馬">' + drank[rank[yu] + rank[um]]  +
-    '<td class="弓馬 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / 100)  +
-    '<td class="弓馬 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[um]) / 2 / ct / 100)  +
-    '<td class="槍器">' + drank[rank[ya] + rank[ki]]  +
-    '<td class="槍器 実指揮">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / 100)  +
-    '<td class="槍器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[ya] + rank[ki]) / 2 / ct / 100)  +
-    '<td class="馬器">' + drank[rank[um] + rank[ki]]  +
-    '<td class="馬器 実指揮">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / 100)  +
-    '<td class="馬器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[um] + rank[ki]) / 2 / ct / 100)  +
-    '<td class="弓器">' + drank[rank[yu] + rank[ki]]  +
-    '<td class="弓器 実指揮">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / 100)  +
-    '<td class="弓器 ｺｽﾄ比">' + Math.round(uc[1] * (rank[yu] + rank[ki]) / 2 / ct / 100);
-    var $tmp = $( tmp);
+    '</tr>',
+    $tmp = $( tmp),
+    power = cal_energy( $tmp);
+    $tmp.find( '.小隊攻').text( power.replace( /^.+?(\d+).+$/, '$1'));
+    $tmp.find( '.小隊防').text( power.replace( /^.+:(\d+).+$/, '$1'));
     if ( butai) $tmp.find( 'td.選択').toggleClass( '隊');
     $('ul.uldoption').find('input').each(function() {
       if (!$(this).prop('checked')) {
@@ -521,10 +526,13 @@ $( function () {
         'http://' + world + '.sengokuixa.jp/facility/set_unit_list_if.php',
         postData, // { card_id: data0, unit_type: data1, unit_count: data2 },
         function (data) {
-          var result = JSON.parse(data).result;
+          var result = JSON.parse(data).result, power;
           if ( result === 'ok') {
             card.find( '.兵数').text( postData.unit_count)
             .next().text( UnitCode.getKey( postData.unit_type));
+            power = cal_energy( card);
+            card.find( '.小隊攻').text( power.replace( /^.+?(\d+).+$/, '$1'));
+            card.find( '.小隊防').text( power.replace( /^.+:(\d+).+$/, '$1'));
           }
           if ( result !== 'ipu')
             setTimeout( postSetHeishi, 100, dataArray, selectedCards);
@@ -765,17 +773,18 @@ $( function () {
     //console.log( villageIds);
   }
 
-  function cal_energy($power) {
+  function cal_energy($force) {
     var UnitData = {
         "足軽": {off: 11,def: 11,mov: 15,tp1: "t1",tp2: "t1"},"長槍足軽": {off: 16,def: 16,mov: 16,tp1: "t1",tp2: "t1"},"武士": {off: 18,def: 18,mov: 18,tp1: "t1",tp2: "t3"},"国人衆": {off: 17,def: 13,mov: 17,tp1: "t1",tp2: "t3"},
         "弓足軽": {off: 10,def: 12,mov: 16,tp1: "t3",tp2: "t3"},"長弓兵": {off: 15,def: 17,mov: 18,tp1: "t3",tp2: "t3"},"弓騎馬": {off: 17,def: 19,mov: 23,tp1: "t2",tp2: "t3"},"海賊衆": {off: 16,def: 17,mov: 20,tp1: "t2",tp2: "t3"},
         "騎馬兵": {off: 12,def: 10,mov: 22,tp1: "t2",tp2: "t2"},"精鋭騎馬": {off: 17,def: 15,mov: 23,tp1: "t2",tp2: "t2"},"赤備え": {off: 21,def: 20,mov: 25,tp1: "t1",tp2: "t2"},"母衣衆": {off: 19,def: 16,mov: 24,tp1: "t1",tp2: "t2"},
         "破城鎚": {off: 3,def: 8,mov: 8,tp1: "t4",tp2: "t4"},"攻城櫓": {off: 14,def: 5,mov: 10,tp1: "t4",tp2: "t4"},"大筒兵": {off: 10,def: 12,mov: 8,tp1: "t3",tp2: "t4"},
         "鉄砲足軽": {off: 18,def: 26,mov: 15,tp1: "t1",tp2: "t4"},"騎馬鉄砲": {off: 26,def: 18,mov: 21,tp1: "t2",tp2: "t4"},"焙烙火矢": {off: 23,def: 23,mov: 19,tp1: "t3",tp2: "t4"},"雑賀衆": {off: 23,def: 17,mov: 18,tp1: "t1",tp2: "t4"},
+        "": { off: 0, def: 0, mov: 0, tp1: 0,tp2: 0}
       },
-      rank = {SSS: 1.20,SS: 1.15,S: 1.10,A: 1.05,B: 1,C: 0.95,D: 0.9,E: 0.85,F: 0.80}, check_list = [], tmp;
-    $('input[name^="id"]:checked').each(function() {
-      var $tr = $(this).parent().parent(),
+      rank = {SSS: 1.20,SS: 1.15,S: 1.10,A: 1.05,B: 1,C: 0.95,D: 0.9,E: 0.85,F: 0.80,0: 0}, check_list = [], tmp;
+    $force.each(function() {
+      var $tr = $(this),
         num = $tr.find('td.兵数').text(),
         unit = $tr.find('td.兵種').text(),
         off = $tr.find('td.攻撃').text(),
@@ -785,7 +794,7 @@ $( function () {
         t3 = $tr.find('td.弓:eq(0)').text(),
         t4 = $tr.find('td.器:eq(0)').text();
       //t1:槍,t2:馬,t3:弓,t4:器
-      check_list.push({unit: unit,off: off,def: def,num: num,t1: t1,t2: t2,t3: t3,t4: t4});
+      check_list.push({unit: unit,off: off,def: def,num: num,t1: t1,t2: t2,t3: t3,t4: t4,0: 0});
     });
     if (check_list.length == 0) {
       tmp = '武将が選択されていません';
@@ -793,14 +802,14 @@ $( function () {
       var o_power = 0;
       var d_power = 0;
       for (var i = 0; i < check_list.length; i++) {
-        var r1 = rank[(check_list[i])[UnitData[check_list[i].unit].tp1]];
-        var r2 = rank[(check_list[i])[UnitData[check_list[i].unit].tp2]];
+        var r1 = rank[ check_list[i][ UnitData[ check_list[i].unit].tp1]];
+        var r2 = rank[ check_list[i][ UnitData[ check_list[i].unit].tp2]];
         o_power += (parseInt(check_list[i].num * UnitData[check_list[i].unit].off) + parseInt(check_list[i].off)) * ((r1 + r2) / 2);
         d_power += (parseInt(check_list[i].num * UnitData[check_list[i].unit].def) + parseInt(check_list[i].def)) * ((r1 + r2) / 2);
       }
       tmp = '攻撃力:' + o_power.toFixed(1) + '/防御力:' + d_power.toFixed(1);
     }
-    $power.text(tmp);
+    return tmp;
   }
 
   // TableSorterのセッティング
@@ -900,19 +909,19 @@ $( function () {
       widgets: ['zebra'],
       headers: {0: {sorter: 'checkbox'},
         2: {sorter: 'grouping'},
-        3: {sorter: 'grp'},
-        4: {sorter: 'rarerity'},
-        13: {sorter: 'soltype'},
-        17: {sorter: 'ability'},
-        20: {sorter: 'ability'},
-        23: {sorter: 'ability'},
-        26: {sorter: 'ability'},
-        32: {sorter: 'ability'},
-        35: {sorter: 'ability'},
-        38: {sorter: 'ability'},
-        41: {sorter: 'ability'},
-        44: {sorter: 'ability'},
-        47: {sorter: 'ability'},
+        //3: {sorter: 'grp'},
+        3: {sorter: 'rarerity'},
+        12: {sorter: 'soltype'},
+        18: {sorter: 'ability'},
+        21: {sorter: 'ability'},
+        24: {sorter: 'ability'},
+        27: {sorter: 'ability'},
+        33: {sorter: 'ability'},
+        36: {sorter: 'ability'},
+        39: {sorter: 'ability'},
+        42: {sorter: 'ability'},
+        45: {sorter: 'ability'},
+        48: {sorter: 'ability'},
       }
       //sortForce: [[0,1]]
     })
