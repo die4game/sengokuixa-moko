@@ -13,6 +13,5 @@ $('div.subserver').on('click', function (e) {
     store[world].season = season;
     store[world].period = period;
     chrome.storage.local.set( store);
-    console.log( store, season, period);
   });
 })
