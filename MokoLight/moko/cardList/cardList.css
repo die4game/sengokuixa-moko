@@ -65,8 +65,16 @@ table.tablesorter thead tr .tablesorter-headerDesc, table.tablesorter thead tr .
   background-color: burlyWood;
 }
 
-table#tb_unit th {
+#tb_unit th {
   padding-right: 18px;
+}
+
+#tb_unit {
+  white-space: nowrap;
+}
+
+#tb_unitlist td.隊 {
+  background-color: #BA8BE5;
 }
 
 .pager > img {
@@ -94,44 +102,66 @@ table#tb_unit th {
   opacity: 0.5;
 }
 
-body {
-  color: lightgrey;
-  background-color: black;
-}
-
-#energy {
-  float: left;
-  white-space: nowrap;
-}
-
-#coloption {
-  clear: both;
-}
-
-#coloption>button.uldoption {
-  float: left;
-  padding: 0 4px;
-  margin-bottom: 5px;
-}
-
-#coloption>ul.uldoption {
-  clear: both;
-  display: none;
-}
-
-#coloption>ul>li {
-  float: left;
-  width: 5.5em;
-  margin-bottom: 4px;
-  list-style: none;
-}
-
 #mokotool>div.Loading {
   position: absolute;
   top: 50%;
   left: 50%;
   opacity: 0.8;
   width: 20px;
+}
+
+body {
+  color: lightgrey;
+  background-color: black;
+}
+
+#deck div.ano {
+  float: left;
+  min-height: 16ex;
+  margin: 0 4px;
+}
+
+#deck>table {
+  white-space: nowrap;
+}
+
+#cost {
+  float:left;
+  padding:5px 0;
+}
+
+#energy {
+  float: left;
+  white-space: nowrap;
+  margin-right:1em;
+}
+
+#unitSet {
+  float: left;
+  font-size: small;
+  margin-right:1em;
+}
+
+#unitSet span{
+  margin-left:4px;
+}
+
+#unit_cnt_text {
+  width: 4em;
+}
+
+#attack {
+  float:left;
+  white-space: nowrap;
+  margin-right: 1em;
+}
+
+#attack input{
+  width: 2em;
+}
+
+#check {
+  float: left;
 }
 
 #onTable {
@@ -144,45 +174,25 @@ body {
 }
 
 #onTable > span {
-  margin-left: 1ex;
-}
-
-#tb_unit {
-  white-space: nowrap;
-}
-
-#unitSet {
-}
-
-#unit_cnt_text {
-  width: 4em;
-}
-
-#attack {
-  float:left;
-  white-space: nowrap;
-}
-
-#attack input{
-  width: 2em;
-}
-
-#unitSet {
-  float: left;
-  margin: 0 1em;
   font-size: small;
-}
-
-#v_head div.ano {
+  margin-left: 1ex;
   float: left;
-  margin: 1ex;
-  min-height: 16ex;
+  padding-top: 10px;
 }
 
-#v_head>table {
-  white-space: nowrap;
+#coloption>button.uldoption {
+  float: left;
+  margin-left: 1em;
 }
 
-#tb_unitlist td.隊 {
-  background-color: #BA8BE5;
+#coloption>ul.uldoption {
+  clear: both;
+  display: none;
+}
+
+#coloption>ul>li {
+  float: left;
+  width: 5.5em;
+  margin-bottom: 4px;
+  list-style: none;
 }

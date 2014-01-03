@@ -12,19 +12,19 @@
       <img src="../../plugin/images/loading.gif">
     </div>
     <div id="cardList">
-      <div id="v_head">
-        <div>
-          デッキコスト：<span class="deckcost"></span>
-        </div>
+      <div id="deck">
         <table>
           <tbody>
             <tr>
-              <td><div class="ano"><button>解散</button><span value="0">[---新規部隊を作成---]</span><br/></div>
-              <td><div class="ano"><button>解散</button><span value="1">[---新規部隊を作成---]</span><br/></div>
-              <td><div class="ano"><button>解散</button><span value="2">[---新規部隊を作成---]</span><br/></div>
-              <td><div class="ano"><button>解散</button><span value="3">[---新規部隊を作成---]</span><br/></div>
-              <td><div class="ano"><button>解散</button><span value="4">[---新規部隊を作成---]</span><br/></div>
+              <td><div class="ano"><button>解散</button><span value="0">[---新規部隊を作成---]</span></div>
+              <td><div class="ano"><button>解散</button><span value="1">[---新規部隊を作成---]</span></div>
+              <td><div class="ano"><button>解散</button><span value="2">[---新規部隊を作成---]</span></div>
+              <td><div class="ano"><button>解散</button><span value="3">[---新規部隊を作成---]</span></div>
+              <td><div class="ano"><button>解散</button><span value="4">[---新規部隊を作成---]</span></div>
         </table>
+      </div>
+      <div id="cost">
+        デッキコスト：<span class="deckcost"></span>
       </div>
       <div id="energy">
         <button>総攻防力</button><span>攻撃力/防御力</span>
@@ -37,6 +37,35 @@
         x: <input type="text" name="village_x_value">
         y: <input type="text" name="village_y_value">
         <span></span>
+      </div>
+      <div id="check">
+        <span>チェック：</span>
+        <button id="checkAll">全て</button>
+        <button id="checkDeck">部隊</button>
+        <button id="checkToggle">トグル</button>
+        <button id="checkPage">ページ</button>
+        <span>お気に入り：</span>
+        <button id="favoriteWrite">登録</button>
+        <select></select><button id="favoriteDelete">削除</button>
+      </div>
+      <div id="onTable">
+        <div class="pager">
+          <img src="../../plugin/images/first.gif" class="first">
+          <img src="../../plugin/images/prev.gif" class="prev">
+          <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+          <img src="../../plugin/images/next.gif" class="next">
+          <img src="../../plugin/images/last.gif" class="last">
+          <select class="pagesize">
+            <option value="12">12
+            <option value="16">16
+            <option value="20" selected="selected">20
+            <option value="50">50
+            <option value="100">100
+            <option value="200">200
+            <option value="300">300
+          </select>
+        </div>
+        <span>(Shift+Clickで複数行選択)</span>
       </div>
       <div id="coloption">
         <button class="uldoption">列表示選択</button>
@@ -78,33 +107,6 @@
           <li><label><input type="checkbox"> : 馬器</label>
           <li><label><input type="checkbox"> : 弓器</label>
         </ul>
-      </div>
-      <div id="onTable">
-        <div class="pager">
-          <img src="../../plugin/images/first.gif" class="first">
-          <img src="../../plugin/images/prev.gif" class="prev">
-          <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
-          <img src="../../plugin/images/next.gif" class="next">
-          <img src="../../plugin/images/last.gif" class="last">
-          <select class="pagesize">
-            <option value="12">12
-            <option value="16">16
-            <option value="20" selected="selected">20
-            <option value="50">50
-            <option value="100">100
-            <option value="200">200
-            <option value="300">300
-          </select>
-        </div>
-        <span>(Shift+Clickで複数行選択)</span>
-        <span>チェック：</span>
-        <button id="checkAll">全て</button>
-        <button id="checkDeck">部隊</button>
-        <button id="checkToggle">トグル</button>
-        <button id="checkPage">ページ</button>
-        <span>お気に入り：</span>
-        <button id="favoriteWrite">登録</button>
-        <select></select><button id="favoriteDelete">削除</button>
       </div>
       <table id="tb_unit" class="tablesorter">
         <thead><tr>
