@@ -161,7 +161,7 @@ body {
 }
 
 #check {
-  float: left;
+  clear: both;
 }
 
 #onTable {
@@ -181,7 +181,7 @@ body {
 }
 
 #coloption>button.uldoption {
-  float: left;
+  float: right;
   margin-left: 1em;
 }
 
