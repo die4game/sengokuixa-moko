@@ -1,0 +1,34 @@
+body {
+  background: #DDDCD7;
+}
+
+#worldList>div {
+  margin: 1em auto;
+  background: #F5F5F5;
+  padding: 1ex;
+  display: -webkit-box;
+  width: 38em;
+}
+
+#worldList>div>div:nth-child(1) {
+  width: 20em;
+}
+
+#worldList>div>div:nth-child(2) {
+  width: 18em;
+}
+
+ul {
+  display: inline-block;
+  padding: 0;
+}
+
+ul li {
+  list-style: none;
+  float: left;
+  width: 6em;
+}
+
+input[type="text"] {
+  width: 2em;
+}

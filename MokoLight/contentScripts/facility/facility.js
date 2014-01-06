@@ -175,6 +175,8 @@ chrome.storage.local.get( world, function ( store) {
           renpeiSet = store[ world].renpeiSet? store[ world].renpeiSet: ( store[ world].renpeiSet = []);
         for ( key in soldiertype) {
           var moko = maxsoldier( wood, stone, iron, rice, soldiertype[key][0], soldiertype[key][1], soldiertype[key][2], soldiertype[key][3], rate);
+          if ( store[ world].enableSoldier && !store[ world].enableSoldier[ key])
+            continue;
           table1 += '<TR><TD><input type="checkbox" id="' + key + '"></TD>' +
             '<TD><select name="ratio">' +
               '<option value="1" selected>1</option>' +
