@@ -58,7 +58,7 @@ $( function () {
       p2.find( '[name=season]').val( options[world].season);
       p2.find( '[name=period]').val( options[world].period);
       p2.change( function (e) {
-        store[world] = { season: p2.find( '[name=season]').val(), period: p2.find( '[name=period]').val()};
+        options[world] = { season: p2.find( '[name=season]').val(), period: p2.find( '[name=period]').val()};
         chrome.storage.local.set( options);
       });
       if ( options[ world].enableSoldier) {

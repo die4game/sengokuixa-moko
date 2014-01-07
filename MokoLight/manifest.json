@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "2.1.3.8912",
+  "version": "2.1.4.8913",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -51,6 +51,7 @@
         "http://world.sengokuixa.jp/world/select_world.php*"
       ],
       "js": [
+        "contentScripts/getWorld.js",
         "contentScripts/tabArea/tabMenu.js"
       ],
       "run_at": "document_start"
