@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "2.1.0.8910",
+  "version": "2.1.3.8912",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -27,17 +27,16 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*.sengokuixa.jp/*"
+        "http://*.sengokuixa.jp/*" //全ページ、run_at: document_start
       ],
       "js": [
-        "/plugin/jquery.min.js",
-        "contentScripts/tabArea/tabMenu.js"
+        "/plugin/jquery.min.js"
       ],
       "run_at": "document_start"
     },
     {
       "matches":[
-        "http://world.sengokuixa.jp/world/select_world.php*"
+        "http://world.sengokuixa.jp/world/select_world.php*" //ワールド選択
       ],
       "js": [
         "contentScripts/select_world/select_world.js"
@@ -45,7 +44,24 @@
     },
     {
       "matches": [
+        "http://*.sengokuixa.jp/*" //全ページ、run_at: document_start
+      ],
+      "exclude_matches": [
+        "http://sengokuixa.jp/index.php*",
+        "http://world.sengokuixa.jp/world/select_world.php*"
+      ],
+      "js": [
+        "contentScripts/tabArea/tabMenu.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
         "http://*.sengokuixa.jp/*" //全ページ
+      ],
+      "exclude_matches": [
+        "http://sengokuixa.jp/index.php*",
+        "http://world.sengokuixa.jp/world/select_world.php*"
       ],
       "js": [
         "contentScripts/sideBox/appendToolBox.js",
@@ -70,11 +86,19 @@
     },
     {
       "matches":[
-        "http://*.sengokuixa.jp/card/deck.php*", //部隊編成
-        "http://*.sengokuixa.jp/union/levelup.php*" //部隊編成
+        "http://*.sengokuixa.jp/card/deck.php*" //部隊編成
       ],
       "css": [
-        "contentScripts/deck/deck.css"
+        "contentScripts/deck/cardDeck.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches":[
+        "http://*.sengokuixa.jp/union/levelup.php*" //合成
+      ],
+      "css": [
+        "contentScripts/deck/unionDeck.css"
       ],
       "run_at": "document_start"
     },

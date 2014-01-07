@@ -2,6 +2,3 @@ div.ig_deck_smallcardarea > .clearfix:nth-child(2) {
   height: 195px;
   white-space: nowrap;
 }
-#ig_keikenup, #ig_deckcost a {
-  display: none;
-}

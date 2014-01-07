@@ -99,12 +99,20 @@ chrome.storage.local.get( world, function ( store) {
       //最大作成可能兵数リンク設置、デフォルトの訓練数、デフォルトの兵種のみを表示
       $( function () {
         $( 'DIV.ig_tilesection_detailarea > H3').each( function() {
-          var soltype = $( this).text().match( /\[( [^\]]+)\]/)[1],
+          var soltype = $( this).text().match( /\[([^\]]+)\]/)[1],
             $parent, maxsol, tmp;
-          //console.log( soltype);
           //デフォルトの訓練数をセット
           if ( soltype !== fname) { //操作無し
             $parent = $( this).parent();
+            if ( store[ world].enableSoldier && !store[ world].enableSoldier[ soltype]) {
+              $parent.parent().hide().parent().append(
+                $( '<button>'+soltype+'</button>')
+                .on( 'click', function (e) {
+                  $parent.parent().toggle();
+                })
+              );
+              return true;
+            }
             maxsol = 150000;
             tmp = [ wood  / soldiertype[soltype][0],
                     stone / soldiertype[soltype][1],
