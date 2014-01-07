@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "1.2.0.8906",
+  "version": "2.0.0.8909",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -47,10 +47,12 @@
       ],
       "js": [
         "contentScripts/sideBox/appendToolBox.js",
-        "contentScripts/tabArea/tab.js"
+        "contentScripts/tabArea/tab.js",
+        "contentScripts/tabArea/torideLink.js"
       ],
       "css": [
-        "contentScripts/sideBox/toolBox.css"
+        "contentScripts/sideBox/toolBox.css",
+        "contentScripts/tabArea/torideLink.css"
       ]
     },
     {

@@ -1,0 +1,41 @@
+ul.quest a.fort_no {
+  background-image: none;
+}
+
+#fort_list a.fort_no {
+  display: inline-block;
+  width: 100%;
+  padding: 5px 0;
+  text-decoration: none;
+  border-left: 1px solid dimgray;
+  border-bottom: 1px solid dimgray;
+}
+
+#fort_list a.fort_no:hover {
+  background-color: #725E1E;
+}
+
+#fort_list {
+  border-right: 1px solid dimgray;
+  border-top: 1px solid dimgray;
+}
+
+#fort_list td {
+  text-align: center;
+}
+
+#gMenu03::-webkit-scrollbar {
+  width: 11px;
+  height:11px;
+  background-color: black;
+}
+
+#gMenu03::-webkit-scrollbar-thumb {
+  background: #666;
+  border: 2px solid black;
+  border-radius: 6px;
+}
+
+#gMenu03::-webkit-scrollbar-thumb:hover {
+  background: #725E1E;
+}
