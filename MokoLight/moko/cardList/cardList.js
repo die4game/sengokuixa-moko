@@ -13,13 +13,14 @@ $( function () {
           if ( this[key] === parseInt( val, 10)) returnKey = key;
         return returnKey;
       }
-    };
+    },
+    items;
 
   // カレントタブ取得
   chrome.tabs.getCurrent( function ( tab) {
     world = tab.url.split( '?')[1];
-    $(cardList);
     chrome.storage.local.get( world, function ( store) {
+      items = store;
       if ( !store[ world])
         store[ world] = {};
       if ( !store[ world].cardList)
@@ -30,6 +31,14 @@ $( function () {
         favorite = store[ world].cardList.favorite;
       if ( !store[ world].xyc)
         store[ world].xyc = [ '', '', ''];
+      if ( !store[ world].column)
+        store[ world].column = column;
+      else
+        column = store[ world].column;
+      if ( !store[ world].villageIds)
+        store[ world].villageIds = villageIds;
+      else
+        villageIds = store[ world].villageIds;
       chrome.storage.local.set( store, function () {
         var no = favorite.length,
             xyc = store[ world].xyc;
@@ -41,6 +50,8 @@ $( function () {
           obj.value = xyc[idx];
         });
       });
+      console.log(store[world]);
+      $(cardList);
     });
   });
 
@@ -86,7 +97,9 @@ $( function () {
       $( 'ul.uldoption input').each( function ( idx, elm) {
         column[ idx] = elm.checked;
       });
-      localStorage.column = JSON.stringify( column);
+      items[ world].column = column;
+      chrome.storage.local.set( items);
+      //localStorage.column = JSON.stringify( column);
     }).each( function ( idx, elm) {
       elm.checked = column[idx];
     });
@@ -769,7 +782,8 @@ $( function () {
         });
       }
     });
-    localStorage.villageIds = JSON.stringify( villageIds);
+    items[ world].villageIds = villageIds;
+    chrome.storage.local.set( items);
     //console.log( villageIds);
   }
 

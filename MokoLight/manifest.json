@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "2.0.0.8909",
+  "version": "2.1.0.8910",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -23,13 +23,15 @@
     "scripts": ["/moko/background/background.js"],
     "persistent": false
   },
+
   "content_scripts": [
     {
       "matches": [
         "http://*.sengokuixa.jp/*"
       ],
       "js": [
-        "/plugin/jquery.min.js"
+        "/plugin/jquery.min.js",
+        "contentScripts/tabArea/tabMenu.js"
       ],
       "run_at": "document_start"
     },

@@ -43,9 +43,9 @@ chrome.storage.local.get( world, function ( item) {
 					else {
 						menu = this.FORTCOORD_6;
 					}
-					br3.makeMapMenu(menu, 'gMenu03');
+					this.makeMapMenu(menu, 'gMenu03');
 					$('.gMenu03 > a')
-					.mouseover(function() { br3.openMenu('gMenu03'); })
+					.mouseover(function() { br3.openMenu(); })
 					.mouseout(function() { br3.closetime(); });
 				},
 
@@ -117,10 +117,8 @@ chrome.storage.local.get( world, function ( item) {
 				},
 
 				openMenu: function(obj) {
-					br3.closeMenu();
-					br3.closetimeC();
-						//$("#" + obj).toggle();
-					$("#" + obj).fadeIn(100);
+					this.closetimeC();
+					$("#gMenu03").fadeIn(100);
 				
 				},
 
@@ -131,13 +129,13 @@ chrome.storage.local.get( world, function ( item) {
 				closeTimer: null,
 
 				closetime: function() {
-					br3.closeTimer = window.setTimeout(br3.closeMenu, 30);
+					this.closeTimer = window.setTimeout(this.closeMenu, 30);
 				},
 
 				closetimeC: function() {
-					if (br3.closeTimer) {
-						window.clearTimeout(br3.closeTimer);
-						br3.closeTimer = null;
+					if (this.closeTimer) {
+						window.clearTimeout(this.closeTimer);
+						this.closeTimer = null;
 					}
 				}
 			};
