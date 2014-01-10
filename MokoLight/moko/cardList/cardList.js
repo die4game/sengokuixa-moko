@@ -729,7 +729,7 @@ $( function () {
             grps = tai[ano],
             gp_1 = '',
             gp_2 = '',
-            rr = rarerity[ card.find( 'span[class^="rarerity_"]').prop( 'class').replace( 'rarerity_', '')],
+            rr = rarerity[ card.find( 'span[class^="rarity_"]').prop( 'class').replace( 'rarity_', '')],
             hi = card.find( 'span.ig_card_name').attr( 'title'),
             nm = card.find( 'span.ig_card_name').text(),
             ct = card.find( 'span.ig_card_cost_over').text(),
