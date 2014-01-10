@@ -50,7 +50,6 @@ $( function () {
           obj.value = xyc[idx];
         });
       });
-      console.log(store[world]);
       $(cardList);
     });
   });
@@ -267,7 +266,6 @@ $( function () {
     var idx = $( this).val() - 1, bool;
     $(this).toggleClass( 'checked');
     bool = $(this).hasClass( 'checked');
-    console.log( idx, bool, favorite[idx]);
     $.each( favorite[idx], function ( idx, elm) {
       $( '#tb_unitlist td.選択 input[value=' + elm + ']').prop( 'checked', bool);
     });
@@ -311,7 +309,6 @@ $( function () {
 
   // 武将リスト取得
   function unitListLoad( p, ano) {
-//    console.log( p, ano);
     if (p === 1 && $('#cost span.deckcost').text()) {
       $('div.Loading').hide();
       $('#cardList').css({'opacity': '1.0'});
