@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MokoLight.crx",
-  "version": "2.1.4.8913",
+  "version": "2.1.5.8934",
   "description": "MokoLight.crx @author: die4game",
   "icons": {
     "19": "icons/19.png",
@@ -29,6 +29,9 @@
       "matches": [
         "http://*.sengokuixa.jp/*" //全ページ、run_at: document_start
       ],
+      "exclude_matches": [
+        "http://sengokuixa.jp/*"
+      ],
       "js": [
         "/plugin/jquery.min.js"
       ],
@@ -47,7 +50,7 @@
         "http://*.sengokuixa.jp/*" //全ページ、run_at: document_start
       ],
       "exclude_matches": [
-        "http://sengokuixa.jp/index.php*",
+        "http://sengokuixa.jp/*",
         "http://world.sengokuixa.jp/world/select_world.php*"
       ],
       "js": [
@@ -61,7 +64,7 @@
         "http://*.sengokuixa.jp/*" //全ページ
       ],
       "exclude_matches": [
-        "http://sengokuixa.jp/index.php*",
+        "http://sengokuixa.jp/*",
         "http://world.sengokuixa.jp/world/select_world.php*"
       ],
       "js": [
