@@ -1,6 +1,9 @@
 $( function () {
   var world,
-    column = localStorage.column? JSON.parse( localStorage.column): [ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true ],
+    column = localStorage.column? JSON.parse( localStorage.column):
+     [ true, true, true, true, true, true, true, true, true, true, true, true,
+       true, true, true, true, true, true, true, true, true, true, true, true,
+       true, true, true, true, true, true, true, true ],
     villageIds = localStorage.villageIds? JSON.parse( localStorage.villageIds): {},
     favorite = [],
     UnitCode = {
@@ -44,7 +47,7 @@ $( function () {
             xyc = store[ world].xyc;
         for ( no; no > 0; no--) {
           $( '#checkPage').after( '<button class="favo" value=' + no + '>favo' + no + '</button>');
-          $( '#favoriteDelete').prev().prepend( '<option value=' + no + '>favo' + no + '</option>');
+          $( '#favoriteWrite').prev().prepend( '<option value=' + no + '>favo' + no + '</option>');
         }
         $( '#attack input').each( function ( idx, obj) {
           obj.value = xyc[idx];
@@ -284,15 +287,15 @@ $( function () {
       store[ world].cardList.favorite = favorite;
       chrome.storage.local.set( store, function () {
         var no = favorite.length;
-        $( e.target).prev().before( '<button class="favo" value=' + no + '>favo' + no + '</button>');
-        $( '#favoriteDelete').prev().append( '<option value=' + no + '>favo' + no + '</option>');
+        $( '#checkPage').nextAll( 'span:first').before( '<button class="favo" value=' + no + '>favo' + no + '</button>');
+        $( e.target).prev().append( '<option value=' + no + '>favo' + no + '</option>');
         //console.log(e.target);
       });
     });
   });
 
   $( '#favoriteDelete').on( 'click', function ( e) {
-    var no = $( this).prev().val();
+    var no = $( this).prev().prev().val();
     if ( !no)
       return;
     chrome.storage.local.get( world, function ( store) {
@@ -301,7 +304,7 @@ $( function () {
       chrome.storage.local.set( store, function () {
         var no = favorite.length;
         $( '#check > button.favo:last').remove();
-        $( '#favoriteDelete').prev().children( 'option:last').remove();
+        $( '#favoriteDelete').prev().prev().children( 'option:last').remove();
         //console.log(e.target);
       });
     });
@@ -402,13 +405,12 @@ $( function () {
           //取得終了後の処理
           $('#deck > span.' + $('#deck > select.unit_ano').find('option:selected').attr('class')).show();
           $( '#unitSet')
-            .prepend( '<input type="button" value="兵士セット"><input type="text" id="unit_cnt_text" value="max">')
-            .on( 'click', 'input:eq(0)', setHeishi);
+            .on( 'click', 'input[type="button"]', setHeishi);
           $.get( 'http://' + world + '.sengokuixa.jp/facility/set_unit_list.php', function ( data) {
             var html = $.parseHTML( data),
                 select_unit = $( '<select></select>'),
                 unit;
-            $( '#unitSet').find( 'input:eq(0)').after( select_unit);
+            $( '#unitSet').prepend( select_unit);
             select_unit.append( '<option label="なし" value="">なし</option>');
             $( html).find( '#soldiers_catalog img[alt]').each( function ( idx, elm) {
               if ( UnitCode[elm.alt]) {

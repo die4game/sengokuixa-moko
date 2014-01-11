@@ -30,11 +30,13 @@
         <button>総攻防力</button><span>攻撃力/防御力</span>
       </div>
       <div id="unitSet">
+        <input type="text" id="unit_cnt_text" value="max">
+        <input type="button" value="兵士セット">
       </div>
       <div id="attack">
-        <button>全部隊出陣</button>
         x: <input type="text" name="village_x_value">
         y: <input type="text" name="village_y_value">
+        <button>全部隊出陣</button>
         <span></span>
       </div>
       <div id="check">
@@ -44,8 +46,9 @@
         <button id="checkToggle">トグル</button>
         <button id="checkPage">ページ</button>
         <span>お気に入り：</span>
+        <select></select>
         <button id="favoriteWrite">登録</button>
-        <select></select><button id="favoriteDelete">削除</button>
+        <button id="favoriteDelete">削除</button>
       </div>
       <div id="onTable">
         <div class="pager">
