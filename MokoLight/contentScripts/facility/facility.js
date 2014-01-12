@@ -506,10 +506,10 @@ chrome.storage.local.get( world, function ( store) {
           break;
       }
       --i;
-      var tmp1 = '[必要 ';
+      var tmp1 = '[';
       var tmp1c = 0;
       var tmp1t = null;
-      var tmp2 = '[余剰 ';
+      var tmp2 = '[';
       var tmpx;
       if ( ( i * aa) < a) {
         tmpx = ( a - i * aa);

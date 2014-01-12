@@ -148,6 +148,7 @@ $( function () {
         },
         village = {},
         key;
+      items[ world].xyc = [ x, y];
       $('#cardList').css({'opacity': '0.3'});
       $('div.Loading').show();
       if ( confirm( '全部隊を( '+x+', '+y+')へ出陣')) {
