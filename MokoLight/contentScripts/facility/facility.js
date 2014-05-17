@@ -1,6 +1,6 @@
 var world = location.host.split( '.')[0] + 'ワールド';
 chrome.storage.local.get( world, function ( store) {
-  var season = store[ world]? ( store[ world].season? store[ world].season: '6'): '6',
+  var season = store[ world]? ( store[ world].season? store[ world].season: '7'): '7',
     checkedSoldier = store[ world]? ( store[ world].checkedSoldier? store[ world].checkedSoldier: {}): {};
   if ( !store[ world])
     store[ world] = { checkedSoldier: checkedSoldier = {}};

@@ -1,6 +1,6 @@
 var world = location.host.split( '.')[0] + 'ワールド';
 chrome.storage.local.get( world, function ( item) {
-  var season = item[ world]? ( item[ world].season? item[ world].season: '6'): '6';
+  var season = item[ world]? ( item[ world].season? item[ world].season: '7'): '7';
     $( function () {
 			var br3 = {
 
@@ -48,11 +48,11 @@ chrome.storage.local.get( world, function ( item) {
 				runMenu: function() {
 					/*砦*/
 					var menu = [];
-					if ( season === '7' ) {
-						menu = this.FORTCOORD_7;
+					if ( parseInt( season) < 7 ) {
+						menu = this.FORTCOORD_6;
 					}
 					else {
-						menu = this.FORTCOORD_6;
+						menu = this.FORTCOORD_7;
 					}
 					this.makeMapMenu(menu, 'gMenu03');
 					$('.gMenu03 > a')

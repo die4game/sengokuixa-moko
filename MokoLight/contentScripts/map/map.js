@@ -549,14 +549,24 @@ chrome.storage.local.get( key, function ( store) {
   },
   POTENTIAL, season, period;
 
-  if ( !store[key] || !store[key].season || !store[key].period) {
-    season = 6, period = 6;
+  if ( !store[key] || !store[key].season) {
+    season = 6;
   } else if ( store[key].season === '5') {
-    season = 5, period = parseInt( store[key].period, 10);
+    season = 5;
     typesOfSoldiers['国人衆'] = [ '槍', 13];
   } else { //6,7章
-    season = 6, period = parseInt( store[key].period, 10);
+    season = 6;
   }
+
+  if ( !store[key] || !store[key].period) {
+    period = 6;
+  } else {
+    period = parseInt( store[key].period, 10);
+    if ( isNaN( period) || period > 6) {
+      period = 6;
+    }
+  }
+
   //console.log( store, store[key].season, store[key].period);
   POTENTIAL = setPotential( season, period);
 
@@ -626,14 +636,14 @@ chrome.storage.local.get( key, function ( store) {
       offset = $this.offset(),
       l = e.pageX - offset.left - 100,
       t = e.pageY - offset.top - 60,
-      x = Math.floor( 200*( l/90 + t/30)),
-      y = Math.floor( 200*( l/90 - t/30)),
+      x = Math.floor( 180*( l/90 + t/30)),
+      y = Math.floor( 180*( l/90 - t/30)),
       c = $( '#ig_map_movepanel').find( 'input[name="c"]').val(),
       url = '/map.php?x='+x+'&y='+y+'&c='+c;
-    if ( Math.abs(x) < 200 && Math.abs(y) < 200)
+    if ( Math.abs(x) < 180 && Math.abs(y) < 180)
       $.get( url, function ( html) {
         var $html = $( $.parseHTML( html)),
-          navi = [ 91+( l>75? 75: ( l<-75? -75: l)), 50+( t>25? 25: ( t<-25? -25: t))];
+          navi = [ 91+( l>90? 90: ( l<-90? -90: l)), 50+( t>30? 30: ( t<-30? -30: t))];
         history.pushState( {}, '('+x+', '+y+', '+c+')', url);
         $( '#ig_mapbox_container').html( $html.find( '#ig_mapbox_container').html());
         $( '#mnavi_box').css( { left: navi[0]+'px', top: navi[1]+'px'});

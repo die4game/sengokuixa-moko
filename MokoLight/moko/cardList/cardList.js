@@ -930,6 +930,7 @@ $( function () {
         21: {sorter: 'ability'},
         24: {sorter: 'ability'},
         27: {sorter: 'ability'},
+        30: {sorter: 'ability'},
         33: {sorter: 'ability'},
         36: {sorter: 'ability'},
         39: {sorter: 'ability'},
